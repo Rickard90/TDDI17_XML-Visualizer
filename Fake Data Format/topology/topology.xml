@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Topology>
+
+  <Computer name="GraphicsComputer">
+
+    <Partition name="GC_0">
+      <Application name="FLIGHT_DATA_PRES"/>
+      <Application name="LANDING_PRES"/>
+      <Application name="NAVIGATION_PRES"/>
+    </Partition>
+
+    <Partition name="GC_1">
+      <Application name="PRES_MISSION"/>
+      <Application name="PRES_AIM"/>
+    </Partition>
+
+  </Computer>
+
+  <Computer name="FlightComputer">
+
+    <Partition name="FC_0">
+      <Application name="AIR_DATA"/>
+      <Application name="POS_DATA"/>
+      <Application name="ATT_DATA"/>
+    </Partition>
+
+    <Partition name="FC_1">
+      <Application name="NAVIGATION_CALC"/>
+    </Partition>
+
+    <Partition name="FC_2">
+      <Application name="COMMS_CIV"/>
+      <Application name="TRANSPONDER"/>
+    </Partition>
+
+  </Computer>
+
+  <Computer name="TacticalComputer">
+
+    <Partition name="TC_0">
+      <Application name="COMMS_MIL"/>
+      <Application name="MISSION_HANDLING"/>
+    </Partition>
+
+    <Partition name="TC_1">
+      <Application name="STORES"/>
+    </Partition>
+	
+  </Computer>
+
+</Topology>

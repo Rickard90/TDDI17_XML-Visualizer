@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<Connections>
+
+  <Connection>
+    <SenderPort name="AIR_DATA.AIR_DATA_64.Airspeed"/>
+    <RecieverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Airspeed"/>
+  </Connection>
+
+  <Connection>
+    <SenderPort name="AIR_DATA.AIR_DATA_64.Altitude"/>
+    <RecieverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Altitude"/>
+  </Connection>
+
+  <Connection>
+    <SenderPort name="AIR_DATA.AIR_DATA_16.Pressure"/>
+    <RecieverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Pressure"/>
+  </Connection>
+
+  <Connection>
+    <SenderPort name="AIR_DATA.AIR_DATA_16.Temperature"/>
+    <RecieverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Temperature"/>
+  </Connection>
+
+</Connections>

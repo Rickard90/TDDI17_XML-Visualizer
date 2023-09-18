@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ApplicationResourceRequirements application="AIR_DATA" initStack="64000" ramSize="256000">
+  <ThreadResourceRequirements thread="AIR_64" execStack="16000" execTime="1500000"/>
+  <ThreadResourceRequirements thread="AIR_DATA_16" execStack="32000" execTime="3000000"/>
+</ApplicationResourceRequirements>

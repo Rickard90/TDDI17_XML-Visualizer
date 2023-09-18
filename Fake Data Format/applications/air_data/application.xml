@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Application name="AIR_DATA">
+ 
+  <Thread name="AIR_DATA_64" frequency="64HZ">
+    <Port name="Air_Speed" interface="Air_Data_Interface.Speed" role="Sender"/>
+    <Port name="Altitude" interface="Air_Data_Interface.Altitude" role="Sender"/>
+  </Thread>
+
+  <Thread name="AIR_DATA_16" frequency="16HZ">
+    <Port name="Pressure" interface="Air_Data_Interface.Pressure" role="Sender"/>
+    <Port name="Temperature" interface="Air_Data_Interface.Temperature" role="Sender"/>
+  </Thread>
+
+</Application>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ApplicationResourceRequirements application="FLIGHT_DATA_PRES" initStack="32000" ramSize="128000">
+  <ThreadResourceRequirements thread="FLIGHT_DATA_PRES_64" execStack="32000" execTime="5000000"/>
+</ApplicationResourceRequirements>
