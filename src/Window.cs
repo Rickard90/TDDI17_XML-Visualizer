@@ -6,14 +6,15 @@ namespace XML_Visualizer;
 
 public class Window : Game
 {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
+    private GraphicsDeviceManager graphics;
+    private SpriteBatch spriteBatch;
+    private Texture2D tex;
 
     public Window()
     {
-        _graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = "Content";
-        IsMouseVisible = true;
+        this.graphics = new GraphicsDeviceManager(this);
+        base.Content.RootDirectory = "Content";
+        base.IsMouseVisible = true;
     }
 
     protected override void Initialize()
@@ -25,7 +26,10 @@ public class Window : Game
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        this.spriteBatch = new SpriteBatch(GraphicsDevice);
+        
+        this.tex = new Texture2D(base.GraphicsDevice, 1, 1);
+        this.tex.SetData( new Color[] { Color.Green });
 
         // TODO: use this.Content to load your game content here
     }
@@ -42,8 +46,11 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        base.GraphicsDevice.Clear(Color.CornflowerBlue);
 
+        this.spriteBatch.Begin();
+        this.spriteBatch.Draw(tex, new Rectangle(0, 0, 100, 200), Color.White);
+        this.spriteBatch.End();
         // TODO: Add your drawing code here
 
         base.Draw(gameTime);
