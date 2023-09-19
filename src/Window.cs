@@ -10,6 +10,8 @@ public class Window : Game
     private SpriteBatch spriteBatch;
     private Texture2D tex;
 
+    private Computer comp = new Computer();
+
     public Window()
     {
         this.graphics = new GraphicsDeviceManager(this);
@@ -51,6 +53,8 @@ public class Window : Game
         this.spriteBatch.Begin();
         this.spriteBatch.Draw(tex, new Rectangle(0, 0, 100, 200), Color.White);
         this.spriteBatch.End();
+
+        comp.Draw(new Point(50, 50), base.GraphicsDevice);
         // TODO: Add your drawing code here
 
         base.Draw(gameTime);
