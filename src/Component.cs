@@ -28,7 +28,7 @@ public abstract class Component
 		return componentName;
 	}
 
-	public abstract void Draw(Point pos, GraphicsDevice graph);
+	public abstract void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb);
 
  
 	protected readonly 	string				componentName	= "";
@@ -63,21 +63,25 @@ public class Computer : Component
 {
 	public Computer(){}
 
-	public override void Draw(Point pos, GraphicsDevice graph)
+	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb)
 	{
-		SpriteBatch PC 		= new SpriteBatch(graph);
+		//SpriteBatch PC 		= new SpriteBatch(graph);
 		Texture2D texture 	= new Texture2D(graph, 1, 1);
        	texture.SetData(new Color[] { Color.White });
 
-		PC.Begin();
-		PC.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
-		PC.End();
+		//PC.Begin();
+		//PC.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
+		//PC.End();
+
+		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
 	}
 }
 
 public class Partition : Component
 {
-	public override void Draw(Point pos, GraphicsDevice graph)
+	public Partition(){}
+
+	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb)
 	{
 		SpriteBatch PC 		= new SpriteBatch(graph);
 		Texture2D texture 	= new Texture2D(graph, 1, 1);
@@ -91,7 +95,7 @@ public class Partition : Component
 
 public class Application : Component
 {
-	public override void Draw(Point pos, GraphicsDevice graph)
+	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb)
 	{
 		SpriteBatch PC 		= new SpriteBatch(graph);
 		Texture2D texture 	= new Texture2D(graph, 1, 1);
@@ -105,7 +109,7 @@ public class Application : Component
 
 public class Thread : Component
 {
-	public override void Draw(Point pos, GraphicsDevice graph)
+	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb)
 	{
 		SpriteBatch PC 		= new SpriteBatch(graph);
 		Texture2D texture 	= new Texture2D(graph, 1, 1);
