@@ -12,6 +12,7 @@ public class Window : Game
     private Texture2D tex;
 
     private Computer comp = new Computer("Graphics Computer");
+    private XmlReader xr = new XmlReader();
 
     public Window()
     {
@@ -23,12 +24,13 @@ public class Window : Game
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
-
+        
         base.Initialize();
     }
 
     protected override void LoadContent()
     {
+        xr.Read();
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
         
         this.font = Content.Load<SpriteFont>("Text");

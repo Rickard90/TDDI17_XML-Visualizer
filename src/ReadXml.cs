@@ -6,11 +6,15 @@ using Microsoft.VisualBasic;
 namespace XML_Visualizer;
 public class XmlReader
 {
-    static XmlReader()
+    public XmlReader()
+    {
+    }
+
+    public void Read()
     {
         try
         {
-            XDocument topologyXml = XDocument.Load("data/topology/topology.xml");
+            XDocument topologyXml = XDocument.Load("Fake Data Format/topology/topology.xml");//byt till parameter
 
             var computers = from computer in topologyXml.Descendants("Computer")
                 select new
@@ -32,7 +36,7 @@ public class XmlReader
                             }
                         }  
                 };
-                
+ 
             foreach (var computer in computers)
             {               
                 foreach (var partition in computer.partitions)
@@ -41,7 +45,7 @@ public class XmlReader
                     {
                         try
                         {
-                            XDocument applicationXml = XDocument.Load("data/applications/"+application.Name+"/application.xml");
+                            XDocument applicationXml = XDocument.Load("Fake Data Format/applications/"+application.Name+"/application.xml");
 
                             var threads = from thread in applicationXml.Descendants("Thread")
                                 select new
@@ -58,6 +62,10 @@ public class XmlReader
                                                             .Select(_Port => _Port.Attribute("name").Value)                                                                        
                                         }  
                                 };
+                            //read "Fake Data Format/Application/<AppName>/Resources.xml
+                            //read "Fake Data Format/connections/connections.xml
+
+                            //call component constructor from here?
                             
                             Console.WriteLine($"Name: {computer.Name}");                               
                             Console.WriteLine($"  Partition: {partition.Name}");
@@ -69,15 +77,15 @@ public class XmlReader
                                 foreach (var Port in thread.Ports)
                                 {
                                     Console.WriteLine($"      Port: {Port.Name}");
-                                    Console.WriteLine($"      Interface: {Port.Interface}");
-                                    Console.WriteLine($"      Role: {Port.Role}");
+                                    Console.WriteLine($"        Interface: {Port.Interface}");
+                                    Console.WriteLine($"        Role: {Port.Role}");
                                     
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                           // Console.WriteLine($"An error occurred: {ex.Message}");
+                            Console.WriteLine($"An error occurred: {ex.Message}");
                         }
                     }   
                 }
@@ -85,7 +93,7 @@ public class XmlReader
         }     
         catch (Exception ex)
         {
-         //   Console.WriteLine($"An error occurred: {ex.Message}");
+            Console.WriteLine($"An error occurred: {ex.Message}");
         }
     }
 }
