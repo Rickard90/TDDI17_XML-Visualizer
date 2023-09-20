@@ -1,6 +1,7 @@
 ﻿using System;
 //using System.Drawing;
 using System.Linq.Expressions;
+using System.Net.Mime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -28,11 +29,11 @@ public abstract class Component
 		return componentName;
 	}
 
-	public abstract void Draw(Point pos, SpriteBatch sb);
+	public abstract void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb, SpriteFont font);
 
  
-	protected readonly 	string				componentName	= "";
-	protected 		   	int					graphicSize		= 500;
+	protected 		 	string				componentName	= "";
+	protected 		   	int					graphicSize		= 300;
 	protected 			Component			parent;
 	protected readonly 	List<Component> 	children		= new();
 	protected readonly 	List<Component>		myConnections	= new();
@@ -61,13 +62,20 @@ public class Top
 
 public class Computer : Component
 {
-	public Computer(){}
-
-	public override void Draw(Point pos, SpriteBatch sb)
+	public Computer(string name)
 	{
-		Texture2D texture 	= new Texture2D(graph, 1, 1);
+		this.componentName = name;
+	}
+
+	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb, SpriteFont font)
+	{	
+		int lineThickness = 3;
+		int innerSize = graphicSize - 2*lineThickness;
+		Texture2D texture = new(graph, 1, 1);
        	texture.SetData(new Color[] { Color.White });
-		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
+		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
+		sb.Draw(texture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
+		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 	}
 }
 
@@ -75,33 +83,46 @@ public class Partition : Component
 {
 	public Partition(){}
 
-		public override void Draw(Point pos, SpriteBatch sb)
+	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb, SpriteFont font)
 	{
-		Texture2D texture 	= new Texture2D(graph, 1, 1);
+		int lineThickness = 3;
+		int innerSize = graphicSize - 2*lineThickness;
+		Texture2D texture = new(graph, 1, 1);
        	texture.SetData(new Color[] { Color.White });
-		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
+		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
+		sb.Draw(texture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
+		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 	}
-}
 }
 
 public class Application : Component
 {
-		public override void Draw(Point pos, SpriteBatch sb)
+	public Application(){}
+
+	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb, SpriteFont font)
 	{
-		Texture2D texture 	= new Texture2D(graph, 1, 1);
+		int lineThickness = 3;
+		int innerSize = graphicSize - 2*lineThickness;
+		Texture2D texture = new(graph, 1, 1);
        	texture.SetData(new Color[] { Color.White });
-		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
+		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
+		sb.Draw(texture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
+		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 	}
-}
 }
 
 public class Thread : Component
 {
-	public override void Draw(Point pos, SpriteBatch sb)
+	public Thread(){}
+
+	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb, SpriteFont font)
 	{
-		Texture2D texture 	= new Texture2D(graph, 1, 1);
+		int lineThickness = 3;
+		int innerSize = graphicSize - 2*lineThickness;
+		Texture2D texture = new(graph, 1, 1);
        	texture.SetData(new Color[] { Color.White });
-		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
+		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
+		sb.Draw(texture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
+		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 	}
-}
 }
