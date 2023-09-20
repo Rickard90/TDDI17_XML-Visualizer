@@ -28,11 +28,11 @@ public abstract class Component
 		return componentName;
 	}
 
-	public abstract void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb);
+	public abstract void Draw(Point pos, SpriteBatch sb);
 
  
 	protected readonly 	string				componentName	= "";
-	protected 		   	int					graphicSize		= 50;
+	protected 		   	int					graphicSize		= 500;
 	protected 			Component			parent;
 	protected readonly 	List<Component> 	children		= new();
 	protected readonly 	List<Component>		myConnections	= new();
@@ -63,16 +63,10 @@ public class Computer : Component
 {
 	public Computer(){}
 
-	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb)
+	public override void Draw(Point pos, SpriteBatch sb)
 	{
-		//SpriteBatch PC 		= new SpriteBatch(graph);
 		Texture2D texture 	= new Texture2D(graph, 1, 1);
        	texture.SetData(new Color[] { Color.White });
-
-		//PC.Begin();
-		//PC.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
-		//PC.End();
-
 		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
 	}
 }
@@ -81,42 +75,33 @@ public class Partition : Component
 {
 	public Partition(){}
 
-	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb)
+		public override void Draw(Point pos, SpriteBatch sb)
 	{
-		SpriteBatch PC 		= new SpriteBatch(graph);
 		Texture2D texture 	= new Texture2D(graph, 1, 1);
-       	texture.SetData(new Color[] { Color.Yellow });
-
-		PC.Begin();
-		PC.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
-		PC.End();
+       	texture.SetData(new Color[] { Color.White });
+		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
 	}
+}
 }
 
 public class Application : Component
 {
-	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb)
+		public override void Draw(Point pos, SpriteBatch sb)
 	{
-		SpriteBatch PC 		= new SpriteBatch(graph);
 		Texture2D texture 	= new Texture2D(graph, 1, 1);
-       	texture.SetData(new Color[] { Color.Red });
-
-		PC.Begin();
-		PC.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
-		PC.End();
+       	texture.SetData(new Color[] { Color.White });
+		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
 	}
+}
 }
 
 public class Thread : Component
 {
-	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb)
+	public override void Draw(Point pos, SpriteBatch sb)
 	{
-		SpriteBatch PC 		= new SpriteBatch(graph);
 		Texture2D texture 	= new Texture2D(graph, 1, 1);
-       	texture.SetData(new Color[] { Color.Cyan });
-
-		PC.Begin();
-		PC.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
-		PC.End();
+       	texture.SetData(new Color[] { Color.White });
+		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.White);
 	}
+}
 }
