@@ -1,3 +1,2 @@
-﻿
-using var window = new XML_Visualizer.Window();
+﻿using var window = new XML_Visualizer.Window();
 window.Run();
