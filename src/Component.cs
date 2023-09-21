@@ -10,6 +10,15 @@ using Microsoft.Xna.Framework.Input;
 //All types of components inherit constructor and fields from the component-type
 public abstract class Component
 {
+
+	protected static Texture2D whitePixelTexture;
+
+	public static void LoadWhitePixelTexture(GraphicsDevice graphicsDevice)
+	{
+		whitePixelTexture = new(graphicsDevice, 1, 1);
+       	whitePixelTexture.SetData(new Color[] { Color.White });	
+	}
+
 	public Component()
 	{
 	}
@@ -20,7 +29,7 @@ public abstract class Component
 		this.children		= children;
 	}
 
-	public float getSize()
+	public int getSize()
 	{
 		return graphicSize;
 	}
@@ -29,7 +38,7 @@ public abstract class Component
 		return componentName;
 	}
 
-	public abstract void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb, SpriteFont font);
+	public abstract void Draw(Point pos, SpriteBatch sb, SpriteFont font);
 
  
 	protected 		 	string				componentName	= "";
@@ -67,14 +76,13 @@ public class Computer : Component
 		this.componentName = name;
 	}
 
-	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb, SpriteFont font)
+	public override void Draw(Point pos, SpriteBatch sb, SpriteFont font)
 	{	
 		int lineThickness = 3;
 		int innerSize = graphicSize - 2*lineThickness;
-		Texture2D texture = new(graph, 1, 1);
-       	texture.SetData(new Color[] { Color.White });
-		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
-		sb.Draw(texture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
+       	whitePixelTexture.SetData(new Color[] { Color.White });
+		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
+		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
 		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 	}
 }
@@ -83,14 +91,13 @@ public class Partition : Component
 {
 	public Partition(){}
 
-	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb, SpriteFont font)
+	public override void Draw(Point pos, SpriteBatch sb, SpriteFont font)
 	{
 		int lineThickness = 3;
 		int innerSize = graphicSize - 2*lineThickness;
-		Texture2D texture = new(graph, 1, 1);
-       	texture.SetData(new Color[] { Color.White });
-		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
-		sb.Draw(texture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
+       	whitePixelTexture.SetData(new Color[] { Color.White });
+		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
+		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
 		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 	}
 }
@@ -99,14 +106,12 @@ public class Application : Component
 {
 	public Application(){}
 
-	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb, SpriteFont font)
+	public override void Draw(Point pos, SpriteBatch sb, SpriteFont font)
 	{
 		int lineThickness = 3;
 		int innerSize = graphicSize - 2*lineThickness;
-		Texture2D texture = new(graph, 1, 1);
-       	texture.SetData(new Color[] { Color.White });
-		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
-		sb.Draw(texture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
+		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
+		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
 		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 	}
 }
@@ -115,14 +120,13 @@ public class Thread : Component
 {
 	public Thread(){}
 
-	public override void Draw(Point pos, GraphicsDevice graph, SpriteBatch sb, SpriteFont font)
+	public override void Draw(Point pos, SpriteBatch sb, SpriteFont font)
 	{
 		int lineThickness = 3;
 		int innerSize = graphicSize - 2*lineThickness;
-		Texture2D texture = new(graph, 1, 1);
-       	texture.SetData(new Color[] { Color.White });
-		sb.Draw(texture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
-		sb.Draw(texture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
+       	whitePixelTexture.SetData(new Color[] { Color.White });
+		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
+		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
 		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 	}
 }

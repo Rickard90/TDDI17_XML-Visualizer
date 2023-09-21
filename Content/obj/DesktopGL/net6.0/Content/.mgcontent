@@ -4,7 +4,7 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/Oskar/Desktop/Kurser/TDDI17_XML-Visualizer/Content/Text.spritefont</File>
+    <File>C:/Users/EricF/Local/CSharpCode/TDDI17_XML-Visualizer/Content/Text.spritefont</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />

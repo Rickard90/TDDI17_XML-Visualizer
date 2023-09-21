@@ -30,7 +30,8 @@ public class Window : Game
     protected override void LoadContent()
     {
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
-        
+        Component.LoadWhitePixelTexture(GraphicsDevice);
+
         this.font = Content.Load<SpriteFont>("Text");
         this.tex = new Texture2D(base.GraphicsDevice, 1, 1);
         this.tex.SetData( new Color[] { Color.Green });
@@ -54,7 +55,7 @@ public class Window : Game
 
         this.spriteBatch.Begin();
         this.spriteBatch.Draw(tex, new Rectangle(0, 0, 100, 200), Color.White);
-        this.comp.Draw(new Point(50, 50), base.GraphicsDevice, this.spriteBatch, this.font);
+        this.comp.Draw(new Point(50, 50), this.spriteBatch, this.font);
         this.spriteBatch.End();
 
         
