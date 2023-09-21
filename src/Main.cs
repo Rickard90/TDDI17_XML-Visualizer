@@ -1,3 +1,3 @@
 ﻿
 using var window = new XML_Visualizer.Window();
-window.Run();
+    window.Run();
