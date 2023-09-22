@@ -19,6 +19,11 @@ public class Component
        	whitePixelTexture.SetData(new Color[] { Color.White });	
 	}
 
+	public Component()
+	{
+
+	}
+
 	public Component(string name)
 	{
 		this.componentName	= name;
@@ -31,21 +36,21 @@ public class Component
 		this.children		= children;
 	}
 
-	public Rectangle getSize() const
+	public Rectangle GetSize()
 	{
 		return new Rectangle(position.X, position.X, width, height);
 	}
-	public string getName() const
+	public string SetName()
 	{
 		return componentName;
 	}
 
-	public void setChildren(List<Component> newChildren)
+	public void SetChildren(List<Component> newChildren)
 	{
 		this.children = newChildren;
 	}
 
-	public void setParent(Component newParent)
+	public void SetParent(Component newParent)
 	{
 		this.parent = newParent;
 	}
@@ -57,8 +62,7 @@ public class Component
 		int innerHeight = this.height - 2*lineThickness;
 		int innerWidth  = this.width  - 2*lineThickness; 
 
-
-		//Updated component's position
+		//Updates component's position
 		this.position = pos;
 
        	whitePixelTexture.SetData(new Color[] { Color.White });
@@ -81,12 +85,28 @@ public class Component
 
 public class Computer : Component
 {
+	public Computer(string name) : base(name)
+	{
 
+	}
+
+	public Computer(string name, List<Component> children) : base(name, children)
+	{
+		
+	}
 }
 
 public class Partition : Component
 {
+	public Partition(string name) : base(name)
+	{
 
+	}
+
+	public Partition(string name, List<Component> children) : base(name, children)
+	{
+		
+	}
 }
 
 public class Application : Component
