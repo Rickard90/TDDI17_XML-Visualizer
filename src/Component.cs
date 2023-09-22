@@ -2,6 +2,7 @@
 //using System.Drawing;
 using System.Linq.Expressions;
 using System.Net.Mime;
+using System.Reflection.Metadata.Ecma335;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -40,6 +41,16 @@ public class Component
 	{
 		return new Rectangle(position.X, position.X, width, height);
 	}
+	public List<Component> GetChildren()
+	{
+		return this.children;
+	}
+
+	public void SetPosition(Point pos)
+	{
+		this.position = pos;
+	}
+
 	public string SetName()
 	{
 		return componentName;
@@ -149,4 +160,17 @@ public class Thread : Component
 	public int frequency = 0;
 	public int exeTime 	 = 0;
 	public int exeStack  = 0;
+}
+
+public class Port : Component
+{
+	public Port(string name, 
+				string sender, string receiver) : base(name)
+	{
+			this.sender = sender;
+			this.receiver = receiver;
+	}
+
+	public string sender 	= ""; 
+	public string receiver	= "";
 }
