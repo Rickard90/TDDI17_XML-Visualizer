@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 
 //All types of components inherit constructor and fields from the component-type
-public abstract class Component
+public class Component
 {
 
 	protected static Texture2D whitePixelTexture;
@@ -19,9 +19,11 @@ public abstract class Component
        	whitePixelTexture.SetData(new Color[] { Color.White });	
 	}
 
-	public Component()
+	public Component(string name)
 	{
+		this.componentName	= name;
 	}
+
 	public Component(string name,
 					 List<Component> children)
 	{
@@ -29,104 +31,102 @@ public abstract class Component
 		this.children		= children;
 	}
 
-	public int getSize()
+	public Rectangle getSize() const
 	{
-		return graphicSize;
+		return new Rectangle(position.X, position.X, width, height);
 	}
-	public string getName()
+	public string getName() const
 	{
 		return componentName;
 	}
 
-	public abstract void Draw(Point pos, SpriteBatch sb, SpriteFont font);
+	public void setChildren(List<Component> newChildren)
+	{
+		this.children = newChildren;
+	}
+
+	public void setParent(Component newParent)
+	{
+		this.parent = newParent;
+	}
+
+
+	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFont font)
+	{
+		int lineThickness = 3;
+		int innerHeight = this.height - 2*lineThickness;
+		int innerWidth  = this.width  - 2*lineThickness; 
+
+
+		//Updated component's position
+		this.position = pos;
+
+       	whitePixelTexture.SetData(new Color[] { Color.White });
+		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, width, height), Color.Black);
+		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerWidth, innerHeight), Color.White);
+		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
+		
+	}
 
  
 	protected 		 	string				componentName	= "";
-	protected 		   	int					graphicSize		= 300;
-	protected 			Component			parent;
-	protected readonly 	List<Component> 	children		= new();
-	protected readonly 	List<Component>		myConnections	= new();
+	protected 		   	int 				width			= 300;
+	protected 		   	int 				height			= 300;
+	protected			Point				position		= new(0,0);
+    protected 			Component 			parent 			= null;
+	protected 		 	List<Component> 	children		= new();
+	protected 		 	List<Component>		myConnections	= new();
 		
-}
-
-//Top is an object that keeps track of a full loaded topography
-//A topography is stored as a tree with a top component
-public class Top
-{
-
-	public Top(Component head)
-	{
-		this.currentComponent 	= head;
-		this.head 				= head;
-	}
-
-	public void Goto(Component newComponent)
-	{
-		currentComponent = newComponent;
-	}
-
-	private 		 Component currentComponent;
-	private readonly Component head;
 }
 
 public class Computer : Component
 {
-	public Computer(string name)
-	{
-		this.componentName = name;
-	}
 
-	public override void Draw(Point pos, SpriteBatch sb, SpriteFont font)
-	{	
-		int lineThickness = 3;
-		int innerSize = graphicSize - 2*lineThickness;
-       	whitePixelTexture.SetData(new Color[] { Color.White });
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
-		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
-	}
 }
 
 public class Partition : Component
 {
-	public Partition(){}
 
-	public override void Draw(Point pos, SpriteBatch sb, SpriteFont font)
-	{
-		int lineThickness = 3;
-		int innerSize = graphicSize - 2*lineThickness;
-       	whitePixelTexture.SetData(new Color[] { Color.White });
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
-		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
-	}
 }
 
 public class Application : Component
 {
-	public Application(){}
-
-	public override void Draw(Point pos, SpriteBatch sb, SpriteFont font)
+	public Application(string name, List<Component> children,
+					   int ramSize, int initStack) : base(name, children)
 	{
-		int lineThickness = 3;
-		int innerSize = graphicSize - 2*lineThickness;
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
-		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
+		this.ramSize   = ramSize;
+		this.initStack = initStack;
 	}
+	public Application(string name,
+					   int ramSize, int initStack) : base(name)
+	{
+		this.ramSize   = ramSize;
+		this.initStack = initStack;
+	}
+
+	public int ramSize 	 = 0;
+	public int initStack = 0;
 }
 
 public class Thread : Component
 {
-	public Thread(){}
-
-	public override void Draw(Point pos, SpriteBatch sb, SpriteFont font)
+	public Thread(string name, List<Component> children,
+				  int frequency, int exeTime, int exeStack) : base(name, children)
 	{
-		int lineThickness = 3;
-		int innerSize = graphicSize - 2*lineThickness;
-       	whitePixelTexture.SetData(new Color[] { Color.White });
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, graphicSize, graphicSize), Color.Black);
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerSize, innerSize), Color.White);
-		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
+		this.frequency = frequency;
+		this.exeTime   = exeTime;
+		this.exeStack  = exeStack;
 	}
+	
+	public Thread(string name,
+				  int frequency, int exeTime, int exeStack) : base(name)
+	{
+		this.frequency = frequency;
+		this.exeTime   = exeTime;
+		this.exeStack  = exeStack;
+	}
+
+	public int frequency = 0;
+	public int exeTime 	 = 0;
+	public int exeStack  = 0;
 }
