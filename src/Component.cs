@@ -61,6 +61,11 @@ public class Component
 		this.children = newChildren;
 	}
 
+	public void AddChild(Component newChild)
+	{
+		this.children.Add(newChild);
+	}
+
 	public void SetParent(Component newParent)
 	{
 		this.parent = newParent;
@@ -134,7 +139,7 @@ public class Application : Component
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
-
+	
 	public int ramSize 	 = 0;
 	public int initStack = 0;
 }
@@ -155,6 +160,18 @@ public class Thread : Component
 		this.frequency = frequency;
 		this.exeTime   = exeTime;
 		this.exeStack  = exeStack;
+	}
+
+	public Thread(string name,
+				  int exeTime, int exeStack) : base(name)
+	{
+		this.exeTime   = exeTime;
+		this.exeStack  = exeStack;
+	}
+	
+	public void SetFrequency(int frequency)
+	{
+		this.frequency = frequency;
 	}
 
 	public int frequency = 0;

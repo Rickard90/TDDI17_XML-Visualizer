@@ -12,7 +12,7 @@ public class Window : Game
     private Texture2D tex;
 
     private Computer comp = new Computer("Graphics Computer");
-
+    private  XmlReader xmlr = new XmlReader();
     public Window()
     {
         this.graphics = new GraphicsDeviceManager(this);
@@ -33,6 +33,7 @@ public class Window : Game
         Component.LoadWhitePixelTexture(GraphicsDevice);
 
         this.font = Content.Load<SpriteFont>("Text");
+        xmlr.ReadXml();
         this.tex = new Texture2D(base.GraphicsDevice, 1, 1);
         this.tex.SetData( new Color[] { Color.Green });
 
