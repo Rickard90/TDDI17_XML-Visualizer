@@ -53,21 +53,22 @@ class Canvas
     }
 
     //  the size of the canvas depends on factors outside of this class, thus most be given
-    public void GenerateTextures(Point textureSize)
+    public void GenerateTextures(Point textureSize, Color clearColor)
     {
 
         if (this.renderFunction == null)
             throw new Exception("Canvas has not been given a render function!");
 
-        this.textures = new Texture2D[((int)LevelOfDetail.Max)];
+        this.textures = new Texture2D[((int)LevelOfDetail.Max + 1)];
 
         for (LevelOfDetail detail = LevelOfDetail.Min; detail <= LevelOfDetail.Max; detail++)
             using ( RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, textureSize.X, textureSize.Y, false, SurfaceFormat.Color, DepthFormat.None) )
         {
             graphicsDevice.SetRenderTarget(renderTarget);
-            
+   
             //  v render the things here v
             this.spriteBatch.Begin();
+            this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0,textureSize.X, textureSize.Y), clearColor);
             this.renderFunction.Invoke(detail);
             this.spriteBatch.End();
             //  ^ render the things here ^ 
@@ -78,9 +79,7 @@ class Canvas
             textures[(int)detail] = Texture2D.FromStream(graphicsDevice, stream);
         }
         
-
         graphicsDevice.SetRenderTarget(null);   //  give back the rendering target
-
 
     }
 

@@ -3,13 +3,13 @@ using System.Collections.Specialized;
 using System.Data;
 using System.IO;
 
-namespace XML_Visualizer;
+//namespace XML_Visualizer;
 class XmlReader {
 
     public XmlReader()
     {
     }
-    public List<Component> ReadXml() {
+    public List<Component> ReadXml(string path) {
         String line;
         List <Component> computers = new List<Component>();
         int activeThread = 0;
@@ -22,7 +22,7 @@ class XmlReader {
             int ramSize = 0;
             int initStack = 0;
 
-            StreamReader topologyReader = new StreamReader("Fake Data Format/topology/topology.xml");
+            StreamReader topologyReader = new StreamReader(path + "/topology/topology.xml");
             line = topologyReader.ReadLine();
             while (line != null)
             {
@@ -37,8 +37,8 @@ class XmlReader {
                     }else if (line.Split('\"')[0] == "<Application name=" ) {
                         threads.Clear();
                         applicationName = (line.Split('\"')[1]);
-                        ReadResourses(applicationName, threads, ref ramSize, ref initStack);
-                        ReadApplication(applicationName, threads, activeThread);
+                        ReadResourses(applicationName, threads, ref ramSize, ref initStack, path);
+                        ReadApplication(applicationName, threads, activeThread, path);
                         applications.Add(new Application(applicationName, ramSize, initStack));
                         applications[applications.Count-1].SetChildren(threads);
                     }
@@ -60,9 +60,8 @@ class XmlReader {
         return computers;
     }
 
-    void ReadApplication(string applicationName, List<Component> threads, int activeThread) {
+    void ReadApplication(string applicationName, List<Component> threads, int activeThread, string path) {
         String line;
-        Console.WriteLine("Fake Data Format/applications/"+applicationName+"/application.xml");
         try
         {
             int index = 0;
@@ -70,7 +69,7 @@ class XmlReader {
             string interf;
             string role;
             List<Component> ports = new List<Component> ();
-            StreamReader applicationReader = new StreamReader("Fake Data Format/applications/"+applicationName+"/application.xml");
+            StreamReader applicationReader = new StreamReader(path + "/applications/"+applicationName+"/application.xml");
             line = applicationReader.ReadLine();
             
             while (line != null)
@@ -98,15 +97,14 @@ class XmlReader {
         }
         catch(Exception e)
         {
-            //Console.WriteLine("Exception: " + e.Message);
+            Console.WriteLine("Exception: " + e.Message);
         }
     }
 
-   private void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack) {
+   private void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
         string line;
-        Console.WriteLine("Fake Data Format/applications/"+applicationName+"/resources.xml");
         try {
-            StreamReader ResourcesReader = new StreamReader("Fake Data Format/applications/"+applicationName+"/resources.xml");
+            StreamReader ResourcesReader = new StreamReader(path + "/applications/"+applicationName+"/resources.xml");
             line = ResourcesReader.ReadLine();
             while (line != null)
             {
@@ -124,7 +122,7 @@ class XmlReader {
         }
         catch(Exception e)
         {
-            //Console.WriteLine("Exception: " + e.Message);
+            Console.WriteLine("Exception: " + e.Message);
         }
     }
 

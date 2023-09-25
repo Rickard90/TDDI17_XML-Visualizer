@@ -7,18 +7,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-
 //All types of components inherit constructor and fields from the component-type
 public class Component
 {
 
-	protected static Texture2D whitePixelTexture;
-
-	public static void LoadWhitePixelTexture(GraphicsDevice graphicsDevice)
-	{
-		whitePixelTexture = new(graphicsDevice, 1, 1);
-       	whitePixelTexture.SetData(new Color[] { Color.White });	
-	}
 
 	public Component()
 	{
@@ -35,6 +27,10 @@ public class Component
 	{
 		this.componentName	= name;
 		this.children		= children;
+	}
+	public string GetName()
+	{
+		return this.componentName;
 	}
 
 	public Rectangle GetSize()
@@ -53,7 +49,7 @@ public class Component
 
 	public string SetName()
 	{
-		return componentName;
+		return this.componentName;
 	}
 
 	public void SetChildren(List<Component> newChildren)
@@ -83,23 +79,28 @@ public class Component
 	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFont font)
 	{
 		int lineThickness = 3;
+		int smallWidth  = this.width /6;
+		int smallHeight = this.height/10; 
 		int innerHeight = this.height - 2*lineThickness;
-		int innerWidth  = this.width  - 2*lineThickness; 
+		int innerWidth  = 5 * smallWidth  - 2*lineThickness; 
 
 		//Updates component's position
 		this.position = pos;
 
-       	whitePixelTexture.SetData(new Color[] { Color.White });
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, width, height), Color.Black);
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerWidth, innerHeight), Color.White);
+		//Draws small square to the right:
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight, smallWidth, 8 * smallHeight), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight + lineThickness, smallWidth - lineThickness, 8 * smallHeight - 2 * lineThickness), Color.White);
+		//Draws big square:
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
 		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
 	}
 
  
 	protected 		 	string				componentName	= "";
-	protected 		   	int 				width			= 300;
-	protected 		   	int 				height			= 300;
+	protected 		   	int 				width			= 125;
+	protected 		   	int 				height			= 100;
 	protected			Point				position		= new(0,0);
     protected 			Component 			parent 			= null;
 	protected 		 	List<Component> 	children		= new();

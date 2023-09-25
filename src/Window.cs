@@ -2,21 +2,28 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace XML_Visualizer;
+//namespace XML_Visualizer;
 
 public class Window : Game
 {
+    public static Texture2D whitePixelTexture;
+
     private GraphicsDeviceManager graphics;
     private SpriteBatch spriteBatch;
     private SpriteFont font;
-    private Texture2D tex;
+    //private Texture2D tex;
+    
 
-    private Computer comp = new Computer("Graphics Computer");
+    private TopologyHead top = new TopologyHead("test");
+    private Canvas canvas;
+
     public Window()
     {
         this.graphics = new GraphicsDeviceManager(this);
         base.Content.RootDirectory = "Content";
         base.IsMouseVisible = true;
+
+        
     }
 
     protected override void Initialize()
@@ -31,13 +38,15 @@ public class Window : Game
     protected override void LoadContent()
     {
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
-        Component.LoadWhitePixelTexture(GraphicsDevice);
+        //Component.LoadWhitePixelTexture(GraphicsDevice);
 
         this.font = Content.Load<SpriteFont>("Text");
-        
-        this.tex = new Texture2D(base.GraphicsDevice, 1, 1);
-        this.tex.SetData( new Color[] { Color.Green });
+        whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
+        whitePixelTexture.SetData( new Color[] { Color.White });
 
+        this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size, LevelOfDetail.Max);
+        this.canvas.renderFunction = this.RenderTopology;
+        this.canvas.GenerateTextures(new Point(5000, 5000), Color.White);
         // TODO: use this.Content to load your game content here
     }
 
@@ -53,16 +62,19 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        base.GraphicsDevice.Clear(Color.CornflowerBlue);
+        base.GraphicsDevice.Clear(Color.White);
 
         this.spriteBatch.Begin();
-        this.spriteBatch.Draw(tex, new Rectangle(0, 0, 100, 200), Color.White);
-        this.comp.Draw(new Point(50, 50), this.spriteBatch, this.font);
+        this.canvas.Draw();
         this.spriteBatch.End();
 
-        
         // TODO: Add your drawing code here
 
         base.Draw(gameTime);
+    }
+
+    private void RenderTopology(LevelOfDetail levelOfDetail)
+    {
+        this.top.Draw(this.spriteBatch, this.font);
     }
 }
