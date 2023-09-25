@@ -17,14 +17,21 @@ public class TopologyHead
 
 	}
 
+    public Component GetCurrent()
+    {
+        return this.currentComponent;
+    }
+
+    public void GotoHead()
+    {   
+        currentComponent = head;
+    }
+
 	public void Goto(Component newComponent)
 	{
 		currentComponent = newComponent;
 	}
-    public void Head()
-    {   
-        currentComponent = head;
-    }
+
 
 	private 		 Component currentComponent;
 	private Component head;
