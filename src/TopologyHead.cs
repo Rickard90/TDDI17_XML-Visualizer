@@ -16,6 +16,8 @@ public class TopologyHead
         //head.setChildren(Computers)
 
 	}
+
+    //Temporary test-constructor
     public TopologyHead()
 	{
         this.head 				= new Component("Top Level");
@@ -28,21 +30,31 @@ public class TopologyHead
 
     public void Draw(SpriteBatch sb, SpriteFont font)
     {
-        Point pos = new(50, 100);
-        sb.DrawString(font, currentComponent.GetName(), new Vector2( 50, 50), Color.Black);
+        int count = 0;
+        //The following three variables serve to decide edge and spacing layout:
+        int startX = 50;
+        int startY = 100;
+        int spacing = 50;
+
+        Point pos = new(startX, startY);
+ 
+        sb.DrawString(font, currentComponent.GetName(), new Vector2(0, 0), Color.Black);
+
         foreach(Component C in currentComponent.GetChildren())
         {
             C.Draw(pos, sb, font);
-            if( pos.X < 270)
+            count++;
+            if(count < 3)
             {
-                pos.X += 110;
+                pos.X += C.GetSize().Width + spacing;
             }
             else
             {
-                pos.X = 50;
-                pos.Y += 110;
+                count = 0;
+                pos.X = startX;
+                pos.Y += C.GetSize().Height + spacing;
             }
-        }  
+        }
     }
 
     public Component GetCurrent()
@@ -52,12 +64,12 @@ public class TopologyHead
 
     public void GotoHead()
     {   
-        currentComponent = head;
+        this.currentComponent = head;
     }
 
 	public void Goto(Component newComponent)
 	{
-		currentComponent = newComponent;
+		this.currentComponent = newComponent;
 	}
 
 
