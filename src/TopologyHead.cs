@@ -2,6 +2,7 @@ using System;
 
 //Top is an object that keeps track of a full loaded topography
 //A topography is stored as a tree with a top component
+namespace XML_Visualizer;
 public class TopologyHead
 {
 
@@ -11,8 +12,8 @@ public class TopologyHead
 		this.currentComponent 	= head;
 
         //Insert filereader here:
-		//List<Component> Computers= fileread(foldername);
-        //Component.setChildren(Computers)
+		XmlReader fileRead = new XmlReader();
+        this.head.SetChildren(fileRead.ReadXml());
 
 	}
 
@@ -26,5 +27,5 @@ public class TopologyHead
     }
 
 	private 		 Component currentComponent;
-	private readonly Component head;
+	private Component head;
 }

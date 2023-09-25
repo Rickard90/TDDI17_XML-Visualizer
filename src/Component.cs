@@ -58,7 +58,10 @@ public class Component
 
 	public void SetChildren(List<Component> newChildren)
 	{
-		this.children = newChildren;
+		foreach(Component c in newChildren) {
+			this.AddChild(c);
+		}
+		//this.children = newChildren;
 	}
 
 	public void AddChild(Component newChild)
@@ -69,6 +72,11 @@ public class Component
 	public void SetParent(Component newParent)
 	{
 		this.parent = newParent;
+	}
+
+	public string getName()
+	{
+		return componentName;
 	}
 
 
@@ -182,12 +190,12 @@ public class Thread : Component
 public class Port : Component
 {
 	public Port(string name, 
-				string sender, string receiver) : base(name)
+				string interf, string role) : base(name)
 	{
-			this.sender = sender;
-			this.receiver = receiver;
+			this.interf = interf;
+			this.role = role;
 	}
 
-	public string sender 	= ""; 
-	public string receiver	= "";
+	public string interf 	= ""; 
+	public string role	= "";
 }
