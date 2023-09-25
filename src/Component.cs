@@ -28,12 +28,18 @@ public class Component
 		this.componentName	= name;
 		this.children		= children;
 	}
+
 	public string GetName()
 	{
 		return this.componentName;
 	}
 
-	public Rectangle GetSize()
+	public Point getPosition()
+	{
+		return this.position;
+	}
+
+	public Rectangle GetRectangle()
 	{
 		return new Rectangle(position.X, position.X, width, height);
 	}
