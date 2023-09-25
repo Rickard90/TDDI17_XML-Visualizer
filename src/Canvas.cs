@@ -30,6 +30,8 @@ class Canvas
     private GraphicsDevice graphicsDevice;
     private SpriteBatch spriteBatch;
     private Texture2D[] textures = new Texture2D[0];
+    private Point textureSize;
+    private Color clearColor;
 
     public Canvas(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Point windowSize, LevelOfDetail levelOfDetail = LevelOfDetail.Max)
     {
@@ -55,32 +57,46 @@ class Canvas
     //  the size of the canvas depends on factors outside of this class, thus most be given
     public void GenerateTextures(Point textureSize, Color clearColor)
     {
+        this.clearColor = clearColor;
+        this.textureSize = textureSize;
 
         if (this.renderFunction == null)
             throw new Exception("Canvas has not been given a render function!");
 
         this.textures = new Texture2D[((int)LevelOfDetail.Max + 1)];
 
-        for (LevelOfDetail detail = LevelOfDetail.Min; detail <= LevelOfDetail.Max; detail++)
-            using ( RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, textureSize.X, textureSize.Y, false, SurfaceFormat.Color, DepthFormat.None) )
+        using ( RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, textureSize.X, textureSize.Y, false, SurfaceFormat.Color, DepthFormat.None))
         {
             graphicsDevice.SetRenderTarget(renderTarget);
-   
-            //  v render the things here v
-            this.spriteBatch.Begin();
-            this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0,textureSize.X, textureSize.Y), clearColor);
-            this.renderFunction.Invoke(detail);
-            this.spriteBatch.End();
-            //  ^ render the things here ^ 
-
-            //  transfer the data from the render target to the texture
-            using MemoryStream stream = new MemoryStream();
-            renderTarget.SaveAsPng(stream, textureSize.X, textureSize.Y);
-            textures[(int)detail] = Texture2D.FromStream(graphicsDevice, stream);
+            for (LevelOfDetail detail = LevelOfDetail.Min; detail <= LevelOfDetail.Max; detail++) 
+            {
+                GenerateSingleTexture(textureSize, detail, renderTarget);
+            }
+            graphicsDevice.SetRenderTarget(null);   //  give back the rendering target
         }
-        
-        graphicsDevice.SetRenderTarget(null);   //  give back the rendering target
+    }
 
+    public void UpdateTexture(LevelOfDetail detail)
+    {
+        using ( RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, textureSize.X, textureSize.Y, false, SurfaceFormat.Color, DepthFormat.None))
+        {
+            GenerateSingleTexture(textureSize, detail, renderTarget);
+        }        
+    }
+
+    private void GenerateSingleTexture(Point textureSize, LevelOfDetail detail, RenderTarget2D renderTarget)
+    {
+        //  v render the things here v
+        this.spriteBatch.Begin();
+        this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0,textureSize.X, textureSize.Y), clearColor);
+        this.renderFunction.Invoke(detail);
+        this.spriteBatch.End();
+        //  ^ render the things here ^ 
+
+        //  transfer the data from the render target to the texture
+        using MemoryStream stream = new MemoryStream();
+        renderTarget.SaveAsPng(stream, textureSize.X, textureSize.Y);
+        textures[(int)detail] = Texture2D.FromStream(graphicsDevice, stream);
     }
 
 }
