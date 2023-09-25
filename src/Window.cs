@@ -61,11 +61,11 @@ public class Window : Game
 
         if (Selection.LeftMouseJustReleased())
         {
-            //Console.WriteLine("LEFT MOUSE JUST RELEASED");
+            Console.WriteLine("LEFT MOUSE JUST RELEASED");
             
             Point cursorPosition = Selection.MouseCursorPosition();
 
-            //Console.WriteLine("cursor.x = {0}, cursor.y = {1}", cursorPosition.X, cursorPosition.Y);
+            Console.WriteLine("cursor.x = {0}, cursor.y = {1}", cursorPosition.X, cursorPosition.Y);
 
             Component currComponent = this.top.GetCurrent();
 
@@ -73,12 +73,13 @@ public class Window : Game
             {
                 Rectangle rectangle = child.GetRectangle();
 
-                //Console.WriteLine("child pos.x = {0}, child pos.y = {1}, child width = {2}, child height = {3}", rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+                Console.WriteLine("child pos.x = {0}, child pos.y = {1}, child width = {2}, child height = {3}", rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 
                 if (rectangle.X <= cursorPosition.X && cursorPosition.X <= (rectangle.X + rectangle.Width) &&
                     rectangle.Y <= cursorPosition.Y && cursorPosition.Y <= (rectangle.Y + rectangle.Height))
                 {
                     this.top.Goto(child);
+                    Console.WriteLine("BREAK");
                     break;
                 }
             }

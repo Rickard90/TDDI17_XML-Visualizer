@@ -36,13 +36,13 @@ public class TopologyHead
             count++;
             if(count < 3)
             {
-                pos.X += C.GetSize().Width + spacing;
+                pos.X += C.GetRectangle().Width + spacing;
             }
             else
             {
                 count = 0;
                 pos.X = startX;
-                pos.Y += C.GetSize().Height + spacing;
+                pos.Y += C.GetRectangle().Height + spacing;
             }
         }
     }
