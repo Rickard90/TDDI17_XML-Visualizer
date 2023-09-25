@@ -12,13 +12,6 @@ using Microsoft.Xna.Framework.Input;
 public class Component
 {
 
-	protected static Texture2D whitePixelTexture;
-
-	public static void LoadWhitePixelTexture(GraphicsDevice graphicsDevice)
-	{
-		whitePixelTexture = new(graphicsDevice, 1, 1);
-       	whitePixelTexture.SetData(new Color[] { Color.White });	
-	}
 
 	public Component()
 	{
@@ -80,9 +73,8 @@ public class Component
 		//Updates component's position
 		this.position = pos;
 
-       	whitePixelTexture.SetData(new Color[] { Color.White });
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, width, height), Color.Black);
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerWidth, innerHeight), Color.White);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, width, height), Color.Black);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 	lineThickness, pos.Y + 	lineThickness, innerWidth, innerHeight), Color.White);
 		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
 	}
