@@ -34,7 +34,7 @@ public class TopologyHead
         //The following three variables serve to decide edge and spacing layout:
         int startX = 50;
         int startY = 100;
-        int spacing = 50;
+        int spacing = 125;
 
         Point pos = new(startX, startY);
  
@@ -52,7 +52,7 @@ public class TopologyHead
             {
                 count = 0;
                 pos.X = startX;
-                pos.Y += C.GetSize().Height + spacing;
+                pos.Y += C.GetSize().Height + spacing/6;
             }
         }
     }
