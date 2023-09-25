@@ -68,7 +68,7 @@ public class Window : Game
             Console.WriteLine("cursor.x = {0}, cursor.y = {1}", cursorPosition.X, cursorPosition.Y);
 
             Component currComponent = this.top.GetCurrent();
-
+            Console.WriteLine("Current component: {0}", currComponent.GetName());
             foreach (Component child in currComponent.GetChildren())
             {
                 Rectangle rectangle = child.GetRectangle();

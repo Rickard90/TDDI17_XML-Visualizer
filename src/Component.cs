@@ -88,7 +88,8 @@ public class Component
 		int smallWidth  = this.width /6;
 		int smallHeight = this.height/10; 
 		int innerHeight = this.height - 2*lineThickness;
-		int innerWidth  = 5 * smallWidth  - 2*lineThickness; 
+		int innerWidth  = 5 * smallWidth  - 2*lineThickness;
+		string name = this.componentName; 
 
 		//Updates component's position
 		this.position = pos;
@@ -100,8 +101,13 @@ public class Component
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
 		
+
+		if(name.Length > 6)
+		{
+			name = name.Substring(0,6);
+		}
 		//Draws out the name
-		sb.DrawString(font, this.componentName.Substring(0,6), new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
+		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
 	}
 
