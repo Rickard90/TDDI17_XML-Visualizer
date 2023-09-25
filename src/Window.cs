@@ -11,7 +11,7 @@ public class Window : Game
     private SpriteFont font;
     private Texture2D tex;
 
-    private Computer comp = new Computer("Graphics Computer");
+    private TopologyHead top = new TopologyHead();
 
     public Window()
     {
@@ -53,11 +53,10 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        base.GraphicsDevice.Clear(Color.CornflowerBlue);
+        base.GraphicsDevice.Clear(Color.White);
 
         this.spriteBatch.Begin();
-        this.spriteBatch.Draw(tex, new Rectangle(0, 0, 100, 200), Color.White);
-        this.comp.Draw(new Point(50, 50), this.spriteBatch, this.font);
+        this.top.Draw(this.spriteBatch, this.font);
         this.spriteBatch.End();
 
         
