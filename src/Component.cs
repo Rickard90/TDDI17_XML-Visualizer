@@ -93,7 +93,9 @@ public class Component
 		//Draws big square:
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
-		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
+		
+		//Draws out the name
+		sb.DrawString(font, this.componentName.Substring(0,6), new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
 	}
 

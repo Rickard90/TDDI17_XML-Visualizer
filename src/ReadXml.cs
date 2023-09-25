@@ -54,7 +54,7 @@ class XmlReader {
         }
         catch(Exception e)
         {
-            Console.WriteLine("Exception: " + e.Message);
+            //Console.WriteLine("Exception: " + e.Message);
         }
         //debugPrint(computers);
         return computers;
@@ -97,7 +97,7 @@ class XmlReader {
         }
         catch(Exception e)
         {
-            Console.WriteLine("Exception: " + e.Message);
+            //Console.WriteLine("Exception: " + e.Message);
         }
     }
 
@@ -122,7 +122,7 @@ class XmlReader {
         }
         catch(Exception e)
         {
-            Console.WriteLine("Exception: " + e.Message);
+            //Console.WriteLine("Exception: " + e.Message);
         }
     }
 
