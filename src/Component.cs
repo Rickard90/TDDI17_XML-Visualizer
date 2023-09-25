@@ -36,6 +36,10 @@ public class Component
 		this.componentName	= name;
 		this.children		= children;
 	}
+	public string GetName()
+	{
+		return this.componentName;
+	}
 
 	public Rectangle GetSize()
 	{
@@ -53,7 +57,7 @@ public class Component
 
 	public string SetName()
 	{
-		return componentName;
+		return this.componentName;
 	}
 
 	public void SetChildren(List<Component> newChildren)
@@ -85,8 +89,8 @@ public class Component
 
  
 	protected 		 	string				componentName	= "";
-	protected 		   	int 				width			= 300;
-	protected 		   	int 				height			= 300;
+	protected 		   	int 				width			= 100;
+	protected 		   	int 				height			= 100;
 	protected			Point				position		= new(0,0);
     protected 			Component 			parent 			= null;
 	protected 		 	List<Component> 	children		= new();
