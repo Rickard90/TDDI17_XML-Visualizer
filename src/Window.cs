@@ -15,15 +15,12 @@ public class Window : Game
     
 
     private TopologyHead top = new TopologyHead("test");
-    private Canvas canvas;
 
     public Window()
     {
         this.graphics = new GraphicsDeviceManager(this);
         base.Content.RootDirectory = "Content";
         base.IsMouseVisible = true;
-
-        
     }
 
     protected override void Initialize()
@@ -43,19 +40,12 @@ public class Window : Game
         this.font = Content.Load<SpriteFont>("Text");
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
         whitePixelTexture.SetData( new Color[] { Color.White });
-
-        this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size, LevelOfDetail.Max);
-        this.canvas.renderFunction = this.RenderTopology;
-        this.canvas.GenerateTextures(new Point(5000, 5000), Color.White);
-        // TODO: use this.Content to load your game content here
     }
 
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-
-        // TODO: Add your update logic here
 
         Selection.UpdateMouseInfo();
 
@@ -75,13 +65,24 @@ public class Window : Game
 
                 Console.WriteLine("child pos.x = {0}, child pos.y = {1}, child width = {2}, child height = {3}", rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 
-                if (rectangle.X <= cursorPosition.X && cursorPosition.X <= (rectangle.X + rectangle.Width) &&
-                    rectangle.Y <= cursorPosition.Y && cursorPosition.Y <= (rectangle.Y + rectangle.Height))
-                {
-                    this.top.Goto(child);
-                    Console.WriteLine("BREAK");
-                    break;
-                }
+                if(cursorPosition.X >= rectangle.X && cursorPosition.X <= (rectangle.X + rectangle.Width )  
+				&& cursorPosition.Y >= rectangle.Y && cursorPosition.Y <= (rectangle.Y + rectangle.Height))
+				{
+					if(child.GetInfo() != "")
+					{
+						Console.WriteLine("Clicked component info: \n {0}", child.GetInfo());
+					}
+					if(child.GetChildren().Count()	> 0)
+					{
+						this.top.Goto(child);
+						Console.WriteLine("BREAK");
+					}
+					else
+					{
+						Console.WriteLine("Lowest level already reached");
+					}
+					break;
+				}
             }
         }
 
@@ -93,16 +94,10 @@ public class Window : Game
         base.GraphicsDevice.Clear(Color.White);
 
         this.spriteBatch.Begin();
-        this.canvas.Draw();
+        this.top.Draw(this.spriteBatch, this.font);
         this.spriteBatch.End();
 
-        // TODO: Add your drawing code here
 
         base.Draw(gameTime);
-    }
-
-    private void RenderTopology(LevelOfDetail levelOfDetail)
-    {
-        this.top.Draw(this.spriteBatch, this.font);
     }
 }

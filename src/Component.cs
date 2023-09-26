@@ -28,7 +28,12 @@ public class Component
 		this.componentName	= name;
 		this.children		= children;
 	}
-
+	
+	public virtual string GetInfo()
+	{
+		return "";
+	}
+	
 	public string GetName()
 	{
 		return this.componentName;
@@ -43,6 +48,7 @@ public class Component
 	{
 		return new Rectangle(this.position.X, this.position.Y, this.width, this.height);
 	}
+	
 	public List<Component> GetChildren()
 	{
 		return this.children;
@@ -163,6 +169,12 @@ public class Application : Component
 		this.initStack = initStack;
 	}
 	
+	public override string GetInfo()
+	{
+		return ("ramSize = " + ramSize + ", initstack = " + initStack);
+	}
+	
+	
 	public int ramSize 	 = 0;
 	public int initStack = 0;
 }
@@ -170,8 +182,9 @@ public class Application : Component
 public class Thread : Component
 {
 	public Thread(string name, List<Component> children,
-				  int frequency, int exeTime, int exeStack) : base(name, children)
+				  int frequency, int exeTime, int exeStack) : base(name)
 	{
+		this.ports = children;
 		this.frequency = frequency;
 		this.exeTime   = exeTime;
 		this.exeStack  = exeStack;
@@ -196,10 +209,16 @@ public class Thread : Component
 	{
 		this.frequency = frequency;
 	}
+	
+	public override string GetInfo()
+	{
+		return ("Frequency = " + frequency + ", Execution Time = " + exeTime + ", Execution Stack = " + exeStack);
+	}
 
 	public int frequency = 0;
 	public int exeTime 	 = 0;
 	public int exeStack  = 0;
+	public List<Component> ports = new();
 }
 
 public class Port : Component
@@ -212,5 +231,5 @@ public class Port : Component
 	}
 
 	public string interf 	= ""; 
-	public string role	= "";
+	public string role		= "";
 }

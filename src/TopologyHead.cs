@@ -28,7 +28,7 @@ public class TopologyHead
 
         Point pos = new(startX, startY);
  
-        sb.DrawString(font, currentComponent.GetName(), new Vector2(0, 0), Color.Black);
+        sb.DrawString(font, currentComponent.GetName(), new Vector2(startX/2, 0), Color.Black);
 
         foreach(Component C in currentComponent.GetChildren())
         {
