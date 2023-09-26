@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 //Top is an object that keeps track of a full loaded topography
 //A topography is stored as a tree with a top component
+//namespace XML_Visualizer;
 public class TopologyHead
 {
 	public TopologyHead(string folderName)
@@ -12,20 +13,9 @@ public class TopologyHead
 		this.currentComponent 	= head;
 
         //Insert filereader here:
-		//List<Component> Computers = fileread(foldername);
-        //head.setChildren(Computers)
 
-	}
-
-    //Temporary test-constructor
-    public TopologyHead()
-	{
-        this.head 				= new Component("Top Level");
-		this.currentComponent 	= head;
-
-		List<Component> Computers = new List<Component>{new Computer("PC1"), new Computer("PC2",new List<Component>{new Partition("Part1"), new Partition("Part2")}), new Computer("PC3"), new Computer("WC")};
-        head.SetChildren(Computers);
-
+		XmlReader fileRead = new XmlReader();
+        this.head.SetChildren(fileRead.ReadXml("Fake Data Format"));
 	}
 
     public void Draw(SpriteBatch sb, SpriteFont font)
@@ -46,13 +36,13 @@ public class TopologyHead
             count++;
             if(count < 3)
             {
-                pos.X += C.GetSize().Width + spacing;
+                pos.X += C.GetRectangle().Width + spacing;
             }
             else
             {
                 count = 0;
                 pos.X = startX;
-                pos.Y += C.GetSize().Height + spacing/6;
+                pos.Y += C.GetRectangle().Height + spacing/6;
             }
         }
     }
@@ -74,5 +64,5 @@ public class TopologyHead
 
 
 	private 		 Component currentComponent;
-	private readonly Component head;
+	private Component head;
 }

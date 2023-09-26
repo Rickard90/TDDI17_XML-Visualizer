@@ -7,18 +7,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-
 //All types of components inherit constructor and fields from the component-type
 public class Component
 {
 
-	protected static Texture2D whitePixelTexture;
-
-	public static void LoadWhitePixelTexture(GraphicsDevice graphicsDevice)
-	{
-		whitePixelTexture = new(graphicsDevice, 1, 1);
-       	whitePixelTexture.SetData(new Color[] { Color.White });	
-	}
 
 	public Component()
 	{
@@ -36,12 +28,18 @@ public class Component
 		this.componentName	= name;
 		this.children		= children;
 	}
+
 	public string GetName()
 	{
 		return this.componentName;
 	}
 
-	public Rectangle GetSize()
+	public Point getPosition()
+	{
+		return this.position;
+	}
+
+	public Rectangle GetRectangle()
 	{
 		return new Rectangle(position.X, position.X, width, height);
 	}
@@ -62,12 +60,25 @@ public class Component
 
 	public void SetChildren(List<Component> newChildren)
 	{
-		this.children = newChildren;
+		foreach(Component c in newChildren) {
+			this.AddChild(c);
+		}
+		//this.children = newChildren;
+	}
+
+	public void AddChild(Component newChild)
+	{
+		this.children.Add(newChild);
 	}
 
 	public void SetParent(Component newParent)
 	{
 		this.parent = newParent;
+	}
+
+	public string getName()
+	{
+		return componentName;
 	}
 
 
@@ -77,18 +88,26 @@ public class Component
 		int smallWidth  = this.width /6;
 		int smallHeight = this.height/10; 
 		int innerHeight = this.height - 2*lineThickness;
-		int innerWidth  = 5 * smallWidth  - 2*lineThickness; 
+		int innerWidth  = 5 * smallWidth  - 2*lineThickness;
+		string name = this.componentName; 
 
 		//Updates component's position
 		this.position = pos;
 
 		//Draws small square to the right:
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight, smallWidth, 8 * smallHeight), Color.Black); //black outline
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight + lineThickness, smallWidth - lineThickness, 8 * smallHeight - 2 * lineThickness), Color.White);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight, smallWidth, 8 * smallHeight), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight + lineThickness, smallWidth - lineThickness, 8 * smallHeight - 2 * lineThickness), Color.White);
 		//Draws big square:
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
-		sb.Draw(whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
-		sb.DrawString(font, this.componentName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
+		
+
+		if(name.Length > 6)
+		{
+			name = name.Substring(0,6);
+		}
+		//Draws out the name
+		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
 	}
 
@@ -143,7 +162,7 @@ public class Application : Component
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
-
+	
 	public int ramSize 	 = 0;
 	public int initStack = 0;
 }
@@ -166,6 +185,18 @@ public class Thread : Component
 		this.exeStack  = exeStack;
 	}
 
+	public Thread(string name,
+				  int exeTime, int exeStack) : base(name)
+	{
+		this.exeTime   = exeTime;
+		this.exeStack  = exeStack;
+	}
+	
+	public void SetFrequency(int frequency)
+	{
+		this.frequency = frequency;
+	}
+
 	public int frequency = 0;
 	public int exeTime 	 = 0;
 	public int exeStack  = 0;
@@ -174,12 +205,12 @@ public class Thread : Component
 public class Port : Component
 {
 	public Port(string name, 
-				string sender, string receiver) : base(name)
+				string interf, string role) : base(name)
 	{
-			this.sender = sender;
-			this.receiver = receiver;
+			this.interf = interf;
+			this.role = role;
 	}
 
-	public string sender 	= ""; 
-	public string receiver	= "";
+	public string interf 	= ""; 
+	public string role	= "";
 }
