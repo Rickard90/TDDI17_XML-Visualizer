@@ -68,8 +68,15 @@ public class Window : Game
                 if(cursorPosition.X >= rectangle.X && cursorPosition.X <= (rectangle.X + rectangle.Width )  
 				&& cursorPosition.Y >= rectangle.Y && cursorPosition.Y <= (rectangle.Y + rectangle.Height))
 				{
-					this.top.Goto(child);
-					Console.WriteLine("BREAK");
+					if(child.GetChildren().Count()	> 0)
+					{
+						this.top.Goto(child);
+						Console.WriteLine("BREAK");
+					}
+					else
+					{
+						Console.WriteLine("Lowest level already reached")
+					}
 					break;
 				}
             }
