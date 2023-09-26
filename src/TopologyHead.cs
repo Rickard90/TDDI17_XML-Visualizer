@@ -9,13 +9,12 @@ public class TopologyHead
 {
 	public TopologyHead(string folderName)
 	{
-        this.head 				= new Component("Top Level");
-		this.currentComponent 	= head;
+        this.head = new Component("Top Level");
+		this.path = new List<Component>{this.head};
 
-        //Insert filereader here:
-
+        //Filereader:
 		XmlReader fileRead = new XmlReader();
-        this.head.SetChildren(fileRead.ReadXml("Fake Data Format"));
+        this.path.Last().SetChildren(fileRead.ReadXml("Fake Data Format"));
 	}
 
     public void Draw(SpriteBatch sb, SpriteFont font)
@@ -28,9 +27,9 @@ public class TopologyHead
 
         Point pos = new(startX, startY);
  
-        sb.DrawString(font, currentComponent.GetName(), new Vector2(startX/2, 0), Color.Black);
+        sb.DrawString(font, path.Last().GetName(), new Vector2(startX/2, 0), Color.Black);
 
-        foreach(Component C in currentComponent.GetChildren())
+        foreach(Component C in path.Last().GetChildren())
         {
             C.Draw(pos, sb, font);
             count++;
@@ -46,23 +45,34 @@ public class TopologyHead
             }
         }
     }
-
+	public void GoBack()
+	{
+		if(path.Last() != head)
+		{
+			this.path.Remove(this.path.Last());
+		}
+	}
+	public List<Component> GetPath()
+	{
+		return this.path;
+	}
+	
     public Component GetCurrent()
     {
-        return this.currentComponent;
+        return this.path.Last();;
     }
 
     public void GotoHead()
     {   
-        this.currentComponent = head;
+        this.path = new List<Component>{head};
     }
 
 	public void Goto(Component newComponent)
 	{
-		this.currentComponent = newComponent;
+		this.path.Add(newComponent);
 	}
 
 
-	private 		 Component currentComponent;
-	private Component head;
+	private List<Component> path = new();
+	private Component head = new();
 }
