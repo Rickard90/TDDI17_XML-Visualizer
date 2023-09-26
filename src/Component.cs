@@ -182,8 +182,9 @@ public class Application : Component
 public class Thread : Component
 {
 	public Thread(string name, List<Component> children,
-				  int frequency, int exeTime, int exeStack) : base(name, children)
+				  int frequency, int exeTime, int exeStack) : base(name)
 	{
+		this.ports = children;
 		this.frequency = frequency;
 		this.exeTime   = exeTime;
 		this.exeStack  = exeStack;
@@ -217,6 +218,7 @@ public class Thread : Component
 	public int frequency = 0;
 	public int exeTime 	 = 0;
 	public int exeStack  = 0;
+	public List<Component> ports = new();
 }
 
 public class Port : Component
