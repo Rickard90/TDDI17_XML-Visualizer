@@ -39,4 +39,10 @@ public static class Selection
         return mouseCursorPosition;
     }
 
+    public static bool CursorIsInside(Rectangle rect)
+    {
+        return (mouseCursorPosition.X >= rect.X && mouseCursorPosition.X <= (rect.X + rect.Width) &&
+				mouseCursorPosition.Y >= rect.Y && mouseCursorPosition.Y <= (rect.Y + rect.Height));
+    }
+
 }

@@ -12,6 +12,8 @@ public class Window : Game
     private SpriteBatch spriteBatch;
     private SpriteFont font;
     //private Texture2D tex;
+
+    private Button buttonBack = new Button(new Rectangle(10, 40, 100, 50), "back");
     
 
     private TopologyHead top = new TopologyHead("test");
@@ -59,30 +61,36 @@ public class Window : Game
 
             Component currComponent = this.top.GetCurrent();
             Console.WriteLine("Current component: {0}", currComponent.GetName());
-            foreach (Component child in currComponent.GetChildren())
+
+            if(Selection.CursorIsInside(this.buttonBack.GetRectangle()))
             {
-                Rectangle rectangle = child.GetRectangle();
+                Console.WriteLine("BACK-BUTTON SELECTED");
+                this.top.GoBack();
+            }
+            else
+            {
+                foreach (Component child in currComponent.GetChildren())
+                {
+                    //Console.WriteLine("child pos.x = {0}, child pos.y = {1}, child width = {2}, child height = {3}", rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 
-                Console.WriteLine("child pos.x = {0}, child pos.y = {1}, child width = {2}, child height = {3}", rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-
-                if(cursorPosition.X >= rectangle.X && cursorPosition.X <= (rectangle.X + rectangle.Width )  
-				&& cursorPosition.Y >= rectangle.Y && cursorPosition.Y <= (rectangle.Y + rectangle.Height))
-				{
-					if(child.GetInfo() != "")
-					{
-						Console.WriteLine("Clicked component info: \n {0}", child.GetInfo());
-					}
-					if(child.GetChildren().Count()	> 0)
-					{
-						this.top.Goto(child);
-						Console.WriteLine("BREAK");
-					}
-					else
-					{
-						Console.WriteLine("Lowest level already reached");
-					}
-					break;
-				}
+                    if(Selection.CursorIsInside(child.GetRectangle()))
+                    {
+                        if(child.GetInfo() != "")
+                        {
+                            Console.WriteLine("Clicked component info: \n {0}", child.GetInfo());
+                        }
+                        if(child.GetChildren().Count()	> 0)
+                        {
+                            this.top.Goto(child);
+                            Console.WriteLine("BREAK");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Lowest level already reached");
+                        }
+                        break;
+                    }
+                }
             }
         }
 
@@ -95,6 +103,7 @@ public class Window : Game
 
         this.spriteBatch.Begin();
         this.top.Draw(this.spriteBatch, this.font);
+        this.buttonBack.Draw(this.spriteBatch, this.font);
         this.spriteBatch.End();
 
 
