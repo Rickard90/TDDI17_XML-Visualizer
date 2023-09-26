@@ -68,6 +68,10 @@ public class Window : Game
                 if(cursorPosition.X >= rectangle.X && cursorPosition.X <= (rectangle.X + rectangle.Width )  
 				&& cursorPosition.Y >= rectangle.Y && cursorPosition.Y <= (rectangle.Y + rectangle.Height))
 				{
+					if(child.GetInfo() != "")
+					{
+						Console.WriteLine("Clicked component info: \n {0}", child.GetInfo());
+					}
 					if(child.GetChildren().Count()	> 0)
 					{
 						this.top.Goto(child);
@@ -75,7 +79,7 @@ public class Window : Game
 					}
 					else
 					{
-						Console.WriteLine("Lowest level already reached")
+						Console.WriteLine("Lowest level already reached");
 					}
 					break;
 				}
