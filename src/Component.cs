@@ -41,7 +41,7 @@ public class Component
 
 	public Rectangle GetRectangle()
 	{
-		return new Rectangle(position.X, position.X, width, height);
+		return new Rectangle(this.position.X, this.position.Y, this.width, this.height);
 	}
 	public List<Component> GetChildren()
 	{
