@@ -13,8 +13,8 @@ public class Window : Game
     private SpriteFont font;
     //private Texture2D tex;
     
-
     private TopologyHead top = new TopologyHead("test");
+	private Canvas canvas;
 
     public Window()
     {
@@ -25,8 +25,6 @@ public class Window : Game
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
-
         base.Initialize();
 
         Window.AllowUserResizing = true;
@@ -40,6 +38,10 @@ public class Window : Game
         this.font = Content.Load<SpriteFont>("Text");
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
         whitePixelTexture.SetData( new Color[] { Color.White });
+		
+		this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size, LevelOfDetail.Max);
+        this.canvas.renderFunction = this.RenderTopology;
+        this.canvas.GenerateTextures(new Point(5000, 5000), Color.White);
     }
 
     protected override void Update(GameTime gameTime)
@@ -99,5 +101,10 @@ public class Window : Game
 
 
         base.Draw(gameTime);
+    }
+	
+	private void RenderTopology(LevelOfDetail levelOfDetail)
+    {
+        this.top.Draw(this.spriteBatch, this.font);
     }
 }
