@@ -26,8 +26,18 @@ public class TopologyHead
         int spacing = 125;
 
         Point pos = new(startX, startY);
- 
-        sb.DrawString(font, path.Last().GetName(), new Vector2(startX/2, 0), Color.Black);
+
+        // For printing the path as text
+        String pathString = new String("");
+        foreach(Component C in path)
+        {
+            pathString += C.GetName();
+            pathString += " > ";
+        }
+        pathString = pathString.Remove(pathString.Length - 3);
+
+        //sb.DrawString(font, path.Last().GetName(), new Vector2(startX/2, 0), Color.Black);
+        sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
 
         foreach(Component C in path.Last().GetChildren())
         {
