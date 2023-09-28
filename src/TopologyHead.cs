@@ -15,8 +15,9 @@ public class TopologyHead
         //Insert filereader here:
 
 		XmlReader fileRead = new XmlReader();
-        this.head.SetChildren(fileRead.ReadComponents("Fake Data Format"));
-        fileRead.ReadConnections("Fake Data Format");
+        XmlReader.ComponentsAndConnections data = fileRead.ReadComponents("Fake Data Format");
+        this.head.SetChildren(data.components);
+        //fileRead.ReadConnections("Fake Data Format");
 	}
 
     public void Draw(SpriteBatch sb, SpriteFont font)

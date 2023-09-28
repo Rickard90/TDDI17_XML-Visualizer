@@ -10,19 +10,20 @@ class XmlReader {
     {
     }
 
-    public List<Component> ReadComponents(string path) {
+    public ComponentsAndConnections ReadComponents(string path) {
         String line;
         List <Component> computers = new List<Component>();
         int activeThread = 0;
-        try
-        {
-            List <Component> partitions = new List<Component>();
-            List <Component> applications = new List<Component>();
-            List <Component> threads = new List<Component>();
-            string applicationName;
-            int ramSize = 0;
-            int initStack = 0;
+        List <Component> partitions = new List<Component>();
+        List <Component> applications = new List<Component>();
+        List <Component> threads = new List<Component>();
+        Dictionary<string, List<Port>> connections = new Dictionary<string, List<Port>>();
+        string applicationName;
+        int ramSize = 0;
+        int initStack = 0;
 
+        try
+        {            
             StreamReader topologyReader = new StreamReader(path + "/topology/topology.xml");
             line = topologyReader.ReadLine();
             while (line != null)
@@ -39,7 +40,7 @@ class XmlReader {
                         threads.Clear();
                         applicationName = (line.Split('\"')[1]);
                         ReadResourses(applicationName, threads, ref ramSize, ref initStack, path);
-                        ReadApplication(applicationName, threads, activeThread, path);
+                        connections = ReadApplication(applicationName, threads, activeThread, path);
                         applications.Add(new Application(applicationName, ramSize, initStack));
                         applications[applications.Count-1].SetChildren(threads);
                     }
@@ -57,18 +58,23 @@ class XmlReader {
         {
            // Console.WriteLine("Exception: " + e.Message);
         }
-        return computers;
+        ComponentsAndConnections returnValue = new ComponentsAndConnections(computers, connections);
+        return returnValue;
     }
 
-    void ReadApplication(string applicationName, List<Component> threads, int activeThread, string path) {
+    Dictionary<string, List<Port>> ReadApplication(string applicationName, List<Component> threads, int activeThread, string path) {
+        Dictionary<string, List<Port>> connections = new Dictionary<string, List<Port>>();
+        List<Component> ports = new List<Component> ();
         String line;
+        int index = 0;
+        string name;
+        string interf;
+        string role;
+        int frequency = 0;
+        
         try
         {
-            int index = 0;
-            string name;
-            string interf;
-            string role;
-            List<Component> ports = new List<Component> ();
+            
             StreamReader applicationReader = new StreamReader(path + "/applications/"+applicationName+"/application.xml");
             line = applicationReader.ReadLine();
             
@@ -77,13 +83,18 @@ class XmlReader {
                 line = line.Trim();
                 if(line.Contains('\"')){ 
                     if (line.Split('\"')[0] == "<Thread name=" ) {
-                        ((Thread)threads[index]).SetFrequency(Int32.Parse(line.Split('\"')[3].Remove(line.Split('\"')[3].Length-2)));
+                        frequency = Int32.Parse(line.Split('\"')[3].Remove(line.Split('\"')[3].Length-2));
+                        ((Thread)threads[index]).SetFrequency(frequency);
                         index ++;
                     } else if (line.Split('\"')[0] =="<Port name=" ) {
                         name = (line.Split('\"')[1]);
                         interf = (line.Split('\"')[3]);
                         role = (line.Split('\"')[5]);
                         ports.Add(new Port (name, interf, role));
+                        if (!connections.ContainsKey(interf)) {
+                            connections.Add(interf, new List<Port>());    
+                        }
+                        connections[interf].Add((Port)ports[ports.Count]);
                     }
                 }else if (line == "</Thread>"){
                     threads[activeThread].SetChildren(ports);
@@ -99,6 +110,7 @@ class XmlReader {
         {
          //   Console.WriteLine("Exception: " + e.Message);
         }
+        return connections;
     }
 
    private void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
@@ -126,16 +138,27 @@ class XmlReader {
         }
     }
 
-    public struct Connection{
-        string senderPort;
-        string reciverPort;
+    public struct ComponentsAndConnections {
+        public List<Component> components = new List<Component>();
+        public Dictionary<string, List<Port>> connections = new Dictionary<string, List<Port>>();
+        
+        public ComponentsAndConnections(List<Component> components, Dictionary<string, List<Port>> connections)
+        {
+            this.components = components;
+            this.connections = connections;
+        }
+    };
 
-        public Connection(string senderPort, string reciverPort)
+    /*public struct Connection{
+        List<Port> ports = new List<Port>();
+        
+        public Connection(Port senderPort, Port reciverPort)
         {
             this.senderPort = senderPort;
             this.reciverPort = reciverPort;
         }
     };
+    /*
     public List<Connection> ReadConnections(string path)
     {
         List <Connection> connections = new List<Connection>();
@@ -164,5 +187,5 @@ class XmlReader {
            // Console.WriteLine("Exception: " + e.Message);
         }
         return connections;
-    }
+    }*/
 }
