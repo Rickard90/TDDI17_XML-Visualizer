@@ -37,7 +37,8 @@ public class TopologyHead
         pathString = pathString.Remove(pathString.Length - 3);
 
         //sb.DrawString(font, path.Last().GetName(), new Vector2(startX/2, 0), Color.Black);
-        sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
+        //sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
+        sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black, 0.0f, Vector2.Zero, 0.64f, SpriteEffects.None, 0.0f);
 
         foreach(Component C in path.Last().GetChildren())
         {
