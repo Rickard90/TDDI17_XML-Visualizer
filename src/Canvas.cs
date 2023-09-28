@@ -21,7 +21,12 @@ class Canvas
         }
     }
 
-    public LevelOfDetail levelOfDetail;
+    private LevelOfDetail levelOfDetail;
+    public LevelOfDetail LevelOfDetail
+    {
+        get {return this.levelOfDetail;}
+        set {this.levelOfDetail = value; this.UpdateTexture();}
+    }
     public delegate void RenderTopology(LevelOfDetail levelOfDetail);
     public RenderTopology renderFunction = null;
 
@@ -29,7 +34,7 @@ class Canvas
     private Point windowSize;
     private GraphicsDevice graphicsDevice;
     private SpriteBatch spriteBatch;
-    private Texture2D[] textures = new Texture2D[0];
+    private Texture2D texture = null;
     private Point textureSize;
     private Color clearColor;
 
@@ -45,50 +50,32 @@ class Canvas
 
     public void Draw()
     {
-        if (this.textures.Length == 0)
-            throw new Exception("Tried to draw canvas without generating textures!");
+        if (this.texture == null)
+            throw new Exception("Tried to draw canvas without generating texture");
+        this.spriteBatch.Draw(this.texture, new Rectangle(0, 0, windowSize.X, windowSize.Y), copyArea, Color.White);
+
+    }
+
+    public void UpdateTexture()
+    {
         if (this.levelOfDetail > LevelOfDetail.Max)
             throw new Exception($"Tried to render invalid level of detail : {this.levelOfDetail}");
-
-        this.spriteBatch.Draw(this.textures[(int)this.levelOfDetail], new Rectangle(0, 0, windowSize.X, windowSize.Y), copyArea, Color.White);
-
-    }
-
-    //  the size of the canvas depends on factors outside of this class, thus most be given
-    public void GenerateTextures(Point textureSize, Color clearColor)
-    {
-        this.clearColor = clearColor;
-        this.textureSize = textureSize;
-
         if (this.renderFunction == null)
-            throw new Exception("Canvas has not been given a render function!");
+            throw new Exception("Tried to render without a render function!");
 
-        this.textures = new Texture2D[((int)LevelOfDetail.Max + 1)];
-
+        this.textureSize = this.windowSize;
+        this.texture = new Texture2D(graphicsDevice, textureSize.X, textureSize.Y);
         using ( RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, textureSize.X, textureSize.Y, false, SurfaceFormat.Color, DepthFormat.None))
         {
-            graphicsDevice.SetRenderTarget(renderTarget);
-            for (LevelOfDetail detail = LevelOfDetail.Min; detail <= LevelOfDetail.Max; detail++) 
-            {
-                GenerateSingleTexture(textureSize, detail, renderTarget);
-            }
-            graphicsDevice.SetRenderTarget(null);   //  give back the rendering target
-        }
-    }
-
-    public void UpdateTexture(LevelOfDetail detail)
-    {
-        using ( RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, textureSize.X, textureSize.Y, false, SurfaceFormat.Color, DepthFormat.None))
-        {
-            GenerateSingleTexture(textureSize, detail, renderTarget);
+            GenerateSingleTexture(this.levelOfDetail, renderTarget);
         }        
     }
 
-    private void GenerateSingleTexture(Point textureSize, LevelOfDetail detail, RenderTarget2D renderTarget)
+    private void GenerateSingleTexture(LevelOfDetail detail, RenderTarget2D renderTarget)
     {
         //  v render the things here v
         this.spriteBatch.Begin();
-        this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0,textureSize.X, textureSize.Y), clearColor);
+        this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0, textureSize.X, textureSize.Y), clearColor);
         this.renderFunction.Invoke(detail);
         this.spriteBatch.End();
         //  ^ render the things here ^ 
@@ -96,7 +83,7 @@ class Canvas
         //  transfer the data from the render target to the texture
         using MemoryStream stream = new MemoryStream();
         renderTarget.SaveAsPng(stream, textureSize.X, textureSize.Y);
-        textures[(int)detail] = Texture2D.FromStream(graphicsDevice, stream);
+        this.texture = Texture2D.FromStream(graphicsDevice, stream);
     }
 
 }

@@ -41,7 +41,7 @@ public class Window : Game
 		
 		this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size, LevelOfDetail.Max);
         this.canvas.renderFunction = this.RenderTopology;
-        this.canvas.GenerateTextures(new Point(5000, 5000), Color.White);
+        this.canvas.LevelOfDetail = LevelOfDetail.Max;
     }
 
     protected override void Update(GameTime gameTime)
@@ -95,14 +95,18 @@ public class Window : Game
     {
         base.GraphicsDevice.Clear(Color.White);
 
+        this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
+
         this.spriteBatch.Begin();
-        this.top.Draw(this.spriteBatch, this.font);
+        this.canvas.Draw();
+        //this.top.Draw(this.spriteBatch, this.font);
         this.spriteBatch.End();
 
 
         base.Draw(gameTime);
     }
 	
+    //  this is the render function
 	private void RenderTopology(LevelOfDetail levelOfDetail)
     {
         this.top.Draw(this.spriteBatch, this.font);
