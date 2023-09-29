@@ -9,11 +9,11 @@ public class TopologyHead
 {
 	public TopologyHead(string folderName)
 	{
-        this.head = new Component("Top Level");
+        this.head = new Component();
 		this.path = new List<Component>{this.head};
 
         //Filereader:
-		XmlReader fileRead = new XmlReader();
+		XmlReader fileRead = new();
         this.path.Last().SetChildren(fileRead.ReadComponents(folderName).components);
 	}
 
@@ -28,7 +28,7 @@ public class TopologyHead
         Point pos = new(startX, startY);
 
         // For printing the path as text
-        String pathString = new String("");
+        String pathString = "";
         foreach(Component C in path)
         {
             pathString += C.GetName();

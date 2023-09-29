@@ -10,8 +10,6 @@ using Microsoft.Xna.Framework.Input;
 //All types of components inherit constructor and fields from the component-type
 public class Component
 {
-
-
 	public Component()
 	{
 
@@ -38,55 +36,43 @@ public class Component
 	{
 		return this.componentName;
 	}
-
-	public Point getPosition()
+	public Point GetPosition()
 	{
 		return this.position;
 	}
-
 	public Rectangle GetRectangle()
 	{
 		return new Rectangle(this.position.X, this.position.Y, this.width, this.height);
 	}
-	
 	public List<Component> GetChildren()
 	{
 		return this.children;
 	}
-
 	public void SetPosition(Point pos)
 	{
 		this.position = pos;
 	}
-
 	public string SetName()
 	{
 		return this.componentName;
 	}
+	public void SetParent(Component newParent)
+	{
+		this.parent = newParent;
+	}
 
 	public void SetChildren(List<Component> newChildren)
 	{
-		foreach(Component c in newChildren) {
+		//We do not have a deep copy. Might need a copy-constructor for Component
+ 		foreach(Component c in newChildren) {
 			this.AddChild(c);
 		}
-		//this.children = newChildren;
 	}
 
 	public void AddChild(Component newChild)
 	{
 		this.children.Add(newChild);
 	}
-
-	public void SetParent(Component newParent)
-	{
-		this.parent = newParent;
-	}
-
-	public string getName()
-	{
-		return componentName;
-	}
-
 
 	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFont font)
 	{
