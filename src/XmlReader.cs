@@ -42,19 +42,19 @@ class XmlReader {
                         ReadResourses(applicationName, threads, ref ramSize, ref initStack, path);
                         connections = ReadApplication(applicationName, threads, activeThread, path);
                         applications.Add(new Application(applicationName, ramSize, initStack));
-                        applications[applications.Count-1].SetChildren(threads);
+                        applications[^1].SetChildren(threads);
                     }
                 }else if (line == "</Computer>"){
-                    computers[computers.Count-1].SetChildren(partitions);
+                    computers[^1].SetChildren(partitions);
                 }else if (line == "</Partition>"){
-                    partitions[partitions.Count-1].SetChildren(applications);
+                    partitions[^1].SetChildren(applications);
                 }
 
                 line = topologyReader.ReadLine();
             }
             topologyReader.Close();
         }
-        catch(Exception e)
+        catch(Exception)
         {
             //Console.WriteLine("Exception: " + e.Message);
         }
@@ -71,7 +71,6 @@ class XmlReader {
         string interf;
         string role;
         int frequency = 0;
-        
         try
         {
             
@@ -106,7 +105,7 @@ class XmlReader {
             }
             applicationReader.Close();
         }
-        catch(Exception e)
+        catch (Exception)
         {
             //Console.WriteLine("Exception: " + e.Message);
         }
@@ -132,7 +131,7 @@ class XmlReader {
                 line = ResourcesReader.ReadLine();
             }
         }
-        catch(Exception e)
+        catch(Exception)
         {
             //Console.WriteLine("Exception: " + e.Message);
         }

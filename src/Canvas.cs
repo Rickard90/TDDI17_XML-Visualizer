@@ -36,7 +36,7 @@ class Canvas
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
     private Point textureSize;
-    private Color clearColor;
+    private Color clearColor = new();
 
     public Canvas(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Point windowSize, LevelOfDetail levelOfDetail = LevelOfDetail.Max)
     {
