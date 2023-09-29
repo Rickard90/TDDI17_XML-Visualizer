@@ -15,7 +15,7 @@ public class Window : Game
 
     private Button buttonBack = new Button(new Rectangle(10, 40, 100, 50), "back");
     
-    private TopologyHead top = new TopologyHead("test");
+    private TopologyHead top = new TopologyHead("Fake Data Format");
 	private Canvas canvas;
 
     public Window()
