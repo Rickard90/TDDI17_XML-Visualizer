@@ -148,44 +148,4 @@ class XmlReader {
             this.connections = connections;
         }
     };
-
-    /*public struct Connection{
-        List<Port> ports = new List<Port>();
-        
-        public Connection(Port senderPort, Port reciverPort)
-        {
-            this.senderPort = senderPort;
-            this.reciverPort = reciverPort;
-        }
-    };
-    /*
-    public List<Connection> ReadConnections(string path)
-    {
-        List <Connection> connections = new List<Connection>();
-        try
-        {
-            string line;
-            string SenderPort = "test";
-            StreamReader ConnectionReader = new StreamReader(path + "/connections/connections.xml");
-            line = ConnectionReader.ReadLine();
-            while (line != null)
-            {
-                line = line.Trim();
-                if(line.Contains('\"')){
-                    if (line.Split('\"')[0] == "<SenderPort name=" ) {
-                        SenderPort = (line.Split('\"')[1]);
-                    } else if (line.Split('\"')[0] == "<RecieverPort name=" ) {
-                        connections.Add(new Connection(SenderPort, line.Split('\"')[1]));
-                    }
-                }
-                line = ConnectionReader.ReadLine();
-            }
-            ConnectionReader.Close();
-        }
-        catch(Exception e)
-        {
-           // Console.WriteLine("Exception: " + e.Message);
-        }
-        return connections;
-    }*/
 }
