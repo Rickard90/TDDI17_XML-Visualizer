@@ -88,25 +88,28 @@ public class Window : Game
             }
         }
 
+        canvas.Update(Mouse.GetState(), Keyboard.GetState());
+
         base.Update(gameTime);
     }
 
+    
+
     protected override void Draw(GameTime gameTime)
     {
-        base.GraphicsDevice.Clear(Color.White);
-
+        
         this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
 
+        base.GraphicsDevice.Clear(Color.Gray);
         this.spriteBatch.Begin();
         this.canvas.Draw();
-        //this.top.Draw(this.spriteBatch, this.font);
         this.spriteBatch.End();
 
 
         base.Draw(gameTime);
     }
 	
-    //  this is the render function
+    //  this is the render function, feed into the canvas
 	private void RenderTopology(LevelOfDetail levelOfDetail)
     {
         this.top.Draw(this.spriteBatch, this.font);
