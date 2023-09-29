@@ -15,8 +15,8 @@ public class Window : Game
 
     private Button buttonBack = new Button(new Rectangle(10, 40, 100, 50), "back");
     
-
     private TopologyHead top = new TopologyHead("test");
+	private Canvas canvas;
 
     public Window()
     {
@@ -27,8 +27,6 @@ public class Window : Game
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
-
         base.Initialize();
 
         Window.AllowUserResizing = true;
@@ -42,6 +40,10 @@ public class Window : Game
         this.font = Content.Load<SpriteFont>("Text");
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
         whitePixelTexture.SetData( new Color[] { Color.White });
+		
+		this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size, LevelOfDetail.Max);
+        this.canvas.renderFunction = this.RenderTopology;
+        this.canvas.LevelOfDetail = LevelOfDetail.Max;
     }
 
     protected override void Update(GameTime gameTime)
@@ -101,12 +103,20 @@ public class Window : Game
     {
         base.GraphicsDevice.Clear(Color.White);
 
+        this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
+
         this.spriteBatch.Begin();
-        this.top.Draw(this.spriteBatch, this.font);
+        this.canvas.Draw();
+        //this.top.Draw(this.spriteBatch, this.font);
         this.buttonBack.Draw(this.spriteBatch, this.font);
         this.spriteBatch.End();
-
-
+        
         base.Draw(gameTime);
+    }
+	
+    //  this is the render function
+	private void RenderTopology(LevelOfDetail levelOfDetail)
+    {
+        this.top.Draw(this.spriteBatch, this.font);
     }
 }
