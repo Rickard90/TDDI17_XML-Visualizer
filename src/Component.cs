@@ -36,7 +36,7 @@ public class Component
 	public void SetName(string name) => this.componentName = name;
     public void SetParent(Component newParent) 	=> this.parent = newParent;
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
-    public void SetChildren(List<Component> newChildren)
+    public virtual void SetChildren(List<Component> newChildren)
 	{
  		foreach(Component c in newChildren) {
 			this.AddChild(c);
