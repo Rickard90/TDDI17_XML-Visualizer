@@ -9,20 +9,22 @@ class XmlReader {
     public XmlReader()
     {
     }
-    public List<Component> ReadXml(string path) {
-        String line;
-        List <Component> computers = new List<Component>();
-        int activeThread = 0;
-        try
-        {
-            List <Component> partitions = new List<Component>();
-            List <Component> applications = new List<Component>();
-            List <Component> threads = new List<Component>();
-            string applicationName;
-            int ramSize = 0;
-            int initStack = 0;
 
-            StreamReader topologyReader = new StreamReader(path + "/topology/topology.xml");
+    public ComponentsAndConnections ReadComponents(string path) {
+        String line;
+        List <Component> computers = new();
+        int activeThread = 0;
+        List <Component> partitions = new();
+        List <Component> applications = new();
+        List <Component> threads = new();
+        Dictionary<string, List<Port>> connections = new();
+        string applicationName;
+        int ramSize = 0;
+        int initStack = 0;
+
+        try
+        {            
+            StreamReader topologyReader = new(path + "/topology/topology.xml");
             line = topologyReader.ReadLine();
             while (line != null)
             {
@@ -38,37 +40,40 @@ class XmlReader {
                         threads.Clear();
                         applicationName = (line.Split('\"')[1]);
                         ReadResourses(applicationName, threads, ref ramSize, ref initStack, path);
-                        ReadApplication(applicationName, threads, activeThread, path);
+                        connections = ReadApplication(applicationName, threads, activeThread, path);
                         applications.Add(new Application(applicationName, ramSize, initStack));
-                        applications[applications.Count-1].SetChildren(threads);
+                        applications[^1].SetChildren(threads);
                     }
                 }else if (line == "</Computer>"){
-                    computers[computers.Count-1].SetChildren(partitions);
+                    computers[^1].SetChildren(partitions);
                 }else if (line == "</Partition>"){
-                    partitions[partitions.Count-1].SetChildren(applications);
+                    partitions[^1].SetChildren(applications);
                 }
 
                 line = topologyReader.ReadLine();
             }
             topologyReader.Close();
         }
-        catch(Exception e)
+        catch(Exception)
         {
             //Console.WriteLine("Exception: " + e.Message);
         }
-        //debugPrint(computers);
-        return computers;
+        ComponentsAndConnections returnValue = new(computers, connections);
+        return returnValue;
     }
 
-    void ReadApplication(string applicationName, List<Component> threads, int activeThread, string path) {
+    Dictionary<string, List<Port>> ReadApplication(string applicationName, List<Component> threads, int activeThread, string path) {
+        Dictionary<string, List<Port>> connections = new Dictionary<string, List<Port>>();
+        List<Component> ports = new();
         String line;
+        int index = 0;
+        string name;
+        string interf;
+        string role;
+        int frequency = 0;
         try
         {
-            int index = 0;
-            string name;
-            string interf;
-            string role;
-            List<Component> ports = new List<Component> ();
+            
             StreamReader applicationReader = new StreamReader(path + "/applications/"+applicationName+"/application.xml");
             line = applicationReader.ReadLine();
             
@@ -77,13 +82,18 @@ class XmlReader {
                 line = line.Trim();
                 if(line.Contains('\"')){ 
                     if (line.Split('\"')[0] == "<Thread name=" ) {
-                        ((Thread)threads[index]).SetFrequency(Int32.Parse(line.Split('\"')[3].Remove(line.Split('\"')[3].Length-2)));
+                        frequency = Int32.Parse(line.Split('\"')[3].Remove(line.Split('\"')[3].Length-2));
+                        ((Thread)threads[index]).SetFrequency(frequency);
                         index ++;
                     } else if (line.Split('\"')[0] =="<Port name=" ) {
                         name = (line.Split('\"')[1]);
                         interf = (line.Split('\"')[3]);
                         role = (line.Split('\"')[5]);
                         ports.Add(new Port (name, interf, role));
+                        if (!connections.ContainsKey(interf)) {
+                            connections.Add(interf, new List<Port>());    
+                        }
+                        connections[interf].Add((Port)ports[ports.Count]);
                     }
                 }else if (line == "</Thread>"){
                     threads[activeThread].SetChildren(ports);
@@ -95,10 +105,11 @@ class XmlReader {
             }
             applicationReader.Close();
         }
-        catch(Exception e)
+        catch (Exception)
         {
             //Console.WriteLine("Exception: " + e.Message);
         }
+        return connections;
     }
 
    private void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
@@ -120,28 +131,20 @@ class XmlReader {
                 line = ResourcesReader.ReadLine();
             }
         }
-        catch(Exception e)
+        catch(Exception)
         {
             //Console.WriteLine("Exception: " + e.Message);
         }
     }
 
-    private void debugPrint(List<Computer> computers) {
-        foreach(Computer computer in computers) {
-            Console.WriteLine("" + computer.getName());
-            foreach(Partition partition in computer.GetChildren()) {
-                Console.WriteLine("  " + partition.getName());
-                foreach(Application application in partition.GetChildren()) {
-                    Console.WriteLine("    " + application.getName());
-                    foreach(Thread thread in application.GetChildren()) {
-                        Console.WriteLine("      " + thread.getName());
-                        foreach(Port port in thread.GetChildren()) {
-                           Console.WriteLine("        " + port.getName() + " " + ((Port)port).interf + " " + ((Port)port).role);
-                        }
-                    }
-                }    
-            }   
+    public struct ComponentsAndConnections {
+        public List<Component> components = new();
+        public Dictionary<string, List<Port>> connections = new();
+        
+        public ComponentsAndConnections(List<Component> components, Dictionary<string, List<Port>> connections)
+        {
+            this.components = components;
+            this.connections = connections;
         }
-    }
+    };
 }
-
