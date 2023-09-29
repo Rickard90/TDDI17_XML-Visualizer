@@ -10,70 +10,42 @@ using Microsoft.Xna.Framework.Input;
 //All types of components inherit constructor and fields from the component-type
 public class Component
 {
+	//Constructors:
 	public Component()
 	{
 
 	}
-
-	public Component(string name)
-	{
-		this.componentName	= name;
-	}
-
-	public Component(string name,
+    public Component(string name)
+    {
+        this.componentName = name;
+    }
+    public Component(string name,
 					 List<Component> children)
 	{
 		this.componentName	= name;
-		this.children		= children;
+		this.SetChildren(children);
 	}
-	
-	public virtual string GetInfo()
-	{
-		return "";
-	}
-	
-	public string GetName()
-	{
-		return this.componentName;
-	}
-	public Point GetPosition()
-	{
-		return this.position;
-	}
-	public Rectangle GetRectangle()
-	{
-		return new Rectangle(this.position.X, this.position.Y, this.width, this.height);
-	}
-	public List<Component> GetChildren()
-	{
-		return this.children;
-	}
-	public void SetPosition(Point pos)
-	{
-		this.position = pos;
-	}
-	public string SetName()
-	{
-		return this.componentName;
-	}
-	public void SetParent(Component newParent)
-	{
-		this.parent = newParent;
-	}
+    //Functions:
+    public string GetName() => this.componentName;
+    public Point GetPosition() => this.position;
+    public Rectangle GetRectangle() => new(this.position.X, this.position.Y, this.width, this.height);
+    public Component GetParent() => this.parent;
+    public List<Component> GetChildren() => this.children;
 
-	public void SetChildren(List<Component> newChildren)
+    public void SetPosition(Point pos) => this.position = pos;
+	public void SetName(string name) => this.componentName = name;
+    public void SetParent(Component newParent) 	=> this.parent = newParent;
+    public void AddChild(Component newChild) 	=> this.children.Add(newChild);
+    public void SetChildren(List<Component> newChildren)
 	{
-		//We do not have a deep copy. Might need a copy-constructor for Component
  		foreach(Component c in newChildren) {
 			this.AddChild(c);
+			c.SetParent(this);
 		}
 	}
-
-	public void AddChild(Component newChild)
-	{
-		this.children.Add(newChild);
-	}
-
+	
+	//Virtual Functions:
+	public virtual string GetInfo() => "";
 	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFont font)
 	{
 		int lineThickness = 3;
@@ -96,14 +68,15 @@ public class Component
 
 		if(name.Length > 6)
 		{
-			name = name.Substring(0,6);
+			name = name[..6];
 		}
 		//Draws out the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
 	}
 
- 
+	//Fields:
+	public 	   readonly	string				type			= "Component";		
 	protected 		 	string				componentName	= "";
 	protected 		   	int 				width			= 125;
 	protected 		   	int 				height			= 100;
@@ -112,19 +85,22 @@ public class Component
 	protected 		 	List<Component> 	children		= new();
 	protected 		 	List<Component>		myConnections	= new();
 		
+		
 }
 
+//Sub-Components:
 public class Computer : Component
 {
 	public Computer(string name) : base(name)
 	{
 
 	}
-
 	public Computer(string name, List<Component> children) : base(name, children)
 	{
 		
 	}
+
+	public new readonly	string type = "Computer";
 }
 
 public class Partition : Component
@@ -133,11 +109,11 @@ public class Partition : Component
 	{
 
 	}
-
 	public Partition(string name, List<Component> children) : base(name, children)
 	{
 		
 	}
+	public new readonly	string type = "Partition";
 }
 
 public class Application : Component
@@ -154,28 +130,27 @@ public class Application : Component
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
-	
 	public override string GetInfo()
 	{
 		return ("ramSize = " + ramSize + ", initstack = " + initStack);
 	}
-	
-	
+
+	public new readonly	string type = "Application";
 	public int ramSize 	 = 0;
 	public int initStack = 0;
 }
 
 public class Thread : Component
 {
+	//Constructors:
 	public Thread(string name, List<Component> children,
-				  int frequency, int exeTime, int exeStack) : base(name)
+				  int frequency, int exeTime, int exeStack) : base(name, children)
 	{
 		this.ports = children;
 		this.frequency = frequency;
 		this.exeTime   = exeTime;
 		this.exeStack  = exeStack;
 	}
-	
 	public Thread(string name,
 				  int frequency, int exeTime, int exeStack) : base(name)
 	{
@@ -183,28 +158,24 @@ public class Thread : Component
 		this.exeTime   = exeTime;
 		this.exeStack  = exeStack;
 	}
-
 	public Thread(string name,
 				  int exeTime, int exeStack) : base(name)
 	{
 		this.exeTime   = exeTime;
 		this.exeStack  = exeStack;
 	}
-	
-	public void SetFrequency(int frequency)
-	{
-		this.frequency = frequency;
-	}
-	
-	public override string GetInfo()
+
+	//Functions:
+    public void SetFrequency(int frequency) => this.frequency = frequency;
+    public override string GetInfo()
 	{
 		return ("Frequency = " + frequency + ", Execution Time = " + exeTime + ", Execution Stack = " + exeStack);
 	}
 
+	public new readonly	string type = "Thread";
 	public int frequency = 0;
 	public int exeTime 	 = 0;
 	public int exeStack  = 0;
-	public List<Component> ports = new();
 }
 
 public class Port : Component
@@ -216,6 +187,7 @@ public class Port : Component
 			this.role = role;
 	}
 
+	public new readonly	string type = "Port";		
 	public string interf 	= ""; 
 	public string role		= "";
 }
