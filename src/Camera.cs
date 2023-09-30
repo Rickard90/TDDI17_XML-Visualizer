@@ -5,7 +5,7 @@ using Size = Microsoft.Xna.Framework.Point;
 
 partial class Canvas
 {
-    static class Camera
+    public static class Camera
     {
         public static Point offset = Point.Zero;
         private static Size cameraWindowSize;
