@@ -5,23 +5,15 @@ using Size = Microsoft.Xna.Framework.Point;
 
 partial class Canvas
 {
-    static class Camera
+    public static class Camera
     {
         public static Point offset = Point.Zero;
-        private static Size cameraWindowSize;
-        private static Size drawTextureSize;
-        //private static int zoomDivider = 2;
-        public static float zoomLevel = 2.0f; //default zoom level
+        public static float zoomLevel = 1.0f; //default zoom level
         private static float minZoom = 0.1f;
         private static float maxZoom = 10.0f;
         private static float zoomSpeed = 0.0003f;
         private static int previousScrollValue = 0;
 
-        public static void Init(Size mapsize)
-        {
-            drawTextureSize = mapsize;
-            cameraWindowSize = drawTextureSize;
-        }
 
         public static Rectangle ModifiedDrawArea(Rectangle area)
         {
@@ -77,9 +69,6 @@ partial class Canvas
 
             // Update the zoom level
             zoomLevel = newZoomLevel;
-
-            // Adjust camera window size based on the zoom level
-            cameraWindowSize = new Size((int)(drawTextureSize.X * zoomLevel), (int)(drawTextureSize.Y * zoomLevel));
         }
 
         public static void UpdateByKeyboard(KeyboardState keyboardState)

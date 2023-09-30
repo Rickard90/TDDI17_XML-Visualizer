@@ -30,8 +30,6 @@ partial class Canvas
         this.spriteBatch = spriteBatch;
         this.windowSize = windowSize;
         this.levelOfDetail = levelOfDetail;
-
-        Camera.Init(this.windowSize);
     }
 
     public void Draw()
@@ -43,7 +41,6 @@ partial class Canvas
         this.spriteBatch.Draw(this.texture, area, Color.White);
     }
 
-    int recentScrollWheelValue;
     public void Update(MouseState mouseState, KeyboardState keyboardState)
     {
         Camera.UpdateByKeyboard(keyboardState);
