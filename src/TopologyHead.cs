@@ -11,10 +11,28 @@ public class TopologyHead
 	{
         this.head = new Component();
 		this.path = new List<Component>{this.head};
-
+	
         //Filereader:
 		XmlReader fileRead = new();
-        this.path.Last().SetChildren(fileRead.ReadComponents(folderName).components);
+		XmlReader.ComponentsAndConnections cAC = fileRead.ReadComponents(folderName);
+		
+		//The following bit is only for diagnostic purposes:
+		int counter = 0;
+		Console.WriteLine("Number of connections: {0}", cAC.connections.Count);
+		foreach(var connection in cAC.connections)
+		{
+			Console.WriteLine("Connection:");
+			Console.WriteLine("Component: {0}", connection.Key);
+			
+			foreach(var port in connection.Value)
+			{
+				counter++;
+				Console.WriteLine("Port {0}: {1}", counter, port.GetName());
+			}
+        }
+		//Diagnostic parapgraph done, regular code resumes:
+		
+		this.path.Last().SetChildren(cAC.components);
 	}
 
     public void Draw(SpriteBatch sb, SpriteFont font)
