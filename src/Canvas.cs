@@ -8,15 +8,7 @@ using Microsoft.Xna.Framework.Input;
 partial class Canvas
 {
 
-    private LevelOfDetail levelOfDetail;
-    public LevelOfDetail LevelOfDetail
-    {   get {return this.levelOfDetail;}
-        set {
-            this.levelOfDetail = value; 
-            this.UpdateTexture();
-        }
-    }
-    public delegate void RenderTopology(LevelOfDetail levelOfDetail);
+    public delegate void RenderTopology();
     public RenderTopology renderFunction = null;
 
     private Point windowSize;
@@ -24,12 +16,11 @@ partial class Canvas
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
 
-    public Canvas(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Point windowSize, LevelOfDetail levelOfDetail = LevelOfDetail.Max)
+    public Canvas(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Point windowSize)
     {
         this.graphicsDevice = graphicsDevice;
         this.spriteBatch = spriteBatch;
         this.windowSize = windowSize;
-        this.levelOfDetail = levelOfDetail;
     }
 
     public void Draw()
@@ -50,8 +41,6 @@ partial class Canvas
 
     public void UpdateTexture()
     {
-        if (this.levelOfDetail > LevelOfDetail.Max)
-            throw new Exception($"Tried to render invalid level of detail : {this.levelOfDetail}");
         if (this.renderFunction == null)
             throw new Exception("Tried to render without a render function!");
 
@@ -61,7 +50,7 @@ partial class Canvas
         spriteBatch.Begin();
             graphicsDevice.SetRenderTarget(renderTargetIsAOffScreenBuffer);
             this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0, windowSize.X, windowSize.Y), Color.White);
-            this.renderFunction.Invoke(LevelOfDetail);
+            this.renderFunction.Invoke();
         spriteBatch.End();
 
         using (MemoryStream stream = new())
