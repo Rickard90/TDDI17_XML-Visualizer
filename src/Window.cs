@@ -75,7 +75,7 @@ public class Window : Game
                 {
                     //Console.WriteLine("child pos.x = {0}, child pos.y = {1}, child width = {2}, child height = {3}", rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 
-                    if(Selection.CursorIsInside(child.GetRectangle()))
+                    if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
                     {
                         if(child.GetInfo() != "")
                         {
