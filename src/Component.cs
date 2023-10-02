@@ -99,8 +99,25 @@ public class Computer : Component
 	{
 		
 	}
+	public void SetChildren(List<Partition> newChildren)
+	{
+ 		foreach(Partition c in newChildren) {
+			this.AddChild(c);
+			c.SetParent(this);
+			this.execStack += c.execStack;
+			this.execTime += c.execTime;
+			this.ramSize += c.ramSize;
+			this.initStack += c.initStack;
+			this.frequency += c.frequency;
+		}
+	}
 
 	public new readonly	string type = "Computer";
+	public int ramSize 	 = 0;
+	public int initStack = 0;
+	public int execTime   = 0;
+	public int execStack  = 0;
+	public int frequency  = 0;
 }
 
 public class Partition : Component
@@ -113,8 +130,26 @@ public class Partition : Component
 	{
 		
 	}
+	public void SetChildren(List<Application> newChildren)
+	{
+ 		foreach(Application c in newChildren) {
+			this.AddChild(c);
+			c.SetParent(this);
+			this.execStack += c.execStack;
+			this.execTime += c.execTime;
+			this.ramSize += c.ramSize;
+			this.initStack += c.initStack;
+			//this.frequency += c.freaquency;
+		}
+	}
 	public new readonly	string type = "Partition";
+	public int ramSize 	 = 0;
+	public int initStack = 0;
+	public int execTime   = 0;
+	public int execStack  = 0;
+	public int frequency  = 0;
 }
+
 
 public class Application : Component
 {
@@ -135,46 +170,60 @@ public class Application : Component
 		return ("ramSize = " + ramSize + ", initstack = " + initStack);
 	}
 
+	public void SetChildren(List<Thread> newChildren)
+	{
+ 		foreach(Thread c in newChildren) {
+			this.AddChild(c);
+			c.SetParent(this);
+			this.execStack += c.execStack;
+			this.execTime += c.execTime;
+			this.frequency += c.frequency;
+		}
+	}
+
 	public new readonly	string type = "Application";
 	public int ramSize 	 = 0;
 	public int initStack = 0;
+	public int execTime   = 0;
+	public int execStack  = 0;
+	public int frequency  = 0;
 }
 
 public class Thread : Component
 {
 	//Constructors:
 	public Thread(string name, List<Component> children,
-				  int frequency, int exeTime, int exeStack) : base(name, children)
+				  int frequency, int execTime, int execStack) : base(name, children)
 	{
 		this.frequency = frequency;
-		this.exeTime   = exeTime;
-		this.exeStack  = exeStack;
+		this.execTime   = execTime;
+		this.execStack  = execStack;
 	}
 	public Thread(string name,
-				  int frequency, int exeTime, int exeStack) : base(name)
+				  int frequency, int execTime, int execStack) : base(name)
 	{
 		this.frequency = frequency;
-		this.exeTime   = exeTime;
-		this.exeStack  = exeStack;
+		this.execTime   = execTime;
+		this.execStack  = execStack;
 	}
 	public Thread(string name,
-				  int exeTime, int exeStack) : base(name)
+				  int execTime, int execStack) : base(name)
 	{
-		this.exeTime   = exeTime;
-		this.exeStack  = exeStack;
+		this.execTime   = execTime;
+		this.execStack  = execStack;
 	}
 
 	//Functions:
     public void SetFrequency(int frequency) => this.frequency = frequency;
     public override string GetInfo()
 	{
-		return ("Frequency = " + frequency + ", Execution Time = " + exeTime + ", Execution Stack = " + exeStack);
+		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
 	}
 
 	public new readonly	string type = "Thread";
 	public int frequency = 0;
-	public int exeTime 	 = 0;
-	public int exeStack  = 0;
+	public int execTime 	 = 0;
+	public int execStack  = 0;
 }
 
 public class Port : Component
