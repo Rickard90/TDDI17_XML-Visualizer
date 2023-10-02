@@ -13,7 +13,8 @@ public class Window : Game
     private SpriteFont font;
     //private Texture2D tex;
 
-    private Button buttonBack = new Button(new Rectangle(10, 40, 100, 50), "back");
+    //private Button buttonBack = new Button(new Rectangle(10, 40, 100, 50), "back");
+    private BackButton buttonBack = new BackButton(new Rectangle(10, 40, 100, 50), "back");
     
     private TopologyHead top = new TopologyHead("Fake Data Format");
 	private Canvas canvas;

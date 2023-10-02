@@ -3,21 +3,46 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
-class Button
+abstract class Button
 {
-    private Rectangle rectangle;
-    private String description;
+    protected Rectangle rectangle;
 
-    public Button(Rectangle rectangle, String description)
+    protected Button(Rectangle rectangle)
     {
         this.rectangle = rectangle;
-        this.description = description;
     }
 
     public Rectangle GetRectangle()
 	{
 		return this.rectangle;
 	}
+
+    // Idea: Different types of buttons have different actions
+    //public abstract void DoAction();
+}
+
+
+class ComponentButton : Button
+{
+    // Reference to a component
+    private Component component;
+
+    public ComponentButton(Rectangle rectangle, Component component)
+    :   base(rectangle)
+    {
+        this.component = component;
+    }
+}
+
+class BackButton : Button
+{
+    private string description;
+
+    public BackButton(Rectangle rectangle, string description)
+        :   base(rectangle)
+    {
+        this.description = description;
+    }
 
     public void Draw(SpriteBatch sb, SpriteFont font)
     {
