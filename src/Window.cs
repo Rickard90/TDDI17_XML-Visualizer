@@ -96,6 +96,8 @@ public class Window : Game
             }
         }
 
+        canvas.Update(Mouse.GetState(), Keyboard.GetState());
+
         base.Update(gameTime);
     }
 
@@ -105,6 +107,7 @@ public class Window : Game
 
         this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
 
+        base.GraphicsDevice.Clear(Color.Gray);
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
