@@ -43,6 +43,7 @@ public class Window : Game
 		
 		this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size);
         this.canvas.renderFunction = this.RenderTopology;
+        ComponentFinder.top = this.top;
     }
 
     protected override void Update(GameTime gameTime)
