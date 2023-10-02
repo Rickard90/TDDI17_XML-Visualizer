@@ -146,7 +146,6 @@ public class Thread : Component
 	public Thread(string name, List<Component> children,
 				  int frequency, int exeTime, int exeStack) : base(name, children)
 	{
-		//this.ports = children;
 		this.frequency = frequency;
 		this.exeTime   = exeTime;
 		this.exeStack  = exeStack;
