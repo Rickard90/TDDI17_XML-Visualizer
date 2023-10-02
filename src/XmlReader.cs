@@ -12,19 +12,19 @@ class XmlReader {
 
     public ComponentsAndConnections ReadComponents(string path) {
         String line;
-        List <Component> computers = new List<Component>();
+        List <Component> computers = new();
         int activeThread = 0;
-        List <Component> partitions = new List<Component>();
-        List <Component> applications = new List<Component>();
-        List <Component> threads = new List<Component>();
-        Dictionary<string, List<Port>> connections = new Dictionary<string, List<Port>>();
+        List <Component> partitions = new();
+        List <Component> applications = new();
+        List <Component> threads = new();
+        Dictionary<string, List<Port>> connections = new();
         string applicationName;
         int ramSize = 0;
         int initStack = 0;
 
         try
         {            
-            StreamReader topologyReader = new StreamReader(path + "/topology/topology.xml");
+            StreamReader topologyReader = new(path + "/topology/topology.xml");
             line = topologyReader.ReadLine();
             while (line != null)
             {
@@ -42,36 +42,35 @@ class XmlReader {
                         ReadResourses(applicationName, threads, ref ramSize, ref initStack, path);
                         connections = ReadApplication(applicationName, threads, activeThread, path);
                         applications.Add(new Application(applicationName, ramSize, initStack));
-                        applications[applications.Count-1].SetChildren(threads);
+                        applications[^1].SetChildren(threads);
                     }
                 }else if (line == "</Computer>"){
-                    computers[computers.Count-1].SetChildren(partitions);
+                    computers[^1].SetChildren(partitions);
                 }else if (line == "</Partition>"){
-                    partitions[partitions.Count-1].SetChildren(applications);
+                    partitions[^1].SetChildren(applications);
                 }
 
                 line = topologyReader.ReadLine();
             }
             topologyReader.Close();
         }
-        catch(Exception e)
+        catch(Exception)
         {
             //Console.WriteLine("Exception: " + e.Message);
         }
-        ComponentsAndConnections returnValue = new ComponentsAndConnections(computers, connections);
+        ComponentsAndConnections returnValue = new(computers, connections);
         return returnValue;
     }
 
     Dictionary<string, List<Port>> ReadApplication(string applicationName, List<Component> threads, int activeThread, string path) {
         Dictionary<string, List<Port>> connections = new Dictionary<string, List<Port>>();
-        List<Component> ports = new List<Component> ();
+        List<Component> ports = new();
         String line;
         int index = 0;
         string name;
         string interf;
         string role;
         int frequency = 0;
-        
         try
         {
             
@@ -106,7 +105,7 @@ class XmlReader {
             }
             applicationReader.Close();
         }
-        catch(Exception e)
+        catch (Exception)
         {
             //Console.WriteLine("Exception: " + e.Message);
         }
@@ -132,15 +131,15 @@ class XmlReader {
                 line = ResourcesReader.ReadLine();
             }
         }
-        catch(Exception e)
+        catch(Exception)
         {
             //Console.WriteLine("Exception: " + e.Message);
         }
     }
 
     public struct ComponentsAndConnections {
-        public List<Component> components = new List<Component>();
-        public Dictionary<string, List<Port>> connections = new Dictionary<string, List<Port>>();
+        public List<Component> components = new();
+        public Dictionary<string, List<Port>> connections = new();
         
         public ComponentsAndConnections(List<Component> components, Dictionary<string, List<Port>> connections)
         {

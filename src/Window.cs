@@ -75,7 +75,7 @@ public class Window : Game
                 {
                     //Console.WriteLine("child pos.x = {0}, child pos.y = {1}, child width = {2}, child height = {3}", rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 
-                    if(Selection.CursorIsInside(child.GetRectangle()))
+                    if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
                     {
                         if(child.GetInfo() != "")
                         {
@@ -96,27 +96,31 @@ public class Window : Game
             }
         }
 
+        canvas.Update(Mouse.GetState(), Keyboard.GetState());
+
         base.Update(gameTime);
     }
 
+    
+
     protected override void Draw(GameTime gameTime)
     {
-        base.GraphicsDevice.Clear(Color.White);
-
+        
         this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
 
+        base.GraphicsDevice.Clear(Color.Gray);
         this.spriteBatch.Begin();
-        this.canvas.Draw();
-        //this.top.Draw(this.spriteBatch, this.font);
-        this.buttonBack.Draw(this.spriteBatch, this.font);
+            this.canvas.Draw();
+            this.buttonBack.Draw(this.spriteBatch, this.font);
         this.spriteBatch.End();
         
         base.Draw(gameTime);
     }
 	
-    //  this is the render function
+    //  this is the render function, feed into the canvas
 	private void RenderTopology(LevelOfDetail levelOfDetail)
     {
         this.top.Draw(this.spriteBatch, this.font);
+        
     }
 }
