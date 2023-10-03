@@ -13,7 +13,6 @@ class XmlReader {
     public ComponentsAndConnections ReadComponents(string path) {
         String line;
         List <Component> computers = new();
-        int activeThread = 0;
         List <Component> partitions = new();
         List <Component> applications = new();
         List <Component> threads = new();
@@ -40,7 +39,7 @@ class XmlReader {
                         threads.Clear();
                         applicationName = (line.Split('\"')[1]);
                         ReadResourses(applicationName, threads, ref ramSize, ref initStack, path);
-                        connections = ReadApplication(applicationName, threads, activeThread, path);
+                        ReadApplication(applicationName, threads, path, connections);
                         applications.Add(new Application(applicationName, ramSize, initStack));
                         applications[^1].SetChildren(threads);
                     }
@@ -62,8 +61,7 @@ class XmlReader {
         return returnValue;
     }
 
-    Dictionary<string, List<Port>> ReadApplication(string applicationName, List<Component> threads, int activeThread, string path) {
-        Dictionary<string, List<Port>> connections = new Dictionary<string, List<Port>>();
+    void ReadApplication(string applicationName, List<Component> threads, string path, Dictionary<string, List<Port>> connections) {
         List<Component> ports = new();
         String line;
         int index = 0;
@@ -73,7 +71,6 @@ class XmlReader {
         int frequency = 0;
         try
         {
-            
             StreamReader applicationReader = new StreamReader(path + "/applications/"+applicationName+"/application.xml");
             line = applicationReader.ReadLine();
             
@@ -84,7 +81,6 @@ class XmlReader {
                     if (line.Split('\"')[0] == "<Thread name=" ) {
                         frequency = Int32.Parse(line.Split('\"')[3].Remove(line.Split('\"')[3].Length-2));
                         ((Thread)threads[index]).SetFrequency(frequency);
-                        index ++;
                     } else if (line.Split('\"')[0] =="<Port name=" ) {
                         name = (line.Split('\"')[1]);
                         interf = (line.Split('\"')[3]);
@@ -93,23 +89,22 @@ class XmlReader {
                         if (!connections.ContainsKey(interf)) {
                             connections.Add(interf, new List<Port>());    
                         }
-                        connections[interf].Add((Port)ports[ports.Count]);
+                        connections[interf].Add((Port)ports[ports.Count-1]);
                     }
                 }else if (line == "</Thread>"){
-                    threads[activeThread].SetChildren(ports);
+                    threads[index].SetChildren(ports);
                     ports.Clear();
-                    index = 0;
-                    activeThread++;
+                    index ++;
                 }
                 line = applicationReader.ReadLine();
             }
             applicationReader.Close();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //Console.WriteLine("Exception: " + e.Message);
+           // Console.WriteLine("Exception: " + e.Message);
         }
-        return connections;
+        Console.WriteLine(connections.Count);
     }
 
    private void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
