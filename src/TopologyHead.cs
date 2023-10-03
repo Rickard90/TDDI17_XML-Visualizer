@@ -88,7 +88,7 @@ public class TopologyHead
 	
     public Component GetCurrent()
     {
-        return this.path.Last();;
+        return this.path.Last();
     }
 
     public void GotoHead()
