@@ -92,9 +92,16 @@ public class Component
 	}
 	protected virtual void UpdatePorts(Component child)
 	{
-		foreach(string port in child.ports)
+		foreach(string newPort in child.ports)
 			{
-				ports.Add(port);
+				if(ports.Contains(newPort)	//If the connection is only internal it is not needed for higher up components
+				{
+					ports.Remove(newPort);
+				}
+				else
+				{
+					ports.Add(port);
+				}
 			}
 	}
 	
