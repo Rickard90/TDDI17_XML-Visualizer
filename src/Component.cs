@@ -36,6 +36,10 @@ public class Component
 	public void SetName(string name) => this.componentName = name;
     public void SetParent(Component newParent) 	=> this.parent = newParent;
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
+	public virtual String GetComponentType()
+	{
+		return type;
+	}
     public virtual void SetChildren(List<Component> newChildren)
 	{
  		foreach(Component c in newChildren) {
@@ -72,7 +76,6 @@ public class Component
 		}
 		//Draws out the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
-		
 	}
 
 	//Fields:
@@ -111,10 +114,14 @@ public class Computer : Component
 			this.frequency += c.frequency;
 		}
 	}
+	public override string GetInfo()
+	{
+		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
+	}
 
 	public new readonly	string type = "Computer";
-	public int ramSize 	 = 0;
-	public int initStack = 0;
+	public int ramSize 	  = 0;
+	public int initStack  = 0;
 	public int execTime   = 0;
 	public int execStack  = 0;
 	public int frequency  = 0;
@@ -139,8 +146,12 @@ public class Partition : Component
 			this.execTime += c.execTime;
 			this.ramSize += c.ramSize;
 			this.initStack += c.initStack;
-			//this.frequency += c.freaquency;
+			this.frequency += c.frequency;
 		}
+	}
+	public override string GetInfo()
+	{
+		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
 	}
 	public new readonly	string type = "Partition";
 	public int ramSize 	 = 0;
@@ -167,7 +178,7 @@ public class Application : Component
 	}
 	public override string GetInfo()
 	{
-		return ("ramSize = " + ramSize + ", initstack = " + initStack);
+		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
 	}
 
 	public void SetChildren(List<Thread> newChildren)
@@ -214,6 +225,17 @@ public class Thread : Component
 	}
 
 	//Functions:
+	public void SetChildren(List<Port> newChildren)
+	{
+ 		foreach(Port c in newChildren) {
+			this.AddChild(c);
+			c.SetParent(this);
+		}
+	}
+	public override	String GetComponentType()
+	{
+		return type;
+	}
     public void SetFrequency(int frequency) => this.frequency = frequency;
     public override string GetInfo()
 	{
@@ -221,8 +243,8 @@ public class Thread : Component
 	}
 
 	public new readonly	string type = "Thread";
-	public int frequency = 0;
-	public int execTime 	 = 0;
+	public int frequency  = 0;
+	public int execTime   = 0;
 	public int execStack  = 0;
 }
 

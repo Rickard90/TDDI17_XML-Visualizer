@@ -74,14 +74,13 @@ public class Window : Game
                 foreach (Component child in currComponent.GetChildren())
                 {
                     //Console.WriteLine("child pos.x = {0}, child pos.y = {1}, child width = {2}, child height = {3}", rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-
                     if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
                     {
-                        if(child.GetInfo() != "")
+                        if (child.GetInfo() != "")
                         {
-                            Console.WriteLine("Clicked component info: \n {0}", child.GetInfo());
+                            Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
-                        if(child.GetChildren().Count()	> 0)
+                        if (child.GetComponentType() != "Thread")
                         {
                             this.top.Goto(child);
                             Console.WriteLine("BREAK");
