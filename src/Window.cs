@@ -15,11 +15,12 @@ public class Window : Game
 
     private Button buttonBack = new Button(new Rectangle(10, 40, 100, 50), "back");
     
-    private TopologyHead top = new TopologyHead("Fake Data Format");
+    private TopologyHead top; 
 	private Canvas canvas;
 
     public Window()
     {
+		Console.WriteLine("Window constructing");
         this.graphics = new GraphicsDeviceManager(this);
         base.Content.RootDirectory = "Content";
         base.IsMouseVisible = true;
@@ -27,6 +28,7 @@ public class Window : Game
 
     protected override void Initialize()
     {
+		Console.WriteLine("Initializing");
         base.Initialize();
 
         Window.AllowUserResizing = true;
@@ -34,8 +36,8 @@ public class Window : Game
 
     protected override void LoadContent()
     {
+		Console.WriteLine("Loading Content");
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
-        //Component.LoadWhitePixelTexture(GraphicsDevice);
 
         this.font = Content.Load<SpriteFont>("Text");
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
@@ -43,7 +45,9 @@ public class Window : Game
 		
 		this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size);
         this.canvas.renderFunction = this.RenderTopology;
-        ComponentFinder.top = this.top;
+        
+		this.top = new TopologyHead("Fake Data Format");
+		ComponentFinder.top = this.top;
     }
 
     protected override void Update(GameTime gameTime)
@@ -55,14 +59,8 @@ public class Window : Game
 
         if (Selection.LeftMouseJustReleased())
         {
-            Console.WriteLine("LEFT MOUSE JUST RELEASED");
-            
             Point cursorPosition = Selection.MouseCursorPosition();
-
-            Console.WriteLine("cursor.x = {0}, cursor.y = {1}", cursorPosition.X, cursorPosition.Y);
-
             Component currComponent = this.top.GetCurrent();
-            Console.WriteLine("Current component: {0}", currComponent.GetName());
 
             if(Selection.CursorIsInside(this.buttonBack.GetRectangle()))
             {
@@ -73,22 +71,22 @@ public class Window : Game
             {
                 foreach (Component child in currComponent.GetChildren())
                 {
-                    //Console.WriteLine("child pos.x = {0}, child pos.y = {1}, child width = {2}, child height = {3}", rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-
                     if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
                     {
+						Console.WriteLine("Clicked component: {0} of type {1}", child.GetName(), child.type);
                         if(child.GetInfo() != "")
                         {
                             Console.WriteLine("Clicked component info: \n {0}", child.GetInfo());
                         }
-                        if(child.GetChildren().Count()	> 0)
+						Console.WriteLine("Component children: {0}", child.GetChildren().Count);
+						
+						if(child.GetChildren().Count()	> 0) //&& child.type != "Thread")
                         {
                             this.top.Goto(child);
-                            Console.WriteLine("BREAK");
-                        }
+						}
                         else
                         {
-                            Console.WriteLine("Lowest level already reached");
+                            //Console.WriteLine("Lowest level already reached");
                         }
                         break;
                     }
@@ -107,7 +105,7 @@ public class Window : Game
 
         this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
 
-        base.GraphicsDevice.Clear(Color.Gray);
+        //base.GraphicsDevice.Clear(Color.Gray);
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.RenderTopology();

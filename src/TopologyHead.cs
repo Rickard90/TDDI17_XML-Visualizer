@@ -15,7 +15,7 @@ public class TopologyHead
 		
 		//The following bit is only for diagnostic purposes:
 		int counter = 0;
-		Console.WriteLine("Number of connections: {0}", cAC.connections.Count);
+		Console.WriteLine("TopologyHead Constructing\nNumber of connections: {0}", cAC.connections.Count);
 		foreach(var connection in cAC.connections)
 		{
 			Console.WriteLine("Connection:");
@@ -31,7 +31,6 @@ public class TopologyHead
 		
 		this.head = new Component("Top", cAC.components);
 		this.path = new List<Component>{this.head};
-	
 	}
 
     public void Draw(SpriteBatch sb, SpriteFont font, int width, int height)

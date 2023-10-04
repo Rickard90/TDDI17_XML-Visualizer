@@ -25,7 +25,7 @@ public class Component
 		this.componentName	= name;
 		this.SetChildren(children);
 	}
-    //Functions:
+    //Public Functions:
     public string GetName() => this.componentName;
     public Point GetPosition() => this.position;
     public Rectangle GetRectangle() => new(this.position.X, this.position.Y, this.width, this.height);
@@ -36,15 +36,18 @@ public class Component
 	public void SetName(string name) => this.componentName = name;
     public void SetParent(Component newParent) 	=> this.parent = newParent;
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
-    public virtual void SetChildren(List<Component> newChildren)
+	
+	//Virtual Functions:   
+	public virtual void SetChildren(List<Component> newChildren)
 	{
- 		foreach(Component c in newChildren) {
-			this.AddChild(c);
-			c.SetParent(this);
+		ports.Clear();
+ 		foreach(Component child in newChildren) {
+			this.AddChild(child);
+			child.SetParent(this);
+			UpdateStats(child);
+			UpdatePorts(child);			
 		}
 	}
-	
-	//Virtual Functions:
 	public virtual string GetInfo() => "";
 	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFont font, int size)
 	{
@@ -78,9 +81,28 @@ public class Component
 
 		this.width = this.height;
 	}
+	//Protected functions:
+	protected virtual void UpdateStats(Component child)
+	{
+		this.execStack += child.execStack;
+		this.execTime  += child.execTime;
+		this.ramSize   += child.ramSize;
+		this.initStack += child.initStack;
+		this.frequency += child.frequency;
+	}
+	protected virtual void UpdatePorts(Component child)
+	{
+		foreach(string port in child.ports)
+			{
+				ports.Add(port);
+			}
+	}
+	
+	
+	//Properties:
+	public virtual string type {get => "Component";}
 
-	//Fields:
-	public 	   readonly	string				type			= "Component";		
+	//Fields:		
 	protected 		 	string				componentName	= "";
 	protected 		   	int 				width			= 125;
 	protected 		   	int 				height			= 100;
@@ -88,11 +110,18 @@ public class Component
     protected 			Component 			parent 			= null;
 	protected 		 	List<Component> 	children		= new();
 	protected 		 	List<Component>		myConnections	= new();
-		
-		
+	public	 			HashSet<string> 	ports 			= new();
+	
+	//Info:
+	public int ramSize 	 = 0;
+	public int initStack = 0;
+	public int execTime  = 0;
+	public int execStack = 0;
+	public int frequency = 0;
 }
-
 //Sub-Components:
+
+/*_______C_O_M_P_U_T_E_R________*/
 public class Computer : Component
 {
 	public Computer(string name) : base(name)
@@ -103,27 +132,10 @@ public class Computer : Component
 	{
 		
 	}
-	public void SetChildren(List<Partition> newChildren)
-	{
- 		foreach(Partition c in newChildren) {
-			this.AddChild(c);
-			c.SetParent(this);
-			this.execStack += c.execStack;
-			this.execTime += c.execTime;
-			this.ramSize += c.ramSize;
-			this.initStack += c.initStack;
-			this.frequency += c.frequency;
-		}
-	}
-
-	public new readonly	string type = "Computer";
-	public int ramSize 	 = 0;
-	public int initStack = 0;
-	public int execTime   = 0;
-	public int execStack  = 0;
-	public int frequency  = 0;
+	public override string type {get => "Computer";}
 }
 
+/*______P_A_R_T_I_T_I_O_N________*/
 public class Partition : Component
 {
 	public Partition(string name) : base(name)
@@ -134,27 +146,10 @@ public class Partition : Component
 	{
 		
 	}
-	public void SetChildren(List<Application> newChildren)
-	{
- 		foreach(Application c in newChildren) {
-			this.AddChild(c);
-			c.SetParent(this);
-			this.execStack += c.execStack;
-			this.execTime += c.execTime;
-			this.ramSize += c.ramSize;
-			this.initStack += c.initStack;
-			//this.frequency += c.freaquency;
-		}
-	}
-	public new readonly	string type = "Partition";
-	public int ramSize 	 = 0;
-	public int initStack = 0;
-	public int execTime   = 0;
-	public int execStack  = 0;
-	public int frequency  = 0;
+	public override string type {get => "Partition";}
 }
 
-
+/*______A_P_P_L_I_C_A_T_I_O_N______*/
 public class Application : Component
 {
 	public Application(string name, List<Component> children,
@@ -173,26 +168,10 @@ public class Application : Component
 	{
 		return ("ramSize = " + ramSize + ", initstack = " + initStack);
 	}
-
-	public void SetChildren(List<Thread> newChildren)
-	{
- 		foreach(Thread c in newChildren) {
-			this.AddChild(c);
-			c.SetParent(this);
-			this.execStack += c.execStack;
-			this.execTime += c.execTime;
-			this.frequency += c.frequency;
-		}
-	}
-
-	public new readonly	string type = "Application";
-	public int ramSize 	 = 0;
-	public int initStack = 0;
-	public int execTime   = 0;
-	public int execStack  = 0;
-	public int frequency  = 0;
+	public override string type {get => "Application";}
 }
 
+/*_________T_H_R_E_A_D__________*/
 public class Thread : Component
 {
 	//Constructors:
@@ -202,13 +181,17 @@ public class Thread : Component
 		this.frequency = frequency;
 		this.execTime   = execTime;
 		this.execStack  = execStack;
+		foreach(Port P in children)
+		{
+				ports.Add(P.GetName());
+		}
 	}
 	public Thread(string name,
 				  int frequency, int execTime, int execStack) : base(name)
 	{
 		this.frequency = frequency;
-		this.execTime   = execTime;
-		this.execStack  = execStack;
+		this.execTime  = execTime;
+		this.execStack = execStack;
 	}
 	public Thread(string name,
 				  int execTime, int execStack) : base(name)
@@ -219,17 +202,19 @@ public class Thread : Component
 
 	//Functions:
     public void SetFrequency(int frequency) => this.frequency = frequency;
+	protected override void UpdatePorts(Component port)
+	{					
+		this.ports.Add(port.GetName());
+	}
     public override string GetInfo()
 	{
 		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
 	}
 
-	public new readonly	string type = "Thread";
-	public int frequency = 0;
-	public int execTime 	 = 0;
-	public int execStack  = 0;
+	public override string type {get => "Thread";}
 }
 
+/*__________P_O_R_T___________*/
 public class Port : Component
 {
 	public Port(string name, 
@@ -239,7 +224,7 @@ public class Port : Component
 			this.role = role;
 	}
 
-	public new readonly	string type = "Port";		
+	public override string type {get => "Port";}		
 	public string interf 	= ""; 
 	public string role		= "";
 }

@@ -100,11 +100,10 @@ class XmlReader {
             }
             applicationReader.Close();
         }
-        catch (Exception e)
+        catch (Exception)
         {
            // Console.WriteLine("Exception: " + e.Message);
         }
-        Console.WriteLine(connections.Count);
     }
 
    private void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
