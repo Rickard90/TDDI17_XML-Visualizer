@@ -13,17 +13,21 @@ public class Window : Game
     private SpriteFont font;
     //private Texture2D tex;
 
-    //private Button buttonBack = new Button(new Rectangle(10, 40, 100, 50), "back");
-    private BackButton buttonBack = new BackButton(new Rectangle(10, 40, 100, 50), "back");
-    
     private TopologyHead top = new TopologyHead("Fake Data Format");
 	private Canvas canvas;
+
+    private BackButton backButton = new BackButton(new Rectangle(10, 40, 100, 50), "back");
+    private HighlightButton highlightButton;
+    
+
 
     public Window()
     {
         this.graphics = new GraphicsDeviceManager(this);
         base.Content.RootDirectory = "Content";
         base.IsMouseVisible = true;
+
+        this.highlightButton = new HighlightButton(this.top.GetCurrent().GetChildren()[0]);
     }
 
     protected override void Initialize()
@@ -52,7 +56,7 @@ public class Window : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        Selection.UpdateMouseInfo();
+        Selection.Update();
 
         if (Selection.LeftMouseJustReleased())
         {
@@ -65,7 +69,7 @@ public class Window : Game
             Component currComponent = this.top.GetCurrent();
             Console.WriteLine("Current component: {0}", currComponent.GetName());
 
-            if(Selection.CursorIsInside(this.buttonBack.GetRectangle()))
+            if(Selection.CursorIsInside(this.backButton.GetRectangle()))
             {
                 Console.WriteLine("BACK-BUTTON SELECTED");
                 this.top.GoBack();
@@ -97,6 +101,18 @@ public class Window : Game
             }
         }
 
+        if (Selection.componentGoRight)
+        {
+            if (this.highlightButton.GetComponent() == this.top.GetCurrent().GetChildren().Last())
+            {
+                this.highlightButton.SetComponent(this.top.GetCurrent().GetChildren().First());
+            }
+            else
+            {
+                // Hmm jag bör byta till indexering för HighlightButton!
+            }
+        }
+
         canvas.Update(Mouse.GetState(), Keyboard.GetState());
 
         base.Update(gameTime);
@@ -112,7 +128,10 @@ public class Window : Game
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
-        this.buttonBack.Draw(this.spriteBatch, this.font);
+        this.backButton.Draw(this.spriteBatch, this.font);
+
+        this.highlightButton.Draw(this.spriteBatch);
+
         this.spriteBatch.End();
         
         base.Draw(gameTime);

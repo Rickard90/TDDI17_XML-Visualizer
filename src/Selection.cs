@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,7 +11,15 @@ public static class Selection
     private static bool leftMouseJustReleased = false;
     private static Point mouseCursorPosition = new Point();
 
-    public static void UpdateMouseInfo()
+    public static bool componentGoRight = false;
+
+    public static void Update()
+    {
+        UpdateMouseInfo();
+        UpdateKeyInfo();
+    }
+
+    private static void UpdateMouseInfo()
     {
         MouseState mouseState = Mouse.GetState();
 
@@ -27,6 +36,18 @@ public static class Selection
         }
 
         leftMouseBeingPressed = pressed;
+    }
+
+    private static void UpdateKeyInfo()
+    {
+        if (Keyboard.GetState().IsKeyDown(Keys.D))
+        {
+            componentGoRight = true;
+        }
+        else
+        {
+            componentGoRight = false;
+        }
     }
 
     public static bool LeftMouseJustReleased()
