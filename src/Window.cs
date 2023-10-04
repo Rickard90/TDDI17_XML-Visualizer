@@ -110,8 +110,7 @@ public class Window : Game
         base.GraphicsDevice.Clear(Color.Gray);
         this.spriteBatch.Begin();
         this.canvas.Draw();
-        //this.top.Draw(this.spriteBatch, this.font);
-        this.buttonBack.Draw(this.spriteBatch, this.font);
+        //this.RenderTopology();
         this.spriteBatch.End();
         
         base.Draw(gameTime);
@@ -120,6 +119,10 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology()
     {
-        this.top.Draw(this.spriteBatch, this.font);
+        this.top.Draw(this.spriteBatch, this.font, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+        if(!top.IsHead())
+        {
+            this.buttonBack.Draw(this.spriteBatch, this.font);
+        }
     }
 }

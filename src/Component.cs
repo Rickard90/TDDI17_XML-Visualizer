@@ -46,10 +46,12 @@ public class Component
 	
 	//Virtual Functions:
 	public virtual string GetInfo() => "";
-	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFont font)
+	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFont font, int size)
 	{
+		this.width  = 5 * size/24;
+		this.height = 4 * size/24;
 		int lineThickness = 3;
-		int smallWidth  = this.width /6;
+		int smallWidth  = this.width/6;
 		int smallHeight = this.height/10; 
 		int innerHeight = this.height - 2*lineThickness;
 		int innerWidth  = 5 * smallWidth  - 2*lineThickness;
@@ -73,6 +75,8 @@ public class Component
 		//Draws out the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
+
+		this.width = this.height;
 	}
 
 	//Fields:
