@@ -13,7 +13,7 @@ public class Window : Game
     private SpriteFont font;
     //private Texture2D tex;
 
-    private Button buttonBack = new Button(new Rectangle(10, 40, 100, 50), "back");
+    private Button buttonBack = new(new Rectangle(10, 40, 100, 50), "back");
     
     private TopologyHead top; 
 	private Canvas canvas;
@@ -42,11 +42,13 @@ public class Window : Game
         this.font = Content.Load<SpriteFont>("Text");
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
         whitePixelTexture.SetData( new Color[] { Color.White });
-		
-		this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size);
-        this.canvas.renderFunction = this.RenderTopology;
-        
-		this.top = new TopologyHead("Fake Data Format");
+
+        this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size)
+        {
+            renderFunction = this.RenderTopology
+        };
+
+        this.top = new TopologyHead("Fake Data Format");
 		ComponentFinder.top = this.top;
     }
 
@@ -76,7 +78,7 @@ public class Window : Game
 						Console.WriteLine("Clicked component: {0} of type {1}", child.GetName(), child.type);
                         if(child.GetInfo() != "")
                         {
-                            Console.WriteLine("Clicked component info: \n {0}", child.GetInfo());
+                            Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
 						Console.WriteLine("Component children: {0}", child.GetChildren().Count);
 						

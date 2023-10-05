@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.Data;
 using System.IO;
 
-//namespace XML_Visualizer;
 class XmlReader {
 
     public XmlReader()
@@ -44,7 +43,7 @@ class XmlReader {
                         applications[^1].SetChildren(threads);
                     }
                 }else if (line == "</Computer>"){
-                    computers[^1].SetChildren(partitions);
+                    ((Computer)computers[^1]).SetChildren(partitions);
                 }else if (line == "</Partition>"){
                     partitions[^1].SetChildren(applications);
                 }
@@ -71,7 +70,7 @@ class XmlReader {
         int frequency = 0;
         try
         {
-            StreamReader applicationReader = new StreamReader(path + "/applications/"+applicationName+"/application.xml");
+            StreamReader applicationReader = new(path + "/applications/"+applicationName+"/application.xml");
             line = applicationReader.ReadLine();
             
             while (line != null)
@@ -89,7 +88,7 @@ class XmlReader {
                         if (!connections.ContainsKey(interf)) {
                             connections.Add(interf, new List<Port>());    
                         }
-                        connections[interf].Add((Port)ports[ports.Count-1]);
+                        connections[interf].Add((Port)ports[^1]);
                     }
                 }else if (line == "</Thread>"){
                     threads[index].SetChildren(ports);
@@ -109,7 +108,7 @@ class XmlReader {
    private void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
         string line;
         try {
-            StreamReader ResourcesReader = new StreamReader(path + "/applications/"+applicationName+"/resources.xml");
+            StreamReader ResourcesReader = new(path + "/applications/"+applicationName+"/resources.xml");
             line = ResourcesReader.ReadLine();
             while (line != null)
             {

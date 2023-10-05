@@ -48,7 +48,10 @@ public class Component
 			UpdatePorts(child);			
 		}
 	}
-	public virtual string GetInfo() => "";
+	public virtual string GetInfo()
+	{
+		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
+	}
 	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFont font, int size)
 	{
 		this.width  = 5 * size/24;
@@ -78,7 +81,6 @@ public class Component
 		//Draws out the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
-
 		this.width = this.height;
 	}
 	//Protected functions:
@@ -171,10 +173,6 @@ public class Application : Component
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
-	public override string GetInfo()
-	{
-		return ("ramSize = " + ramSize + ", initstack = " + initStack);
-	}
 	public override string type {get => "Application";}
 }
 
@@ -188,7 +186,7 @@ public class Thread : Component
 		this.frequency = frequency;
 		this.execTime   = execTime;
 		this.execStack  = execStack;
-		foreach(Port P in children)
+		foreach(Port P in children.Cast<Port>())
 		{
 				ports.Add(P.GetName());
 		}
@@ -208,6 +206,13 @@ public class Thread : Component
 	}
 
 	//Functions:
+	public void SetChildren(List<Port> newChildren)
+	{
+ 		foreach(Port c in newChildren) {
+			this.AddChild(c);
+			c.SetParent(this);
+		}
+	}
     public void SetFrequency(int frequency) => this.frequency = frequency;
 	protected override void UpdatePorts(Component port)
 	{					
