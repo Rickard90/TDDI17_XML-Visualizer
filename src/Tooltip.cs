@@ -1,20 +1,29 @@
+using System.Globalization;
 using Microsoft.Xna.Framework;
 
 class Tooltip
 {
     private const int fontSize = 11;
 
+
+    private static Component currentComponent = null;
+    public static Rectangle CurrentArea
+    {
+        get;
+        private set;
+    } = Rectangle.Empty;
+
     public static void SetTooltip(Component component, Point mousePosition)
     {
-        throw new NotImplementedException();
-
+        currentComponent = component;
+        if (component == null)
+            CurrentArea = Rectangle.Empty;
+        else
+            CurrentArea = new Rectangle(mousePosition, new Point(100,100));
+        
+        Console.WriteLine($"Tooltip area : {CurrentArea}");
     }
 
-    public static Rectangle CurrentArea()
-    {
-        throw new NotImplementedException();
-        return Rectangle.Empty;
-    }
 
 
     public readonly string[] text;
