@@ -8,13 +8,21 @@ using Microsoft.Xna.Framework.Input;
 partial class Canvas
 {
 
-    public delegate void RenderTopology();
+    public delegate void RenderTopology(Point canvasSize);
     public RenderTopology renderFunction = null;
 
     private Point windowSize;
     private GraphicsDevice graphicsDevice;
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
+
+    public Point WindowSize{
+        get{return windowSize;}
+        set{
+            this.windowSize = value;
+            this.UpdateTexture();
+        }
+    }
 
     public Canvas(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Point windowSize)
     {
@@ -45,21 +53,25 @@ partial class Canvas
             throw new Exception("Tried to render without a render function!");
 
 
-        RenderTarget2D renderTargetIsAOffScreenBuffer = new RenderTarget2D(graphicsDevice, this.windowSize.X, this.windowSize.Y, false, SurfaceFormat.Color, DepthFormat.None);
-
-        spriteBatch.Begin();
-            graphicsDevice.SetRenderTarget(renderTargetIsAOffScreenBuffer);
-            this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0, windowSize.X, windowSize.Y), Color.White);
-            this.renderFunction.Invoke();
-        spriteBatch.End();
-
-        using (MemoryStream stream = new())
+        using (RenderTarget2D renderTargetIsAOffScreenBuffer = new (graphicsDevice, this.windowSize.X, this.windowSize.Y, false, SurfaceFormat.Color, DepthFormat.None))
         {
-            renderTargetIsAOffScreenBuffer.SaveAsPng(stream, windowSize.X, windowSize.Y);
-            this.texture = Texture2D.FromStream(graphicsDevice, stream);
-        }
 
-        graphicsDevice.SetRenderTarget(null);
+            spriteBatch.Begin();
+                graphicsDevice.SetRenderTarget(renderTargetIsAOffScreenBuffer);
+                this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0, windowSize.X, windowSize.Y), Color.White);
+                this.renderFunction.Invoke(this.windowSize);
+            spriteBatch.End();
+            
+
+            this.texture?.Dispose();
+            using (MemoryStream stream = new())
+            {
+                renderTargetIsAOffScreenBuffer.SaveAsPng(stream, windowSize.X, windowSize.Y);
+                this.texture = Texture2D.FromStream(graphicsDevice, stream);
+            }
+
+            graphicsDevice.SetRenderTarget(null);
+        }
         
     }
 

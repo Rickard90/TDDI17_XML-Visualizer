@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.Data;
 using System.IO;
 
-//namespace XML_Visualizer;
 class XmlReader {
 
     public XmlReader()
@@ -13,10 +12,9 @@ class XmlReader {
     public ComponentsAndConnections ReadComponents(string path) {
         String line;
         List <Component> computers = new();
-        int activeThread = 0;
-        List <Component> partitions = new();
-        List <Component> applications = new();
-        List <Component> threads = new();
+        List <Partition> partitions = new();
+        List <Application> applications = new();
+        List <Thread> threads = new();
         Dictionary<string, List<Port>> connections = new();
         string applicationName;
         int ramSize = 0;
@@ -40,12 +38,12 @@ class XmlReader {
                         threads.Clear();
                         applicationName = (line.Split('\"')[1]);
                         ReadResourses(applicationName, threads, ref ramSize, ref initStack, path);
-                        connections = ReadApplication(applicationName, threads, activeThread, path);
+                        ReadApplication(applicationName, threads, path, connections);
                         applications.Add(new Application(applicationName, ramSize, initStack));
                         applications[^1].SetChildren(threads);
                     }
                 }else if (line == "</Computer>"){
-                    computers[^1].SetChildren(partitions);
+                    ((Computer)computers[^1]).SetChildren(partitions);
                 }else if (line == "</Partition>"){
                     partitions[^1].SetChildren(applications);
                 }
@@ -62,9 +60,8 @@ class XmlReader {
         return returnValue;
     }
 
-    Dictionary<string, List<Port>> ReadApplication(string applicationName, List<Component> threads, int activeThread, string path) {
-        Dictionary<string, List<Port>> connections = new Dictionary<string, List<Port>>();
-        List<Component> ports = new();
+    void ReadApplication(string applicationName, List<Thread> threads, string path, Dictionary<string, List<Port>> connections) {
+        List<Port> ports = new();
         String line;
         int index = 0;
         string name;
@@ -73,7 +70,6 @@ class XmlReader {
         int frequency = 0;
         try
         {
-            
             StreamReader applicationReader = new StreamReader(path + "/applications/"+applicationName+"/application.xml");
             line = applicationReader.ReadLine();
             
@@ -84,7 +80,6 @@ class XmlReader {
                     if (line.Split('\"')[0] == "<Thread name=" ) {
                         frequency = Int32.Parse(line.Split('\"')[3].Remove(line.Split('\"')[3].Length-2));
                         ((Thread)threads[index]).SetFrequency(frequency);
-                        index ++;
                     } else if (line.Split('\"')[0] =="<Port name=" ) {
                         name = (line.Split('\"')[1]);
                         interf = (line.Split('\"')[3]);
@@ -93,13 +88,12 @@ class XmlReader {
                         if (!connections.ContainsKey(interf)) {
                             connections.Add(interf, new List<Port>());    
                         }
-                        connections[interf].Add((Port)ports[ports.Count]);
+                        connections[interf].Add((Port)ports[^1]);
                     }
                 }else if (line == "</Thread>"){
-                    threads[activeThread].SetChildren(ports);
+                    threads[index].SetChildren(ports);
                     ports.Clear();
-                    index = 0;
-                    activeThread++;
+                    index ++;
                 }
                 line = applicationReader.ReadLine();
             }
@@ -107,12 +101,11 @@ class XmlReader {
         }
         catch (Exception)
         {
-            //Console.WriteLine("Exception: " + e.Message);
+           // Console.WriteLine("Exception: " + e.Message);
         }
-        return connections;
     }
 
-   private void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
+   private void ReadResourses(string applicationName, List<Thread> threads, ref int ramSize, ref int initStack, string path) {
         string line;
         try {
             StreamReader ResourcesReader = new StreamReader(path + "/applications/"+applicationName+"/resources.xml");

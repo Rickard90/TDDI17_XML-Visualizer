@@ -26,7 +26,17 @@ public class Window : Game
         base.IsMouseVisible = true;
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().GetChildren().First());
+        Window.AllowUserResizing = true;
+        Window.ClientSizeChanged += this.OnResize;
+        Window.AllowAltF4 = true;
     }
+
+    public void OnResize(Object sender, EventArgs e)
+    {
+        Console.WriteLine($"Window bounds = {base.Window.ClientBounds}");
+        this.canvas.WindowSize = base.Window.ClientBounds.Size;
+    }
+
 
     protected override void Initialize()
     {
@@ -78,12 +88,11 @@ public class Window : Game
                 foreach (Component child in currComponent.GetChildren())
                 {
                     //Console.WriteLine("child pos.x = {0}, child pos.y = {1}, child width = {2}, child height = {3}", rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-
                     if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
                     {
-                        if(child.GetInfo() != "")
+                        if (child.GetInfo() != "")
                         {
-                            Console.WriteLine("Clicked component info: \n {0}", child.GetInfo());
+                            Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
                         if(child.GetChildren().Count() > 0)
                         {
@@ -139,7 +148,7 @@ public class Window : Game
     }
 	
     //  this is the render function
-	private void RenderTopology()
+	private void RenderTopology(Point canvasSize)
     {
         this.top.Draw(this.spriteBatch, this.font);
     }
