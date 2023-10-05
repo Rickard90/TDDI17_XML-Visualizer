@@ -8,13 +8,21 @@ using Microsoft.Xna.Framework.Input;
 partial class Canvas
 {
 
-    public delegate void RenderTopology();
+    public delegate void RenderTopology(Point canvasSize);
     public RenderTopology renderFunction = null;
 
     private Point windowSize;
     private GraphicsDevice graphicsDevice;
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
+
+    public Point WindowSize{
+        get{return windowSize;}
+        set{
+            this.windowSize = value;
+            this.UpdateTexture();
+        }
+    }
 
     public Canvas(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Point windowSize)
     {
@@ -51,7 +59,7 @@ partial class Canvas
             spriteBatch.Begin();
                 graphicsDevice.SetRenderTarget(renderTargetIsAOffScreenBuffer);
                 this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0, windowSize.X, windowSize.Y), Color.White);
-                this.renderFunction.Invoke();
+                this.renderFunction.Invoke(this.windowSize);
             spriteBatch.End();
             
 

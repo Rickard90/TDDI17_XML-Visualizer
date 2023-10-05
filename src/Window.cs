@@ -24,7 +24,17 @@ public class Window : Game
         this.graphics = new GraphicsDeviceManager(this);
         base.Content.RootDirectory = "Content";
         base.IsMouseVisible = true;
+        Window.AllowUserResizing = true;
+        Window.ClientSizeChanged += this.OnResize;
+        Window.AllowAltF4 = true;
     }
+
+    public void OnResize(Object sender, EventArgs e)
+    {
+        Console.WriteLine($"Window bounds = {base.Window.ClientBounds}");
+        this.canvas.WindowSize = base.Window.ClientBounds.Size;
+    }
+
 
     protected override void Initialize()
     {
@@ -117,7 +127,7 @@ public class Window : Game
     }
 	
     //  this is the render function
-	private void RenderTopology()
+	private void RenderTopology(Point canvasSize)
     {
         this.top.Draw(this.spriteBatch, this.font, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
         if(!top.IsHead())
