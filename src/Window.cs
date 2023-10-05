@@ -113,11 +113,8 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        base.GraphicsDevice.Clear(Color.White);
-
+        //base.GraphicsDevice.Clear(Color.White);
         this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
-
-        //base.GraphicsDevice.Clear(Color.Gray);
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.RenderTopology();
@@ -129,7 +126,7 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        this.top.Draw(this.spriteBatch, this.font, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+        this.top.Draw(this.spriteBatch, this.font, canvasSize.X, canvasSize.Y);
         if(!top.IsHead())
         {
             this.buttonBack.Draw(this.spriteBatch, this.font);
