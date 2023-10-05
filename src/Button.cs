@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -17,16 +18,20 @@ abstract class Button
 		return this.rectangle;
 	}
 
+    public Rectangle SetRectangle(Rectangle rectangle)
+	{
+		return this.rectangle = rectangle;
+	}
+
     // Idea: Different types of buttons have different actions
     //public abstract void DoAction();
 }
 
-class HighlightButton : Button
+class HighlightButton
 {
-    private Component component;
+    public Component component;
 
     public HighlightButton(Component component)
-    :   base(component.GetRectangle())
     {
         this.component = component;
     }
@@ -36,32 +41,20 @@ class HighlightButton : Button
         Color color = Color.Red;
         int lineWidth = 3;
 
-        Rectangle copy = new Rectangle(base.rectangle.X, base.rectangle.Y, base.rectangle.Width, base.rectangle.Height);
-        base.rectangle = Canvas.Camera.ModifiedDrawArea(base.rectangle);
+        Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.component.GetRectangle());
 
         // Draw top side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(base.rectangle.X, base.rectangle.Y, base.rectangle.Width, lineWidth), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, lineWidth), color);
         // Draw left side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(base.rectangle.X, base.rectangle.Y, lineWidth, base.rectangle.Height), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height), color);
         // Draw right side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(base.rectangle.X + base.rectangle.Width, base.rectangle.Y, lineWidth, base.rectangle.Height), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width, rectangle.Y, lineWidth, rectangle.Height), color);
         // Draw bottom side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(base.rectangle.X, base.rectangle.Y + base.rectangle.Height, base.rectangle.Width, lineWidth), color);
-
-        base.rectangle = new Rectangle(copy.X, copy.Y, copy.Width, copy.Height);
-    }
-
-    public void SetComponent(Component component)
-    {
-        this.component = component;
-    }
-
-    public Component GetComponent()
-    {
-        return this.component;
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height, rectangle.Width, lineWidth), color);
     }
 }
 
+/*
 class ComponentButton : Button
 {
     // Reference to a component
@@ -73,6 +66,7 @@ class ComponentButton : Button
         this.component = component;
     }
 }
+*/
 
 class BackButton : Button
 {

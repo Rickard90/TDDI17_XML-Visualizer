@@ -19,15 +19,13 @@ public class Window : Game
     private BackButton backButton = new BackButton(new Rectangle(10, 40, 100, 50), "back");
     private HighlightButton highlightButton;
     
-
-
     public Window()
     {
         this.graphics = new GraphicsDeviceManager(this);
         base.Content.RootDirectory = "Content";
         base.IsMouseVisible = true;
 
-        this.highlightButton = new HighlightButton(this.top.GetCurrent().GetChildren()[0]);
+        this.highlightButton = new HighlightButton(this.top.GetCurrent().GetChildren().First());
     }
 
     protected override void Initialize()
@@ -73,6 +71,7 @@ public class Window : Game
             {
                 Console.WriteLine("BACK-BUTTON SELECTED");
                 this.top.GoBack();
+                this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
             }
             else
             {
@@ -86,9 +85,10 @@ public class Window : Game
                         {
                             Console.WriteLine("Clicked component info: \n {0}", child.GetInfo());
                         }
-                        if(child.GetChildren().Count()	> 0)
+                        if(child.GetChildren().Count() > 0)
                         {
                             this.top.Goto(child);
+                            this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
                             Console.WriteLine("BREAK");
                         }
                         else
@@ -103,13 +103,14 @@ public class Window : Game
 
         if (Selection.componentGoRight)
         {
-            if (this.highlightButton.GetComponent() == this.top.GetCurrent().GetChildren().Last())
+            List<Component> children = this.top.GetCurrent().GetChildren();
+            if (this.highlightButton.component == children.Last())
             {
-                this.highlightButton.SetComponent(this.top.GetCurrent().GetChildren().First());
+                this.highlightButton.component = children.First();
             }
             else
             {
-                // Hmm jag bör byta till indexering för HighlightButton!
+                this.highlightButton.component = children[children.IndexOf(this.highlightButton.component) + 1];
             }
         }
 
