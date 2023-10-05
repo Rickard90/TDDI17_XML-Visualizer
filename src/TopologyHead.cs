@@ -9,21 +9,41 @@ public class TopologyHead
 {
 	public TopologyHead(string folderName)
 	{
-        this.head = new Component();
-		this.path = new List<Component>{this.head};
-
         //Filereader:
 		XmlReader fileRead = new();
-        this.path.Last().SetChildren(fileRead.ReadComponents(folderName).components);
+		XmlReader.ComponentsAndConnections cAC = fileRead.ReadComponents(folderName);
+		
+		//The following bit is only for diagnostic purposes:
+		int counter = 0;
+		Console.WriteLine("TopologyHead Constructing\nNumber of connections: {0}", cAC.connections.Count);
+		foreach(var connection in cAC.connections)
+		{
+			Console.WriteLine("Connection:");
+			Console.WriteLine("Component: {0}", connection.Key);
+			
+			foreach(var port in connection.Value)
+			{
+				counter++;
+				Console.WriteLine("Port {0}: {1}", counter, port.GetName());
+			}
+        }
+		//Diagnostic parapgraph done, regular code resumes:
+		
+		this.head = new Component("Top", cAC.components);
+		this.path = new List<Component>{this.head};
 	}
 
-    public void Draw(SpriteBatch sb, SpriteFont font)
+    public void Draw(SpriteBatch sb, SpriteFont font, int width, int height)
     {
         int count = 0;
+        if(width < 480)
+        {
+            width = 480;
+        }
         //The following three variables serve to decide edge and spacing layout:
-        int startX = 50;
-        int startY = 100;
-        int spacing = 125;
+        int startX  = width/24;
+        int startY  = 100;
+        int spacing = width/24;
 
         Point pos = new(startX, startY);
 
@@ -42,19 +62,23 @@ public class TopologyHead
 
         foreach(Component C in path.Last().GetChildren())
         {
-            C.Draw(pos, sb, font);
+            C.Draw(pos, sb, font, width);
             count++;
             if(count < 3)
             {
-                pos.X += C.GetRectangle().Width + spacing;
+                pos.X += C.GetRectangle().Width + 4*spacing;
             }
             else
             {
                 count = 0;
                 pos.X = startX;
-                pos.Y += C.GetRectangle().Height + spacing/6;
+                pos.Y += C.GetRectangle().Height + 2*spacing;
             }
         }
+    }
+    public bool IsHead()
+    {
+        return this.head == this.path.Last();
     }
 	public void GoBack()
 	{
@@ -85,5 +109,5 @@ public class TopologyHead
 
 
 	private List<Component> path = new();
-	private Component head = new();
+	private readonly Component head = new();
 }

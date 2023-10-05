@@ -12,9 +12,9 @@ class XmlReader {
     public ComponentsAndConnections ReadComponents(string path) {
         String line;
         List <Component> computers = new();
-        List <Partition> partitions = new();
-        List <Application> applications = new();
-        List <Thread> threads = new();
+        List <Component> partitions = new();
+        List <Component> applications = new();
+        List <Component> threads = new();
         Dictionary<string, List<Port>> connections = new();
         string applicationName;
         int ramSize = 0;
@@ -60,8 +60,8 @@ class XmlReader {
         return returnValue;
     }
 
-    void ReadApplication(string applicationName, List<Thread> threads, string path, Dictionary<string, List<Port>> connections) {
-        List<Port> ports = new();
+    void ReadApplication(string applicationName, List<Component> threads, string path, Dictionary<string, List<Port>> connections) {
+        List<Component> ports = new();
         String line;
         int index = 0;
         string name;
@@ -70,7 +70,7 @@ class XmlReader {
         int frequency = 0;
         try
         {
-            StreamReader applicationReader = new StreamReader(path + "/applications/"+applicationName+"/application.xml");
+            StreamReader applicationReader = new(path + "/applications/"+applicationName+"/application.xml");
             line = applicationReader.ReadLine();
             
             while (line != null)
@@ -105,10 +105,10 @@ class XmlReader {
         }
     }
 
-   private void ReadResourses(string applicationName, List<Thread> threads, ref int ramSize, ref int initStack, string path) {
+   private void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
         string line;
         try {
-            StreamReader ResourcesReader = new StreamReader(path + "/applications/"+applicationName+"/resources.xml");
+            StreamReader ResourcesReader = new(path + "/applications/"+applicationName+"/resources.xml");
             line = ResourcesReader.ReadLine();
             while (line != null)
             {
