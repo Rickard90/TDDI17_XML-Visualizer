@@ -73,47 +73,13 @@ public class Window : Game
             Exit();
 
         Selection.Update();
-
-        if (Selection.LeftMouseJustReleased())
+        if (Selection.LeftMouseJustReleased() && Selection.CursorIsInside(this.backButton.GetRectangle()))
         {
-            Point cursorPosition = Selection.MouseCursorPosition();
-            Component currComponent = this.top.GetCurrent();
-
-            if(Selection.CursorIsInside(this.backButton.GetRectangle()))
-            {
-                Console.WriteLine("BACK-BUTTON SELECTED");
-                this.top.GoBack();
-                this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
-            }
-            else
-            {
-                foreach (Component child in currComponent.GetChildren())
-                {
-                    if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
-                    {
-						Console.WriteLine("Clicked component: {0} of type {1}", child.GetName(), child.type);
-                        if(child.GetInfo() != "")
-                        {
-                            Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
-                        }
-    					//Console.WriteLine("Component children: {0}", child.GetChildren().Count);
-						if(child.GetChildren().Count() > 0) //&& child.type != "Thread")
-                        {
-                            this.top.Goto(child);
-                            this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
-                            Console.WriteLine("BREAK");
-						}
-                        else
-                        {
-                            //Console.WriteLine("Lowest level already reached");
-                        }
-                        break;
-                    }
-                }
-            }
+            Console.WriteLine("BACK-BUTTON SELECTED");
+            this.top.GoBack();
+            this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
         }
-
-        if (Selection.componentGoRight)
+        else if (Selection.componentGoRight)
         {
             List<Component> children = this.top.GetCurrent().GetChildren();
             if (this.highlightButton.component == children.Last())
@@ -123,6 +89,49 @@ public class Window : Game
             else
             {
                 this.highlightButton.component = children[children.IndexOf(this.highlightButton.component) + 1];
+            }
+        }
+        else
+        {
+            Component currComponent = this.top.GetCurrent();
+            bool drawTooltip = false;
+            foreach (Component child in currComponent.GetChildren())
+            {
+                if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
+                {
+                    if (Selection.LeftMouseJustReleased())
+                    {
+
+                        Console.WriteLine("Clicked component: {0} of type {1}", child.GetName(), child.type);
+                        if(child.GetInfo() != "")
+                        {
+                            Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
+                        }
+                        //Console.WriteLine("Component children: {0}", child.GetChildren().Count);
+                        if(child.GetChildren().Count() > 0) //&& child.type != "Thread")
+                        {
+                            this.top.Goto(child);
+                            this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
+                            Console.WriteLine("BREAK");
+                        }
+                        else
+                        {
+                            //Console.WriteLine("Lowest level already reached");
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        // Rita tooltip
+                        Tooltip.SetTooltip(child, Selection.MouseCursorPosition());
+                        drawTooltip = true;
+                        break;
+                    }
+                }
+            }
+            if (!drawTooltip)
+            {
+                Tooltip.SetTooltip(null, Selection.MouseCursorPosition());
             }
         }
 
