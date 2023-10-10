@@ -76,8 +76,7 @@ public class Window : Game
 
         if (Selection.LeftMouseJustReleased())
         {
-            Point cursorPosition = Selection.MouseCursorPosition();
-            Component currComponent = this.top.GetCurrent();
+            //Component currComponent = this.top.GetCurrent();
 
             if(Selection.CursorIsInside(this.backButton.GetRectangle()))
             {
@@ -87,20 +86,26 @@ public class Window : Game
             }
             else
             {
-                foreach (Component child in currComponent.GetChildren())
+                foreach (Component child in this.top.GetCurrent().GetChildren())
                 {
                     if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
                     {
-						Console.WriteLine("Clicked component: {0} of type {1}", child.GetName(), child.type);
                         if(child.GetInfo() != "")
                         {
                             Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
-    					//Console.WriteLine("Component children: {0}", child.GetChildren().Count);
-						if(child.GetChildren().Count() > 0) //&& child.type != "Thread")
+                        Console.WriteLine("Component children: {0}", child.GetChildren().Count);
+						if(child.type != "Thread") //child.GetChildren().Count() > 0)
                         {
                             this.top.Goto(child);
-                            this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
+                            if (child.GetChildren().Count == 0)
+                            {
+                                this.highlightButton.component = null;
+                            }
+                            else
+                            {
+                                this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
+                            }
                             Console.WriteLine("BREAK");
 						}
                         else

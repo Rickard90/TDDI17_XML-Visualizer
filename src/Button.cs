@@ -38,6 +38,11 @@ class HighlightButton
 
     public void Draw(SpriteBatch sb)
     {
+        if (this.component == null)
+        {
+            return;
+        }
+
         Color color = Color.Red;
         int lineWidth = 3;
 
