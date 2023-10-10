@@ -143,8 +143,8 @@ public class Window : Game
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
-        this.backButton.Draw(this.spriteBatch, this.font);
         this.highlightButton.Draw(this.spriteBatch);
+        this.backButton.Draw(this.spriteBatch, this.font);
 
         //this.RenderTopology();
         this.spriteBatch.End();
