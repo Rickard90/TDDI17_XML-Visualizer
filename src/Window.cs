@@ -78,7 +78,7 @@ public class Window : Game
         {
             //Component currComponent = this.top.GetCurrent();
 
-            if(Selection.CursorIsInside(this.backButton.GetRectangle()))
+            if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.GetRectangle())))
             {
                 Console.WriteLine("BACK-BUTTON SELECTED");
                 this.top.GoBack();
