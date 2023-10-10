@@ -18,9 +18,11 @@ public class Window : Game
 
     private BackButton backButton;
     private HighlightButton highlightButton;
+    private string path;
     
-    public Window()
+    public Window(string path)
     {
+        this.path = path;
 		Console.WriteLine("Window constructing");
         this.graphics = new GraphicsDeviceManager(this);
         base.Content.RootDirectory = "Content";
@@ -60,7 +62,7 @@ public class Window : Game
             renderFunction = this.RenderTopology
         };
 
-        this.top = new TopologyHead("Fake Data Format");
+        this.top = new TopologyHead(path);
 		ComponentFinder.top = this.top;
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().GetChildren().First());
