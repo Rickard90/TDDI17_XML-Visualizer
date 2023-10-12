@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FontStashSharp;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -10,7 +11,7 @@ public class Window : Game
 
     private GraphicsDeviceManager graphics;
     private SpriteBatch spriteBatch;
-    private SpriteFont font;
+    private FontSystem fontSystem;
     //private Texture2D tex;
 
     private TopologyHead top; 
@@ -18,9 +19,11 @@ public class Window : Game
 
     private BackButton backButton;
     private HighlightButton highlightButton;
+    private string path;
     
-    public Window()
+    public Window(string path)
     {
+        this.path = path;
 		Console.WriteLine("Window constructing");
         this.graphics = new GraphicsDeviceManager(this);
         base.Content.RootDirectory = "Content";
@@ -51,7 +54,8 @@ public class Window : Game
 		Console.WriteLine("Loading Content");
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        this.font = Content.Load<SpriteFont>("Text");
+        this.fontSystem = new();
+        this.fontSystem.AddFont(File.ReadAllBytes("resource/font/arial.ttf"));
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
         whitePixelTexture.SetData( new Color[] { Color.White });
 
@@ -60,7 +64,7 @@ public class Window : Game
             renderFunction = this.RenderTopology
         };
 
-        this.top = new TopologyHead("Fake Data Format");
+        this.top = new TopologyHead(path);
 		ComponentFinder.top = this.top;
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().GetChildren().First());
@@ -75,9 +79,46 @@ public class Window : Game
         Selection.Update();
         if (Selection.LeftMouseJustReleased() && Selection.CursorIsInside(this.backButton.GetRectangle()))
         {
-            Console.WriteLine("BACK-BUTTON SELECTED");
-            this.top.GoBack();
-            this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
+            //Component currComponent = this.top.GetCurrent();
+
+            if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.GetRectangle())))
+            {
+                Console.WriteLine("BACK-BUTTON SELECTED");
+                this.top.GoBack();
+                this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
+            }
+            else
+            {
+                foreach (Component child in this.top.GetCurrent().GetChildren())
+                {
+                    if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
+                    {
+                        if(child.GetInfo() != "")
+                        {
+                            Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
+                        }
+                        Console.WriteLine("Component children: {0}", child.GetChildren().Count);
+						if(child.type != "Thread") //child.GetChildren().Count() > 0)
+                        {
+                            this.top.Goto(child);
+                            if (child.GetChildren().Count == 0)
+                            {
+                                this.highlightButton.component = null;
+                            }
+                            else
+                            {
+                                this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
+                            }
+                            Console.WriteLine("BREAK");
+						}
+                        else
+                        {
+                            //Console.WriteLine("Lowest level already reached");
+                        }
+                        break;
+                    }
+                }
+            }
         }
         else if (Selection.componentGoRight)
         {
@@ -147,7 +188,7 @@ public class Window : Game
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
-        this.backButton.Draw(this.spriteBatch, this.font);
+        this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
         this.highlightButton.Draw(this.spriteBatch);
 
         //this.RenderTopology();
@@ -159,7 +200,7 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        this.top.Draw(this.spriteBatch, this.font, canvasSize.X, canvasSize.Y);
+        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(16), canvasSize.X, canvasSize.Y);
         if(!top.IsHead())
         {
             //this.backButton.Draw(this.spriteBatch, this.font);

@@ -1,4 +1,5 @@
 using System.Globalization;
+using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -38,6 +39,11 @@ class HighlightButton
 
     public void Draw(SpriteBatch sb)
     {
+        if (this.component == null)
+        {
+            return;
+        }
+
         Color color = Color.Red;
         int lineWidth = 3;
 
@@ -78,9 +84,10 @@ class BackButton : Button
         this.description = description;
     }
 
-    public void Draw(SpriteBatch sb, SpriteFont font)
+    public void Draw(SpriteBatch sb, SpriteFontBase font)
     {
-        sb.Draw(Window.whitePixelTexture, this.rectangle, Color.Black);
-        sb.DrawString(font, this.description, new Vector2(this.rectangle.X + 10, this.rectangle.Y + 10), Color.White);
+        Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(this.rectangle);
+        sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Black);
+        sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);
     }
 }
