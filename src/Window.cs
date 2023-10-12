@@ -69,6 +69,8 @@ public class Window : Game
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().GetChildren().First());
         this.backButton = new BackButton(new Rectangle(10, 40, 100, 50), "back");
+
+        Tooltip.spriteBatch = this.spriteBatch;
     }
 
     protected override void Update(GameTime gameTime)
@@ -164,7 +166,7 @@ public class Window : Game
                     else
                     {
                         // Rita tooltip
-                        Tooltip.SetTooltip(child, Selection.MouseCursorPosition());
+                        Tooltip.SetTooltip(child, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
                         drawTooltip = true;
                         break;
                     }
@@ -172,7 +174,7 @@ public class Window : Game
             }
             if (!drawTooltip)
             {
-                Tooltip.SetTooltip(null, Selection.MouseCursorPosition());
+                Tooltip.SetTooltip(null, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
             }
         }
 
@@ -190,6 +192,8 @@ public class Window : Game
         //this.top.Draw(this.spriteBatch, this.font);
         this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
         this.highlightButton.Draw(this.spriteBatch);
+
+        Tooltip.DrawCurrent();
 
         //this.RenderTopology();
         this.spriteBatch.End();
