@@ -164,7 +164,7 @@ public class Window : Game
                     else
                     {
                         // Rita tooltip
-                        Tooltip.SetTooltip(child, Selection.MouseCursorPosition());
+                        Tooltip.SetTooltip(child, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
                         drawTooltip = true;
                         break;
                     }
@@ -172,7 +172,7 @@ public class Window : Game
             }
             if (!drawTooltip)
             {
-                Tooltip.SetTooltip(null, Selection.MouseCursorPosition());
+                Tooltip.SetTooltip(null, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
             }
         }
 
