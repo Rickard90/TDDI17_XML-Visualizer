@@ -8,7 +8,7 @@ class main {
         }
         else
         {
-            Console.WriteLine("You did not enter a file. using file Fake Data Format");
+            Console.WriteLine("You did not enter a file. \nUsing default file: Fake Data Format");
             fileName = "Fake Data Format";
         }
         using var window = new Window(fileName);
