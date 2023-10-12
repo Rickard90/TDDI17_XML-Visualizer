@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FontStashSharp;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -10,7 +11,7 @@ public class Window : Game
 
     private GraphicsDeviceManager graphics;
     private SpriteBatch spriteBatch;
-    private SpriteFont font;
+    private FontSystem fontSystem;
     //private Texture2D tex;
 
     private TopologyHead top; 
@@ -51,7 +52,8 @@ public class Window : Game
 		Console.WriteLine("Loading Content");
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        this.font = Content.Load<SpriteFont>("Text");
+        this.fontSystem = new();
+        this.fontSystem.AddFont(File.ReadAllBytes("resource/font/arial.ttf"));
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
         whitePixelTexture.SetData( new Color[] { Color.White });
 
@@ -143,7 +145,7 @@ public class Window : Game
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
-        this.backButton.Draw(this.spriteBatch, this.font);
+        this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
         this.highlightButton.Draw(this.spriteBatch);
 
         //this.RenderTopology();
@@ -155,7 +157,7 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        this.top.Draw(this.spriteBatch, this.font, canvasSize.X, canvasSize.Y);
+        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(16), canvasSize.X, canvasSize.Y);
         if(!top.IsHead())
         {
             //this.backButton.Draw(this.spriteBatch, this.font);

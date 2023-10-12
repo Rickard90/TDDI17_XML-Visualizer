@@ -3,6 +3,7 @@
 using System.Linq.Expressions;
 using System.Net.Mime;
 using System.Reflection.Metadata.Ecma335;
+using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -52,7 +53,7 @@ public class Component
 	{
 		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
 	}
-	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFont font, int size)
+	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int size)
 	{
 		this.width  = 5 * size/24;
 		this.height = 4 * size/24;

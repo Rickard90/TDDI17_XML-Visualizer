@@ -1,4 +1,5 @@
 using System.Globalization;
+using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -83,7 +84,7 @@ class BackButton : Button
         this.description = description;
     }
 
-    public void Draw(SpriteBatch sb, SpriteFont font)
+    public void Draw(SpriteBatch sb, SpriteFontBase font)
     {
         sb.Draw(Window.whitePixelTexture, this.rectangle, Color.Black);
         sb.DrawString(font, this.description, new Vector2(this.rectangle.X + 10, this.rectangle.Y + 10), Color.White);
