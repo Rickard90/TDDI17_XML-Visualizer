@@ -1,4 +1,5 @@
 using System.Globalization;
+using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -16,34 +17,48 @@ class Tooltip
     private static readonly Color fillColor = Color.DarkGray;
 
 
-    private static Component currentComponent = null;
+    private static readonly Dictionary<Component,Tooltip> toolTipDict = new();
+
+
+    private static Tooltip currentTooltip = null;
     public static Rectangle CurrentArea
     {
         get;
         private set;
     } = Rectangle.Empty;
 
-    public static void SetTooltip(Component component, Point mousePosition)
+    public static void SetTooltip(Component component, Point mousePosition, SpriteFontBase font)
     {
-        currentComponent = component;
         if (component == null)
             CurrentArea = Rectangle.Empty;
         else
-            CurrentArea = new Rectangle(mousePosition, new Point(100,100));
+        {
+            currentTooltip = toolTipDict[component];
+            if (currentTooltip == null)
+            {
+                currentTooltip = new Tooltip(mousePosition, component, font);
+                toolTipDict.Add(component,currentTooltip);
+            }
+            CurrentArea = currentTooltip.DrawArea;
+        }
         
         Console.WriteLine($"Tooltip area : {CurrentArea}");
     }
+    public static void DrawCurrent()
+    {
+        currentTooltip.Draw();
+    }
+
 
     public readonly string[] text;
     public Rectangle DrawArea{get { return new Rectangle(position, size);}}
     public Point position;
     private readonly Point size;
-    private readonly SpriteFont font;
-    
 
-    public Tooltip(Component component, SpriteFont font)
+
+    private Tooltip(Point drawPoint, Component component, SpriteFontBase font)
     {
-        this.font = font;
+        this.position = drawPoint;
         //  the font is have a constant size, monogame is to blame
         //font.MeasureString("text");
 
@@ -66,6 +81,7 @@ class Tooltip
 
         int height = this.CalculateHeight(result);
         int width = this.CalculateWidth(result);
+        this.size = new Point(width, height);
 
         //
         //  v fix text texture here v
@@ -77,8 +93,9 @@ class Tooltip
 
     }
 
-    public void Draw()
+    private void Draw()
     {
+
     }
 
 
