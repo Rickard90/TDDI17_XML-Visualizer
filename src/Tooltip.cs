@@ -8,7 +8,7 @@ class Tooltip
     private const int outlinePxSize = 4;
     private const int outlineTextBufferPxSize = 2; 
 
-    private static readonly Color outlineColor = Color.Azure;
+    private static readonly Color outlineColor = Color.Red;
     private static readonly Color fillColor = Color.DarkGray;
 
     private static readonly Dictionary<Component,Tooltip> toolTipDict = new();
@@ -25,7 +25,10 @@ class Tooltip
     public static void SetTooltip(Component component, Point mousePosition, SpriteFontBase font)
     {
         if (component == null)
+        {
             CurrentArea = Rectangle.Empty;
+            currentTooltip = null;
+        }
         else
         {
             
@@ -37,6 +40,7 @@ class Tooltip
             else
             {
                 currentTooltip = toolTipDict[component];
+                currentTooltip.position = mousePosition;
             }
             CurrentArea = currentTooltip.DrawArea;
         }
@@ -90,12 +94,12 @@ class Tooltip
         // Draw inner box
         modifiedArea.X += outlinePxSize;
         modifiedArea.Y += outlinePxSize;
-        modifiedArea.Width -= outlinePxSize;
-        modifiedArea.Height -= outlinePxSize;
+        modifiedArea.Width -= outlinePxSize * 2;
+        modifiedArea.Height -= outlinePxSize * 2;
         spriteBatch.Draw(Window.whitePixelTexture, modifiedArea, Tooltip.fillColor);
 
         // Draw text
-        spriteBatch.DrawString(this.font, this.text, new Vector2(CurrentArea.X + outlineTextBufferPxSize, CurrentArea.Y + outlineTextBufferPxSize), Color.Black);
+        spriteBatch.DrawString(this.font, this.text, new Vector2(CurrentArea.X + outlineTextBufferPxSize + outlinePxSize, CurrentArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black);
     }
 
     private Point CalculateSize()
