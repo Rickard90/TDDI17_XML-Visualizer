@@ -54,11 +54,12 @@ class Tooltip
     public Rectangle DrawArea{get { return new Rectangle(position, size);}}
     public Point position;
     private readonly Point size;
-
+    private readonly SpriteFontBase font;
 
     private Tooltip(Point drawPoint, Component component, SpriteFontBase font)
     {
         this.position = drawPoint;
+        this.font = font;
         //  the font is have a constant size, monogame is to blame
         //font.MeasureString("text");
 
@@ -87,14 +88,23 @@ class Tooltip
         //  v fix text texture here v
         //
 
+
+
         //
         //  ^ --------------------- ^
         //
 
     }
 
-    private void Draw()
+    private void Draw(SpriteBatch sb)
     {
+        Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(this.DrawArea);
+        // Draw outline
+        sb.Draw(Window.whitePixelTexture, modifiedArea, Tooltip.outlineColor);
+        // Draw inner box
+
+        // Draw text
+        sb.DrawString(this.font, this.text, new Vector2(CurrentArea.X + outlineTextBufferPxSize, CurrentArea.Y + outlineTextBufferPxSize), Color.Black);
 
     }
 

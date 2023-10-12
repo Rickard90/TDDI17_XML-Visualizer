@@ -77,7 +77,7 @@ public class Window : Game
             Exit();
 
         Selection.Update();
-        if (Selection.LeftMouseJustReleased() && Selection.CursorIsInside(this.backButton.GetRectangle()))
+        if (Selection.LeftMouseJustReleased()) // && Selection.CursorIsInside(this.backButton.GetRectangle()))
         {
             //Component currComponent = this.top.GetCurrent();
 
