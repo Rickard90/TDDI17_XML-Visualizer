@@ -52,6 +52,10 @@ public class Component
 	}
 	public virtual string GetInfo()
 	{
+		Console.WriteLine("******" + this.GetName());
+		foreach(Component test in connections){
+			Console.WriteLine("........" + test.GetName());
+		}
 		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
 	}
 	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFont font, int size)
@@ -229,6 +233,10 @@ public class Thread : Component
 	
     public override string GetInfo()
 	{
+		Console.WriteLine("******" + this.GetName());
+		foreach(Component test in connections){
+			Console.WriteLine("........" + test.GetName());
+		}
 		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
 	}
 
