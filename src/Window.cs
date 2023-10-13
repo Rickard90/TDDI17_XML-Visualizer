@@ -193,11 +193,12 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        //base.GraphicsDevice.Clear(Color.White);
+        
         if (updateCanvas) {
             this.canvas.UpdateTexture();  // only updated if needed
         }
         updateCanvas = false;
+        base.GraphicsDevice.Clear(Color.Black);
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
