@@ -21,6 +21,7 @@ public class Window : Game
     private BackButton backButton;
     private HighlightButton highlightButton;
     private string path;
+    private bool updateCanvas = true;
     
     public Window(string path)
     {
@@ -88,6 +89,7 @@ public class Window : Game
 
             if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.GetRectangle())))
             {
+                updateCanvas = true;
                 Console.WriteLine("BACK-BUTTON SELECTED");
                 this.top.GoBack();
                 this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
@@ -98,6 +100,7 @@ public class Window : Game
                 {
                     if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
                     {
+                        updateCanvas = true;
                         if(child.GetInfo() != "")
                         {
                             Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
@@ -127,6 +130,7 @@ public class Window : Game
         }
         else if (Selection.componentGoRight)
         {
+            updateCanvas = true;
             List<Component> children = this.top.GetCurrent().GetChildren();
             if (this.highlightButton.component == children.Last())
             {
@@ -145,6 +149,7 @@ public class Window : Game
             {
                 if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
                 {
+                    updateCanvas = true;
                     if (Selection.LeftMouseJustReleased())
                     {
 
@@ -189,7 +194,10 @@ public class Window : Game
     protected override void Draw(GameTime gameTime)
     {
         //base.GraphicsDevice.Clear(Color.White);
-        this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
+        if (updateCanvas) {
+            this.canvas.UpdateTexture();  // only updated if needed
+        }
+        updateCanvas = false;
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
@@ -200,7 +208,6 @@ public class Window : Game
 
         //This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate. Needs an update if you want more controlled rotation
         spriteBatch.Draw(arrowhead, new Rectangle(50, 350, 50, 50), null, Color.White, (float)(Math.PI/2.0), Vector2.Zero, SpriteEffects.None, 1.0f);
-        
         
         //this.RenderTopology();
         this.spriteBatch.End();
