@@ -103,7 +103,7 @@ public class Window : Game
                             Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
                         Console.WriteLine("Component children: {0}", child.GetChildren().Count);
-						if(child.type != "Thread") //child.GetChildren().Count() > 0)
+						if(child.type != "Thread" && child.GetChildren().Count() > 0)
                         {
                             this.top.Goto(child);
                             if (child.GetChildren().Count == 0)
@@ -199,7 +199,7 @@ public class Window : Game
         Tooltip.DrawCurrent();
 
         //This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate. Needs an update if you want more controlled rotation
-        spriteBatch.Draw(arrowhead, new Rectangle(50, 50, 50, 50), null, Color.White, (float)1.5708, Vector2.Zero, SpriteEffects.None, 1.0f);
+        spriteBatch.Draw(arrowhead, new Rectangle(50, 350, 50, 50), null, Color.White, (float)(Math.PI/2.0), Vector2.Zero, SpriteEffects.None, 1.0f);
         
         
         //this.RenderTopology();

@@ -48,7 +48,6 @@ public class Component
 			this.AddChild(child);
 			child.SetParent(this);
 			UpdateStats(child);
-			UpdateConnections(child);			
 		}
 	}
 	public virtual string GetInfo()
@@ -81,10 +80,10 @@ public class Component
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
 		
 
-		if(name.Length > 6)
-		{
-			name = name[..6];
-		}
+		// if(name.Length > 6)
+		// {
+		// 	name = name[..6];
+		// }
 		//Draws out the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
@@ -99,12 +98,12 @@ public class Component
 		this.initStack += child.initStack;
 		this.frequency += child.frequency;
 	}
-	protected virtual void UpdateConnections(Component child)
+	protected virtual void UpdateConnections(Component child) //Not used atm, probably not needed
 	{
 		foreach(Component connection in child.connections) {
 			if(this.connections.Contains(connection.parent))	//If the connection is only internal it is not needed for higher up components
 			{
-				//this.connections.Remove(connection.parent);
+				this.connections.Remove(connection.parent);
 			}
 			else
 			{
@@ -115,7 +114,9 @@ public class Component
 
 	public virtual void UpdateParentConnections(HashSet<Component> newConnections){
 		foreach(var connection in newConnections) {
-			this.connections.Add(connection.parent);
+			if (!this.connections.Contains(connection)) {
+				this.connections.Add(connection.GetParent());
+			}
 		}
 		this.parent.UpdateParentConnections(connections);
 	}
@@ -131,7 +132,6 @@ public class Component
 	protected			Point				position		= new(0,0);
     protected 			Component 			parent 			= null;
 	protected 		 	List<Component> 	children		= new();
-	//protected 		 	List<Component>		myConnections	= new();
 	public	 			HashSet<Component> 	connections		= new();
 	
 	//Info:
@@ -155,6 +155,11 @@ public class Computer : Component
 		
 	}
 	public override void UpdateParentConnections(HashSet<Component> newConnections){
+		foreach(var connection in newConnections) {
+			if (!this.connections.Contains(connection)) {
+				this.connections.Add(connection.GetParent());
+			}
+		}
 	}
 	public override string type {get => "Computer";}
 }
