@@ -88,15 +88,15 @@ class Tooltip
 
     private void Draw()
     {
-        Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(this.DrawArea);
         // Draw outline
-        spriteBatch.Draw(Window.whitePixelTexture, modifiedArea, Tooltip.outlineColor);
+        spriteBatch.Draw(Window.whitePixelTexture, this.DrawArea, Tooltip.outlineColor);
         // Draw inner box
-        modifiedArea.X += outlinePxSize;
-        modifiedArea.Y += outlinePxSize;
-        modifiedArea.Width -= outlinePxSize * 2;
-        modifiedArea.Height -= outlinePxSize * 2;
-        spriteBatch.Draw(Window.whitePixelTexture, modifiedArea, Tooltip.fillColor);
+        Rectangle copy = this.DrawArea;
+        copy.X += outlinePxSize;
+        copy.Y += outlinePxSize;
+        copy.Width -= outlinePxSize * 2;
+        copy.Height -= outlinePxSize * 2;
+        spriteBatch.Draw(Window.whitePixelTexture, copy, Tooltip.fillColor);
 
         // Draw text
         spriteBatch.DrawString(this.font, this.text, new Vector2(CurrentArea.X + outlineTextBufferPxSize + outlinePxSize, CurrentArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black);
