@@ -9,7 +9,7 @@ class XmlReader {
     {
     }
 
-    public ComponentsAndConnections ReadComponents(string path) {
+    public List<Component> ReadComponents(string path) {
         String line;
         List <Component> computers = new();
         List <Component> partitions = new();
@@ -58,8 +58,14 @@ class XmlReader {
         {
             //Console.WriteLine("Exception: " + e.Message);
         }
-        ComponentsAndConnections returnValue = new(computers, connections);
-        return returnValue;
+
+        foreach (var connection in connections) {
+            foreach (Port connected in connection.Value) {
+                connected.AddConnections(connection.Value);
+            }
+        }
+
+        return computers;
     }
 
     void ReadApplication(string applicationName, List<Component> threads, string path, Dictionary<string, List<Port>> connections) {
@@ -132,7 +138,7 @@ class XmlReader {
         }
     }
 
-    public struct ComponentsAndConnections {
+    /*public struct ComponentsAndConnections {
         public List<Component> components = new();
         public Dictionary<string, List<Port>> connections = new();
         
@@ -141,5 +147,5 @@ class XmlReader {
             this.components = components;
             this.connections = connections;
         }
-    };
+    };*/
 }
