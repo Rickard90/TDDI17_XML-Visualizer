@@ -11,7 +11,7 @@ public class Window : Game
     private GraphicsDeviceManager graphics;
     private SpriteBatch spriteBatch;
     private SpriteFont font;
-    //private Texture2D tex;
+    private Texture2D arrowhead;
 
     private TopologyHead top; 
 	private Canvas canvas;
@@ -54,6 +54,8 @@ public class Window : Game
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
 
         this.font = Content.Load<SpriteFont>("Text");
+        this.arrowhead = Content.Load<Texture2D>("Arrowhead");
+
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
         whitePixelTexture.SetData( new Color[] { Color.White });
 
@@ -144,10 +146,11 @@ public class Window : Game
         this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
         this.spriteBatch.Begin();
         this.canvas.Draw();
-        //this.top.Draw(this.spriteBatch, this.font);
-        this.highlightButton.Draw(this.spriteBatch);
-        this.backButton.Draw(this.spriteBatch, this.font);
 
+        //This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate. Needs an update if you want more controlled rotation
+        spriteBatch.Draw(arrowhead, new Rectangle(50, 50, 50, 50), null, Color.White, (float)1.5708, Vector2.Zero, SpriteEffects.None, 1.0f);
+        
+        
         //this.RenderTopology();
         this.spriteBatch.End();
         
