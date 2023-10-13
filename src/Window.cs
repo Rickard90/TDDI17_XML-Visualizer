@@ -154,7 +154,7 @@ public class Window : Game
                             Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
                         //Console.WriteLine("Component children: {0}", child.GetChildren().Count);
-                        if(child.GetChildren().Count() > 0) //&& child.type != "Thread")
+                        if(child.GetChildren().Count() > 0 && child.type != "Thread")
                         {
                             this.top.Goto(child);
                             this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
@@ -211,7 +211,9 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(16), canvasSize.X, canvasSize.Y);
+        int fontSize = canvasSize.X/60;
+        fontSize = fontSize<8?8:fontSize;
+        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(fontSize), canvasSize.X, canvasSize.Y);
         if(!top.IsHead())
         {
             //this.backButton.Draw(this.spriteBatch, this.font);
