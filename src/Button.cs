@@ -7,22 +7,12 @@ using Microsoft.Xna.Framework.Input;
 
 abstract class Button
 {
-    protected Rectangle rectangle;
+    public readonly Rectangle rectangle;
 
     protected Button(Rectangle rectangle)
     {
         this.rectangle = rectangle;
     }
-
-    public Rectangle GetRectangle()
-	{
-		return this.rectangle;
-	}
-
-    public Rectangle SetRectangle(Rectangle rectangle)
-	{
-		return this.rectangle = rectangle;
-	}
 
     // Idea: Different types of buttons have different actions
     //public abstract void DoAction();
@@ -73,6 +63,23 @@ class ComponentButton : Button
     }
 }
 */
+
+class LinkButton : Button
+{
+    public readonly Component component;
+
+    public LinkButton(Rectangle rectangle, Component component)
+        :   base(rectangle)
+    {
+        this.component = component;
+    }
+
+    public void Draw(SpriteBatch sb)
+    {
+        sb.Draw(Window.whitePixelTexture, Canvas.Camera.ModifiedDrawArea(this.rectangle), Color.Beige);
+    }
+
+}
 
 class BackButton : Button
 {
