@@ -75,6 +75,7 @@ public class Window : Game
         this.backButton = new BackButton(new Rectangle(10, 40, 100, 50), "back");
 
         Tooltip.spriteBatch = this.spriteBatch;
+        Tooltip.graphicsDevice = this.GraphicsDevice;
     }
 
     protected override void Update(GameTime gameTime)
