@@ -8,13 +8,17 @@ using Microsoft.Xna.Framework.Graphics;
 //namespace XML_Visualizer;
 public class TopologyHead
 {
+	
+	//This is the texture that draws the head of arrows
+	public static Texture2D arrowhead; 
+    
 	public TopologyHead(string folderName)
 	{
         //Filereader:
 		XmlReader fileRead = new();
 		//XmlReader.ComponentsAndConnections cAC = fileRead.ReadComponents(folderName);
 		
-		//The following bit is only for diagnostic purposes:
+		/*The following bit is only for diagnostic purposes:*/
 		//int counter = 0;
 		//Console.WriteLine("TopologyHead Constructing\nNumber of connections: {0}", cAC.connections.Count);
 		//foreach(var connection in cAC.connections)

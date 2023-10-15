@@ -20,23 +20,23 @@ public class Component
 	}
     public Component(string name)
     {
-        this.componentName = name;
+        this.name = name;
     }
     public Component(string name,
 					 List<Component> children)
 	{
-		this.componentName	= name;
+		this.name	= name;
 		this.SetChildren(children);
 	}
     //Public Functions:
-    public string GetName() => this.componentName;
+    public string GetName() => this.name;
     public Point GetPosition() => this.position;
     public Rectangle GetRectangle() => new(this.position.X, this.position.Y, this.width, this.height);
     public Component GetParent() => this.parent;
     public List<Component> GetChildren() => this.children;
 
     public void SetPosition(Point pos) => this.position = pos;
-	public void SetName(string name) => this.componentName = name;
+	public void SetName(string name) => this.name = name;
     public void SetParent(Component newParent) 	=> this.parent = newParent;
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
 	
@@ -67,7 +67,7 @@ public class Component
 		int smallHeight = this.height/10; 
 		int innerHeight = this.height - 2*lineThickness;
 		int innerWidth  = 5 * smallWidth  - 2*lineThickness;
-		string name = this.componentName; 
+		string name = this.name; 
 
 		//Updates component's position
 		this.position = pos;
@@ -79,13 +79,20 @@ public class Component
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
 		
-
-		// if(name.Length > 6)
-		// {
-		// 	name = name[..6];
-		// }
-		//Draws out the name
+		//Draws the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
+		
+		
+		//Draws connection-arrows
+		int counter = 0;
+		foreach(Component connection in connections)
+		{	
+			counter++;
+			//Draws the arrow-body
+			sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width - 2*lineThickness, pos.Y + counter*smallHeight + smallWidth/6 + lineThickness , 2*smallWidth/3, lineThickness), Color.Black); //black outline
+			//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
+			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + this.width + smallWidth/6, pos.Y + counter*smallHeight, 2*smallWidth/3+ lineThickness, smallHeight + lineThickness ), Color.White);
+		}
 		
 		this.width = this.height;
 	}
@@ -126,7 +133,7 @@ public class Component
 	public virtual string type {get => "Component";}
 
 	//Fields:		
-	protected 		 	string				componentName	= "";
+	protected 		 	string				name	= "";
 	protected 		   	int 				width			= 125;
 	protected 		   	int 				height			= 100;
 	protected			Point				position		= new(0,0);
