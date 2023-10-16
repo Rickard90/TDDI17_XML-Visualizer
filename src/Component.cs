@@ -52,9 +52,9 @@ public class Component
 	}
 	public virtual string GetInfo()
 	{
-		Console.WriteLine("******" + this.GetName());
-		foreach(Component test in connections){
-			Console.WriteLine("........" + test.GetName());
+		Console.WriteLine("|" + this.GetName());
+		foreach(var test in connections){
+			Console.WriteLine("---->" + test.Key.GetName() + "Connection Weight: " + test.Value);
 		}
 		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
 	}
@@ -78,12 +78,7 @@ public class Component
 		//Draws big square:
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
-		
 
-		// if(name.Length > 6)
-		// {
-		// 	name = name[..6];
-		// }
 		//Draws out the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
@@ -98,27 +93,20 @@ public class Component
 		this.initStack += child.initStack;
 		this.frequency += child.frequency;
 	}
-	protected virtual void UpdateConnections(Component child) //Not used atm, probably not needed
-	{
-		foreach(Component connection in child.connections) {
-			if(this.connections.Contains(connection.parent))	//If the connection is only internal it is not needed for higher up components
-			{
-				this.connections.Remove(connection.parent);
-			}
-			else
-			{
-				this.connections.Add(connection.parent);
-			}
-		}
-	}
 
-	public virtual void UpdateParentConnections(HashSet<Component> newConnections){
-		foreach(var connection in newConnections) {
-			if (!this.connections.Contains(connection)) {
-				this.connections.Add(connection.GetParent());
+	public void UpdateConnections() {
+		foreach (Component child in children) {
+			if (this.type != "Port")
+				child.UpdateConnections();
+			foreach (var childConnection in child.connections) {
+				if (connections.ContainsKey(childConnection.Key.parent)) {
+					connections[childConnection.Key.parent] += childConnection.Value;
+				} else {
+					connections[childConnection.Key.parent] = childConnection.Value;
+				}
 			}
+			
 		}
-		this.parent.UpdateParentConnections(connections);
 	}
 	
 	
@@ -132,7 +120,7 @@ public class Component
 	protected			Point				position		= new(0,0);
     protected 			Component 			parent 			= null;
 	protected 		 	List<Component> 	children		= new();
-	public	 			HashSet<Component> 	connections		= new();
+	public	 			Dictionary<Component, int> 	connections		= new();
 	
 	//Info:
 	public int ramSize 	 = 0;
@@ -153,13 +141,6 @@ public class Computer : Component
 	public Computer(string name, List<Component> children) : base(name, children)
 	{
 		
-	}
-	public override void UpdateParentConnections(HashSet<Component> newConnections){
-		foreach(var connection in newConnections) {
-			if (!this.connections.Contains(connection)) {
-				this.connections.Add(connection.GetParent());
-			}
-		}
 	}
 	public override string type {get => "Computer";}
 }
@@ -206,10 +187,6 @@ public class Thread : Component
 		this.frequency = frequency;
 		this.execTime   = execTime;
 		this.execStack  = execStack;
-		// foreach(Port P in children.Cast<Port>())
-		// {
-		// 		connections.Add(P.GetName());
-		// }
 	}
 	public Thread(string name,
 				  int frequency, int execTime, int execStack) : base(name)
@@ -239,9 +216,9 @@ public class Thread : Component
 	
     public override string GetInfo()
 	{
-		Console.WriteLine("******" + this.GetName());
-		foreach(Component test in connections){
-			Console.WriteLine("........" + test.GetName());
+		Console.WriteLine("|" + this.GetName());
+		foreach(var test in connections){
+			Console.WriteLine("---->" + test.Key.GetName() + "Connection Weight: " + test.Value);
 		}
 		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
 	}
@@ -261,11 +238,10 @@ public class Port : Component
 	public void AddConnections(List<Port> connections)
 	{
 		foreach (Component connectedTo in connections) {
-			if (this != connectedTo) {
-				this.connections.Add(connectedTo);
+			if (this != connectedTo && !this.connections.ContainsKey(connectedTo)) {
+				this.connections.Add(connectedTo, 1);
 			}
 		}
-		this.parent.UpdateParentConnections(this.connections);
 	}
 	public override string type {get => "Port";}		
 	public string interf 	= ""; 
