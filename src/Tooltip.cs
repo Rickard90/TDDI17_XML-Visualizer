@@ -70,7 +70,7 @@ class Tooltip
         //  the font is have a constant size, monogame is to blame
         //font.MeasureString("text");
 
-        string line_0 = $"{component.GetParent()}/{component.GetName()}";
+        string line_0 = $"{component.Parent}/{component.Name}";
         string line_1 = $"{component.GetInfo()}";
 
         this.text = line_0 + '\n' + line_1; 

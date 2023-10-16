@@ -11,33 +11,30 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 //All types of components inherit constructor and fields from the component-type
-public class Component
+class Component
 {
 	//Constructors:
-	public Component()
+	public Component(Type type)
 	{
-
+		this.type = type;
 	}
-    public Component(string name)
+    public Component(string name, Type type)
+		: this(type)
     {
-        this.componentName = name;
+        this.name = name;
     }
-    public Component(string name,
-					 List<Component> children)
+    public Component(string name, List<Component> children, Type type)
+		: this(name, type)
 	{
-		this.componentName	= name;
 		this.SetChildren(children);
 	}
-    //Public Functions:
-    public string GetName() => this.componentName;
-    public Point GetPosition() => this.position;
-    public Rectangle GetRectangle() => new(this.position.X, this.position.Y, this.width, this.height);
-    public Component GetParent() => this.parent;
-    public List<Component> GetChildren() => this.children;
+    //Public Functions/Properties:
+	public string Name 			{get => this.name; set => this.name = value;}
+    public Point Position		{get => this.position; set => this.position = value;}
+    public Rectangle Rectangle => new(this.position.X, this.position.Y, this.width, this.height);
+    public Component Parent		{get => this.parent; set => this.parent = value;}
+    public List<Component> Children => this.children;
 
-    public void SetPosition(Point pos) => this.position = pos;
-	public void SetName(string name) => this.componentName = name;
-    public void SetParent(Component newParent) 	=> this.parent = newParent;
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
 	
 	//Virtual Functions:   
@@ -46,15 +43,15 @@ public class Component
 		connections.Clear();
  		foreach(Component child in newChildren) {
 			this.AddChild(child);
-			child.SetParent(this);
+			child.Parent = this;
 			UpdateStats(child);
 		}
 	}
 	public virtual string GetInfo()
 	{
-		Console.WriteLine("******" + this.GetName());
-		foreach(Component test in connections){
-			Console.WriteLine("........" + test.GetName());
+		Console.WriteLine("|" + this.Name);
+		foreach(var test in connections){
+			Console.WriteLine("---->" + test.Key.Name + "Connection Weight: " + test.Value);
 		}
 		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
 	}
@@ -67,7 +64,7 @@ public class Component
 		int smallHeight = this.height/10; 
 		int innerHeight = this.height - 2*lineThickness;
 		int innerWidth  = 5 * smallWidth  - 2*lineThickness;
-		string name = this.componentName; 
+		string name = this.name; 
 
 		//Updates component's position
 		this.position = pos;
@@ -78,14 +75,22 @@ public class Component
 		//Draws big square:
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
-
-		// if(name.Length > 6)
-		// {
-		// 	name = name[..6];
-		// }
+		
 		//Draws out the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
-
+		
+		
+		//Draws connection-arrows
+		int counter = 0;
+		foreach(var connection in connections)
+		{	
+			counter++;
+			//Draws the arrow-body
+			sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width - 2*lineThickness, pos.Y + counter*smallHeight + smallWidth/6 + lineThickness , 2*smallWidth/3, lineThickness), Color.Black); //black outline
+			//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
+			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + this.width + smallWidth/6, pos.Y + counter*smallHeight, 2*smallWidth/3+ lineThickness, smallHeight + lineThickness ), Color.White);
+		}
+		
 		this.width = this.height;
 
         //////// Drawing LinkButtons ////////
@@ -95,7 +100,7 @@ public class Component
             int buttonHeight = this.height / this.connections.Count;
             buttonHeight = buttonHeight > 20 ? 20 : buttonHeight;
             int count = 0;
-            foreach (var linkButton in this.linkButtons)
+            foreach (LinkButton linkButton in this.linkButtons)
             {
                 linkButton.Draw(sb, font, this.position + new Point(this.width+1, count*buttonHeight), buttonHeight);
                 count += 1;
@@ -111,48 +116,52 @@ public class Component
 		this.initStack += child.initStack;
 		this.frequency += child.frequency;
 	}
-	protected virtual void UpdateConnections(Component child) //Not used atm, probably not needed
-	{
-		foreach(Component connection in child.connections) {
-			if(this.connections.Contains(connection.parent))	//If the connection is only internal it is not needed for higher up components
-			{
-				this.connections.Remove(connection.parent);
-			}
-			else
-			{
-				this.connections.Add(connection.parent);
-			}
-		}
-	}
 
-	public virtual void UpdateParentConnections(HashSet<Component> newConnections)
+	public void UpdateConnections()
     {
-        // Temporary solution... Actually this wasn't a solution
-        this.linkButtons.Clear();
-
-		foreach (Component connection in newConnections) {
-			if (!this.connections.Contains(connection)) {
-				this.connections.Add(connection.GetParent());
-                this.linkButtons.Add(new LinkButton(connection.GetParent()));
+		foreach (Component child in children)
+        {
+			if (this.type != Type.Port)
+				child.UpdateConnections();
+			foreach (var childConnection in child.connections)
+            {
+				if (connections.ContainsKey(childConnection.Key.parent)) {
+					connections[childConnection.Key.parent] += childConnection.Value;
+				} else {
+					connections[childConnection.Key.parent] = childConnection.Value;
+				}
 			}
 		}
 
-		this.parent.UpdateParentConnections(connections);
+        // Create linkbuttons
+        foreach (var KV in connections)
+        {
+            this.linkButtons.Add(new LinkButton(KV.Key));
+        }
 	}
-	
-	
-	//Properties:
-	public virtual string type {get => "Component";}
+
+    public string GetName()
+    {
+        return this.name;
+    }
+
+    public override string ToString()
+    {
+        return $"({this.Name}:{this.type})";
+    }
+
+	public enum Type{Top, Computer, Partition, Application, Thread, Port}
+	public readonly Type type = Type.Top;
 
 	//Fields:		
-	protected 		 	string				componentName	  = "";
-	private	 		   	int 				width			  = 125;
-	private	 		   	int 				height			  = 100;
-	protected			Point				position		  = new(0,0);
-    protected 			Component 			parent 			  = null;
-	protected 		 	List<Component> 	children		  = new();
-	public	 			HashSet<Component> 	connections		  = new();
-	public				List<LinkButton>    linkButtons 	  = new();
+	protected 		 	string				        name        	= "";
+	protected 		   	int 				        width			= 125;
+	protected 		   	int 				        height			= 100;
+	protected			Point				        position		= new(0,0);
+    protected 			Component 			        parent 			= null;
+	protected 		 	List<Component> 	        children		= new();
+	public	 			Dictionary<Component, int> 	connections		= new();
+    protected           List<LinkButton>            linkButtons     = new();
 	
 	//Info:
 	public int ramSize 	 = 0;
@@ -164,82 +173,64 @@ public class Component
 //Sub-Components:
 
 /*_______C_O_M_P_U_T_E_R________*/
-public class Computer : Component
+class Computer : Component
 {
-	public Computer(string name) : base(name)
-	{
-
-	}
-	public Computer(string name, List<Component> children) : base(name, children)
-	{
-		
-	}
-	public override void UpdateParentConnections(HashSet<Component> newConnections){
-		foreach(var connection in newConnections) {
-			if (!this.connections.Contains(connection)) {
-				this.connections.Add(connection.GetParent());
-			}
-		}
-	}
-	public override string type {get => "Computer";}
+	public Computer(string name) : base(name, Type.Computer)
+	{}
+	public Computer(string name, List<Component> children) : base(name, children, Type.Computer)
+	{}
 }
 
 /*______P_A_R_T_I_T_I_O_N________*/
-public class Partition : Component
+class Partition : Component
 {
-	public Partition(string name) : base(name)
+	public Partition(string name) : base(name, Type.Partition)
 	{
 
 	}
-	public Partition(string name, List<Component> children) : base(name, children)
+	public Partition(string name, List<Component> children) : base(name, children, Type.Partition)
 	{
 		
 	}
-	public override string type {get => "Partition";}
 }
 
 /*______A_P_P_L_I_C_A_T_I_O_N______*/
-public class Application : Component
+class Application : Component
 {
 	public Application(string name, List<Component> children,
-					   int ramSize, int initStack) : base(name, children)
+					   int ramSize, int initStack) : base(name, children, Type.Application)
 	{
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
 	public Application(string name,
-					   int ramSize, int initStack) : base(name)
+					   int ramSize, int initStack) : base(name, Type.Application)
 	{
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
-	public override string type {get => "Application";}
 }
 
 /*_________T_H_R_E_A_D__________*/
-public class Thread : Component
+class Thread : Component
 {
 	//Constructors:
 	public Thread(string name, List<Component> children,
-				  int frequency, int execTime, int execStack) : base(name, children)
+				  int frequency, int execTime, int execStack) : base(name, children, Type.Thread)
 	{
 		this.frequency = frequency;
 		this.execTime   = execTime;
 		this.execStack  = execStack;
-		// foreach(Port P in children.Cast<Port>())
-		// {
-		// 		connections.Add(P.GetName());
-		// }
 	}
 	public Thread(string name,
-				  int frequency, int execTime, int execStack) : base(name)
+				  int frequency, int execTime, int execStack) : base(name, Type.Thread)
 	{
 		this.frequency = frequency;
 		this.execTime  = execTime;
 		this.execStack = execStack;
 	}
 	public Thread(string name,
-				  int execTime, int execStack) : base(name)
+				  int execTime, int execStack) : base(name, Type.Thread)
 	{
 		this.execTime   = execTime;
 		this.execStack  = execStack;
@@ -250,8 +241,8 @@ public class Thread : Component
 	{
  		foreach(Port c in newChildren) {
 			this.AddChild(c);
-			c.SetParent(this);
-			Console.WriteLine(c.GetName());
+			c.Parent = this;
+			Console.WriteLine(c.Name);
 
 		}
 	}
@@ -259,21 +250,19 @@ public class Thread : Component
 	
     public override string GetInfo()
 	{
-		Console.WriteLine("******" + this.GetName());
-		foreach(Component test in connections){
-			Console.WriteLine("........" + test.GetName());
+		Console.WriteLine("|" + this.Name);
+		foreach(var test in connections){
+			Console.WriteLine("---->" + test.Key.Name + "Connection Weight: " + test.Value);
 		}
 		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
 	}
-
-	public override string type {get => "Thread";}
 }
 
 /*__________P_O_R_T___________*/
-public class Port : Component
+class Port : Component
 {
 	public Port(string name, 
-				string interf, string role) : base(name)
+				string interf, string role) : base(name, Type.Thread)
 	{
 			this.interf = interf;
 			this.role = role;
@@ -281,13 +270,11 @@ public class Port : Component
 	public void AddConnections(List<Port> connections)
 	{
 		foreach (Component connectedTo in connections) {
-			if (this != connectedTo) {
-				this.connections.Add(connectedTo);
+			if (this != connectedTo && !this.connections.ContainsKey(connectedTo)) {
+				this.connections.Add(connectedTo, 1);
 			}
 		}
-		this.parent.UpdateParentConnections(this.connections);
 	}
-	public override string type {get => "Port";}		
 	public string interf 	= ""; 
 	public string role		= "";
 }
