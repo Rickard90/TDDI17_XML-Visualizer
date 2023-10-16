@@ -113,11 +113,42 @@ public class Component
 	}
 
 	public virtual void UpdateParentConnections(HashSet<Component> newConnections){
-		foreach(var connection in newConnections) {
+		foreach (var connection in newConnections) {
 			if (!this.connections.Contains(connection)) {
 				this.connections.Add(connection.GetParent());
 			}
 		}
+
+		/* This would work, but we cannot construct LinkButtons based on the components position and size because the
+		   components position and size is not set until the first Component.Draw()-method is called.
+		   
+		if (this.connections.Count > 0)
+		{
+			int buttonHeight = this.height / this.connections.Count;
+			buttonHeight = buttonHeight > 20 ? 20 : buttonHeight;
+			int count = 0;
+			foreach (var connection in this.connections) {
+				this.linkButtons.Add(new LinkButton(new Rectangle(this.position.X + this.width,
+																		this.position.Y + count*buttonHeight,
+																		120, buttonHeight),
+																		connection));
+				count += 1;
+			}
+		}
+		*/
+
+		// This is the "hacky" solution instead
+		if (this.connections.Count > 0)
+		{
+			int buttonHeight = this.height / this.connections.Count;
+			buttonHeight = buttonHeight > 20 ? 20 : buttonHeight;
+			int count = 0;
+			foreach (var connection in this.connections) {
+				this.linkButtons.Add(new LinkButton(connection, count*buttonHeight, buttonHeight));
+				count += 1;
+			}
+		}
+
 		this.parent.UpdateParentConnections(connections);
 	}
 	
@@ -126,13 +157,15 @@ public class Component
 	public virtual string type {get => "Component";}
 
 	//Fields:		
-	protected 		 	string				componentName	= "";
-	protected 		   	int 				width			= 125;
-	protected 		   	int 				height			= 100;
-	protected			Point				position		= new(0,0);
-    protected 			Component 			parent 			= null;
-	protected 		 	List<Component> 	children		= new();
-	public	 			HashSet<Component> 	connections		= new();
+	protected 		 	string				componentName	  = "";
+	// Gjorde width och height publika för att kunna komma åt dem i LinkButton.Draw() // Mattias
+	public	 		   	int 				width			  = 125;
+	public	 		   	int 				height			  = 100;
+	protected			Point				position		  = new(0,0);
+    protected 			Component 			parent 			  = null;
+	protected 		 	List<Component> 	children		  = new();
+	public	 			HashSet<Component> 	connections		  = new();
+	public				List<LinkButton>    linkButtons 	  = new();
 	
 	//Info:
 	public int ramSize 	 = 0;

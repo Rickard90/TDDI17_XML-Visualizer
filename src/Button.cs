@@ -1,13 +1,14 @@
 using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
-abstract class Button
+public abstract class Button
 {
-    public readonly Rectangle rectangle;
+    public Rectangle rectangle;
 
     protected Button(Rectangle rectangle)
     {
@@ -64,9 +65,11 @@ class ComponentButton : Button
 }
 */
 
-class LinkButton : Button
+public class LinkButton : Button
 {
     public readonly Component component;
+    public readonly int       heightOffset;
+    public readonly int       height;
 
     public LinkButton(Rectangle rectangle, Component component)
         :   base(rectangle)
@@ -74,9 +77,23 @@ class LinkButton : Button
         this.component = component;
     }
 
-    public void Draw(SpriteBatch sb)
+    public LinkButton(Component component, int heightOffset, int height)
+        :   base(new())
     {
-        sb.Draw(Window.whitePixelTexture, Canvas.Camera.ModifiedDrawArea(this.rectangle), Color.Beige);
+        this.component    = component;
+        this.heightOffset = heightOffset;
+        this.height       = height;
+    }
+
+    public void Draw(SpriteBatch sb, FontSystem fontSystem)
+    {
+        base.rectangle.X = this.component.GetPosition().X + this.component.width;
+        base.rectangle.Y = this.component.GetPosition().Y + this.heightOffset;
+        base.rectangle.Width = 120;
+        base.rectangle.Height = this.height;
+        Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(base.rectangle);
+        sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Chocolate);
+        sb.DrawString(fontSystem.GetFont(modifiedArea.Height), this.component.GetName(), new Vector2(modifiedArea.X, modifiedArea.Y), Color.Black);
     }
 
 }
