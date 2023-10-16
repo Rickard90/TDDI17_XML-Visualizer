@@ -59,6 +59,7 @@ class XmlReader {
             //Console.WriteLine("Exception: " + e.Message);
         }
 
+        //Sets connections off all components:
         foreach (var connection in connections) {
             foreach (Port connected in connection.Value) {
                 connected.AddConnections(connection.Value);
@@ -137,15 +138,4 @@ class XmlReader {
             // Console.WriteLine("Exception: " + e.Message);
         }
     }
-
-    /*public struct ComponentsAndConnections {
-        public List<Component> components = new();
-        public Dictionary<string, List<Port>> connections = new();
-        
-        public ComponentsAndConnections(List<Component> components, Dictionary<string, List<Port>> connections)
-        {
-            this.components = components;
-            this.connections = connections;
-        }
-    };*/
 }

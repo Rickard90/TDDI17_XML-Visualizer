@@ -21,6 +21,7 @@ public class Window : Game
     private BackButton backButton;
     private HighlightButton highlightButton;
     private string path;
+    private bool updateCanvas = true;
     
     public Window(string path)
     {
@@ -74,6 +75,7 @@ public class Window : Game
         this.backButton = new BackButton(new Rectangle(10, 40, 100, 50), "back");
 
         Tooltip.spriteBatch = this.spriteBatch;
+        Tooltip.graphicsDevice = this.GraphicsDevice;
     }
 
     protected override void Update(GameTime gameTime)
@@ -88,6 +90,7 @@ public class Window : Game
 
             if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.rectangle)))
             {
+                updateCanvas = true;
                 Console.WriteLine("BACK-BUTTON SELECTED");
                 this.top.GoBack();
                 this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
@@ -98,12 +101,13 @@ public class Window : Game
                 {
                     if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
                     {
+                        updateCanvas = true;
                         if(child.GetInfo() != "")
                         {
                             Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
                         Console.WriteLine("Component children: {0}", child.GetChildren().Count);
-						if(child.type != "Thread") //child.GetChildren().Count() > 0)
+						if(child.type != "Thread" && child.GetChildren().Count() > 0)
                         {
                             this.top.Goto(child);
                             if (child.GetChildren().Count == 0)
@@ -127,6 +131,7 @@ public class Window : Game
         }
         else if (Selection.componentGoRight)
         {
+            updateCanvas = true;
             List<Component> children = this.top.GetCurrent().GetChildren();
             if (this.highlightButton.component == children.Last())
             {
@@ -145,6 +150,7 @@ public class Window : Game
             {
                 if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
                 {
+                    updateCanvas = true;
                     if (Selection.LeftMouseJustReleased())
                     {
 
@@ -154,7 +160,7 @@ public class Window : Game
                             Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
                         //Console.WriteLine("Component children: {0}", child.GetChildren().Count);
-                        if(child.GetChildren().Count() > 0) //&& child.type != "Thread")
+                        if(child.GetChildren().Count() > 0 && child.type != "Thread")
                         {
                             this.top.Goto(child);
                             this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
@@ -188,8 +194,12 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        //base.GraphicsDevice.Clear(Color.White);
-        this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
+        
+        if (updateCanvas) {
+            this.canvas.UpdateTexture();  // only updated if needed
+        }
+        updateCanvas = false;
+        base.GraphicsDevice.Clear(Color.Black);
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
@@ -199,8 +209,7 @@ public class Window : Game
         Tooltip.DrawCurrent();
 
         //This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate. Needs an update if you want more controlled rotation
-        spriteBatch.Draw(arrowhead, new Rectangle(50, 50, 50, 50), null, Color.White, (float)1.5708, Vector2.Zero, SpriteEffects.None, 1.0f);
-        
+        spriteBatch.Draw(arrowhead, new Rectangle(50, 350, 50, 50), null, Color.White, (float)(Math.PI/2.0), Vector2.Zero, SpriteEffects.None, 1.0f);
         
         //this.RenderTopology();
         this.spriteBatch.End();
@@ -211,7 +220,9 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(16), canvasSize.X, canvasSize.Y);
+        int fontSize = canvasSize.X/60;
+        fontSize = fontSize<8?8:fontSize;
+        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(fontSize), canvasSize.X, canvasSize.Y);
         if(!top.IsHead())
         {
             //this.backButton.Draw(this.spriteBatch, this.font);
