@@ -127,21 +127,15 @@ public class Component
 
 	public virtual void UpdateParentConnections(HashSet<Component> newConnections)
     {
-		foreach (var connection in newConnections) {
+        // Temporary solution... Actually this wasn't a solution
+        this.linkButtons.Clear();
+
+		foreach (Component connection in newConnections) {
 			if (!this.connections.Contains(connection)) {
 				this.connections.Add(connection.GetParent());
-                //this.linkButtons.Add(new LinkButton(connection));
+                this.linkButtons.Add(new LinkButton(connection.GetParent()));
 			}
 		}
-
-        Console.WriteLine("connections count = {0}", this.connections.Count);
-
-        foreach (var connection in this.connections) {
-            Console.WriteLine("call");
-            this.linkButtons.Add(new LinkButton(connection));
-        }
-
-        Console.WriteLine("linkbuttons count = {0}", this.linkButtons.Count);
 
 		this.parent.UpdateParentConnections(connections);
 	}
