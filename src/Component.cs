@@ -78,7 +78,6 @@ public class Component
 		//Draws big square:
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
-		
 
 		// if(name.Length > 6)
 		// {
@@ -86,8 +85,22 @@ public class Component
 		// }
 		//Draws out the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
-		
+
 		this.width = this.height;
+
+        //////// Drawing LinkButtons ////////
+
+        if (this.connections.Count > 0)
+        {
+            int buttonHeight = this.height / this.connections.Count;
+            buttonHeight = buttonHeight > 20 ? 20 : buttonHeight;
+            int count = 0;
+            foreach (var linkButton in this.linkButtons)
+            {
+                linkButton.Draw(sb, font, this.position + new Point(this.width+1, count*buttonHeight), buttonHeight);
+                count += 1;
+            }
+        }
 	}
 	//Protected functions:
 	protected virtual void UpdateStats(Component child)
@@ -112,42 +125,23 @@ public class Component
 		}
 	}
 
-	public virtual void UpdateParentConnections(HashSet<Component> newConnections){
+	public virtual void UpdateParentConnections(HashSet<Component> newConnections)
+    {
 		foreach (var connection in newConnections) {
 			if (!this.connections.Contains(connection)) {
 				this.connections.Add(connection.GetParent());
+                //this.linkButtons.Add(new LinkButton(connection));
 			}
 		}
 
-		/* This would work, but we cannot construct LinkButtons based on the components position and size because the
-		   components position and size is not set until the first Component.Draw()-method is called.
-		   
-		if (this.connections.Count > 0)
-		{
-			int buttonHeight = this.height / this.connections.Count;
-			buttonHeight = buttonHeight > 20 ? 20 : buttonHeight;
-			int count = 0;
-			foreach (var connection in this.connections) {
-				this.linkButtons.Add(new LinkButton(new Rectangle(this.position.X + this.width,
-																		this.position.Y + count*buttonHeight,
-																		120, buttonHeight),
-																		connection));
-				count += 1;
-			}
-		}
-		*/
+        Console.WriteLine("connections count = {0}", this.connections.Count);
 
-		// This is the "hacky" solution instead
-		if (this.connections.Count > 0)
-		{
-			int buttonHeight = this.height / this.connections.Count;
-			buttonHeight = buttonHeight > 20 ? 20 : buttonHeight;
-			int count = 0;
-			foreach (var connection in this.connections) {
-				this.linkButtons.Add(new LinkButton(connection, count*buttonHeight, buttonHeight));
-				count += 1;
-			}
-		}
+        foreach (var connection in this.connections) {
+            Console.WriteLine("call");
+            this.linkButtons.Add(new LinkButton(connection));
+        }
+
+        Console.WriteLine("linkbuttons count = {0}", this.linkButtons.Count);
 
 		this.parent.UpdateParentConnections(connections);
 	}
@@ -158,9 +152,8 @@ public class Component
 
 	//Fields:		
 	protected 		 	string				componentName	  = "";
-	// Gjorde width och height publika för att kunna komma åt dem i LinkButton.Draw() // Mattias
-	public	 		   	int 				width			  = 125;
-	public	 		   	int 				height			  = 100;
+	private	 		   	int 				width			  = 125;
+	private	 		   	int 				height			  = 100;
 	protected			Point				position		  = new(0,0);
     protected 			Component 			parent 			  = null;
 	protected 		 	List<Component> 	children		  = new();

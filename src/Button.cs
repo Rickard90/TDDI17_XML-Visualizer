@@ -45,9 +45,9 @@ class HighlightButton
         // Draw left side
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height), color);
         // Draw right side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width, rectangle.Y, lineWidth, rectangle.Height), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width - 1, rectangle.Y, lineWidth, rectangle.Height), color);
         // Draw bottom side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height, rectangle.Width, lineWidth), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - lineWidth, rectangle.Width, lineWidth), color);
     }
 }
 
@@ -68,32 +68,22 @@ class ComponentButton : Button
 public class LinkButton : Button
 {
     public readonly Component component;
-    public readonly int       heightOffset;
-    public readonly int       height;
 
-    public LinkButton(Rectangle rectangle, Component component)
-        :   base(rectangle)
+    public LinkButton(Component component)
+        :   base(new())
     {
         this.component = component;
     }
 
-    public LinkButton(Component component, int heightOffset, int height)
-        :   base(new())
+    public void Draw(SpriteBatch sb, SpriteFontBase font, Point position, int height)
     {
-        this.component    = component;
-        this.heightOffset = heightOffset;
-        this.height       = height;
-    }
-
-    public void Draw(SpriteBatch sb, FontSystem fontSystem)
-    {
-        base.rectangle.X = this.component.GetPosition().X + this.component.width;
-        base.rectangle.Y = this.component.GetPosition().Y + this.heightOffset;
+        base.rectangle.X = position.X;
+        base.rectangle.Y = position.Y;
         base.rectangle.Width = 120;
-        base.rectangle.Height = this.height;
+        base.rectangle.Height = height;
         Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(base.rectangle);
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Chocolate);
-        sb.DrawString(fontSystem.GetFont(modifiedArea.Height), this.component.GetName(), new Vector2(modifiedArea.X, modifiedArea.Y), Color.Black);
+        sb.DrawString(font, this.component.GetName(), new Vector2(modifiedArea.X, modifiedArea.Y), Color.Black);
     }
 
 }
