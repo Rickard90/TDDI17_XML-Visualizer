@@ -12,8 +12,6 @@ public class Window : Game
     private GraphicsDeviceManager graphics;
     private SpriteBatch spriteBatch;
     private FontSystem fontSystem;
-    //private Texture2D tex;
-    private Texture2D arrowhead;
 
     private TopologyHead top; 
 	private Canvas canvas;
@@ -58,10 +56,11 @@ public class Window : Game
 
         this.fontSystem = new();
         this.fontSystem.AddFont(File.ReadAllBytes("resource/font/arial.ttf"));
-        this.arrowhead = Content.Load<Texture2D>("Arrowhead");
 
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
         whitePixelTexture.SetData( new Color[] { Color.White });
+
+		 TopologyHead.arrowhead = Content.Load<Texture2D>("Arrowhead");
 
         this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size)
         {
@@ -208,8 +207,7 @@ public class Window : Game
 
         Tooltip.DrawCurrent();
 
-        //This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate. Needs an update if you want more controlled rotation
-        spriteBatch.Draw(arrowhead, new Rectangle(50, 350, 50, 50), null, Color.White, (float)(Math.PI/2.0), Vector2.Zero, SpriteEffects.None, 1.0f);
+     
         
         //this.RenderTopology();
         this.spriteBatch.End();

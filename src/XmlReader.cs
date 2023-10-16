@@ -59,11 +59,14 @@ class XmlReader {
             //Console.WriteLine("Exception: " + e.Message);
         }
 
-        //Sets connections off all components:
+        //Sets connections off all ports:
         foreach (var connection in connections) {
             foreach (Port connected in connection.Value) {
                 connected.AddConnections(connection.Value);
             }
+        }
+        foreach (Computer comp in computers) {
+            comp.UpdateConnections();
         }
 
         return computers;
