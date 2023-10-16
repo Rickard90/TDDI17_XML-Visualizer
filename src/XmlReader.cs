@@ -3,13 +3,9 @@ using System.Collections.Specialized;
 using System.Data;
 using System.IO;
 
-class XmlReader {
+static class XmlReader {
 
-    public XmlReader()
-    {
-    }
-
-    public List<Component> ReadComponents(string path) {
+    public static List<Component> ReadComponents(string path) {
         String line;
         List <Component> computers = new();
         List <Component> partitions = new();
@@ -72,7 +68,7 @@ class XmlReader {
         return computers;
     }
 
-    void ReadApplication(string applicationName, List<Component> threads, string path, Dictionary<string, List<Port>> connections) {
+    private static void ReadApplication(string applicationName, List<Component> threads, string path, Dictionary<string, List<Port>> connections) {
         List<Component> ports = new();
         String line;
         int index = 0;
@@ -117,7 +113,7 @@ class XmlReader {
         }
     }
 
-   private void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
+    private static void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
         string line;
         try {
             StreamReader ResourcesReader = new(path + "/applications/"+applicationName+"/resources.xml");

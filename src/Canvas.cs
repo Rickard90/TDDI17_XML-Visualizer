@@ -43,8 +43,7 @@ partial class Canvas
     public void Update(MouseState mouseState, KeyboardState keyboardState)
     {
         Camera.UpdateByKeyboard(keyboardState);
-        Camera.UpdateByMouse(mouseState, this.windowSize);
-
+        Camera.UpdateByMouse(mouseState);
     }
 
     public void UpdateTexture()

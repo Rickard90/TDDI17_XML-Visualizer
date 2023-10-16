@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 //Top is an object that keeps track of a full loaded topography
 //A topography is stored as a tree with a top component
 //namespace XML_Visualizer;
-public class TopologyHead
+class TopologyHead
 {
 	
 	//This is the texture that draws the head of arrows
@@ -15,7 +15,7 @@ public class TopologyHead
 	public TopologyHead(string folderName)
 	{
         //Filereader:
-		XmlReader fileRead = new();
+		//XmlReader fileRead = new();
 		//XmlReader.ComponentsAndConnections cAC = fileRead.ReadComponents(folderName);
 		
 		/*The following bit is only for diagnostic purposes:*/
@@ -34,7 +34,7 @@ public class TopologyHead
         //}
 		//Diagnostic parapgraph done, regular code resumes:
 		
-		this.head = new Component("Top", fileRead.ReadComponents(folderName));
+		this.head = new Component("Top", XmlReader.ReadComponents(folderName), Component.Type.Top);
 		this.path = new List<Component>{this.head};
 	}
 
@@ -56,7 +56,7 @@ public class TopologyHead
         String pathString = "";
         foreach(Component C in path)
         {
-            pathString += C.GetName();
+            pathString += C.Name;
             pathString += " > ";
         }
         pathString = pathString.Remove(pathString.Length - 3);
@@ -64,19 +64,19 @@ public class TopologyHead
         //sb.DrawString(font, path.Last().GetName(), new Vector2(startX/2, 0), Color.Black);
         //sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
         sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
-        foreach(Component C in path.Last().GetChildren())
+        foreach(Component C in path.Last().Children)
         {
             C.Draw(pos, sb, font, width);
             count++;
             if(count < 3)
             {
-                pos.X += C.GetRectangle().Width + 4*spacing;
+                pos.X += C.Rectangle.Width + 4*spacing;
             }
             else
             {
                 count = 0;
                 pos.X = startX;
-                pos.Y += C.GetRectangle().Height + 2*spacing;
+                pos.Y += C.Rectangle.Height + 2*spacing;
             }
         }
     }
@@ -112,6 +112,6 @@ public class TopologyHead
 	}
 
 
-	private List<Component> path = new();
-	private readonly Component head = new();
+	private List<Component> path;
+	private readonly Component head;
 }

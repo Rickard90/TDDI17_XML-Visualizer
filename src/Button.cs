@@ -7,22 +7,13 @@ using Microsoft.Xna.Framework.Input;
 
 abstract class Button
 {
-    protected Rectangle rectangle;
+    public readonly Rectangle rectangle;
 
     protected Button(Rectangle rectangle)
     {
         this.rectangle = rectangle;
     }
 
-    public Rectangle GetRectangle()
-	{
-		return this.rectangle;
-	}
-
-    public Rectangle SetRectangle(Rectangle rectangle)
-	{
-		return this.rectangle = rectangle;
-	}
 
     // Idea: Different types of buttons have different actions
     //public abstract void DoAction();
@@ -47,7 +38,7 @@ class HighlightButton
         Color color = Color.Red;
         int lineWidth = 3;
 
-        Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.component.GetRectangle());
+        Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.component.Rectangle);
 
         // Draw top side
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, lineWidth), color);
@@ -76,7 +67,7 @@ class ComponentButton : Button
 
 class BackButton : Button
 {
-    private string description;
+    private readonly string description;
 
     public BackButton(Rectangle rectangle, string description)
         :   base(rectangle)
@@ -88,6 +79,6 @@ class BackButton : Button
     {
         Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(this.rectangle);
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Black);
-        sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);
+        sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);  //  consider cacheing drawing fonts
     }
 }

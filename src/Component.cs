@@ -11,33 +11,30 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 //All types of components inherit constructor and fields from the component-type
-public class Component
+class Component
 {
 	//Constructors:
-	public Component()
+	public Component(Type type)
 	{
-
+		this.type = type;
 	}
-    public Component(string name)
+    public Component(string name, Type type)
+		: this(type)
     {
         this.name = name;
     }
-    public Component(string name,
-					 List<Component> children)
+    public Component(string name, List<Component> children, Type type)
+		: this(name, type)
 	{
-		this.name	= name;
 		this.SetChildren(children);
 	}
-    //Public Functions:
-    public string GetName() => this.name;
-    public Point GetPosition() => this.position;
-    public Rectangle GetRectangle() => new(this.position.X, this.position.Y, this.width, this.height);
-    public Component GetParent() => this.parent;
-    public List<Component> GetChildren() => this.children;
+    //Public Functions/Properties:
+	public string Name 			{get => this.name; set => this.name = value;}
+    public Point Position		{get => this.position; set => this.position = value;}
+    public Rectangle Rectangle => new(this.position.X, this.position.Y, this.width, this.height);
+    public Component Parent		{get => this.parent; set => this.parent = value;}
+    public List<Component> Children => this.children;
 
-    public void SetPosition(Point pos) => this.position = pos;
-	public void SetName(string name) => this.name = name;
-    public void SetParent(Component newParent) 	=> this.parent = newParent;
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
 	
 	//Virtual Functions:   
@@ -46,15 +43,15 @@ public class Component
 		connections.Clear();
  		foreach(Component child in newChildren) {
 			this.AddChild(child);
-			child.SetParent(this);
+			child.Parent = this;
 			UpdateStats(child);
 		}
 	}
 	public virtual string GetInfo()
 	{
-		Console.WriteLine("|" + this.GetName());
+		Console.WriteLine("|" + this.Name);
 		foreach(var test in connections){
-			Console.WriteLine("---->" + test.Key.GetName() + "Connection Weight: " + test.Value);
+			Console.WriteLine("---->" + test.Key.Name + "Connection Weight: " + test.Value);
 		}
 		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
 	}
@@ -108,7 +105,7 @@ public class Component
 
 	public void UpdateConnections() {
 		foreach (Component child in children) {
-			if (this.type != "Port")
+			if (this.type != Type.Port)
 				child.UpdateConnections();
 			foreach (var childConnection in child.connections) {
 				if (connections.ContainsKey(childConnection.Key.parent)) {
@@ -120,10 +117,14 @@ public class Component
 			
 		}
 	}
-	
-	
-	//Properties:
-	public virtual string type {get => "Component";}
+
+    public override string ToString()
+    {
+        return $"({this.Name}:{this.type})";
+    }
+
+	public enum Type{Top, Computer, Partition, Application, Thread, Port}
+	public readonly Type type = Type.Top;
 
 	//Fields:		
 	protected 		 	string				name	= "";
@@ -144,71 +145,64 @@ public class Component
 //Sub-Components:
 
 /*_______C_O_M_P_U_T_E_R________*/
-public class Computer : Component
+class Computer : Component
 {
-	public Computer(string name) : base(name)
-	{
-
-	}
-	public Computer(string name, List<Component> children) : base(name, children)
-	{
-		
-	}
-	public override string type {get => "Computer";}
+	public Computer(string name) : base(name, Type.Computer)
+	{}
+	public Computer(string name, List<Component> children) : base(name, children, Type.Computer)
+	{}
 }
 
 /*______P_A_R_T_I_T_I_O_N________*/
-public class Partition : Component
+class Partition : Component
 {
-	public Partition(string name) : base(name)
+	public Partition(string name) : base(name, Type.Partition)
 	{
 
 	}
-	public Partition(string name, List<Component> children) : base(name, children)
+	public Partition(string name, List<Component> children) : base(name, children, Type.Partition)
 	{
 		
 	}
-	public override string type {get => "Partition";}
 }
 
 /*______A_P_P_L_I_C_A_T_I_O_N______*/
-public class Application : Component
+class Application : Component
 {
 	public Application(string name, List<Component> children,
-					   int ramSize, int initStack) : base(name, children)
+					   int ramSize, int initStack) : base(name, children, Type.Application)
 	{
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
 	public Application(string name,
-					   int ramSize, int initStack) : base(name)
+					   int ramSize, int initStack) : base(name, Type.Application)
 	{
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
-	public override string type {get => "Application";}
 }
 
 /*_________T_H_R_E_A_D__________*/
-public class Thread : Component
+class Thread : Component
 {
 	//Constructors:
 	public Thread(string name, List<Component> children,
-				  int frequency, int execTime, int execStack) : base(name, children)
+				  int frequency, int execTime, int execStack) : base(name, children, Type.Thread)
 	{
 		this.frequency = frequency;
 		this.execTime   = execTime;
 		this.execStack  = execStack;
 	}
 	public Thread(string name,
-				  int frequency, int execTime, int execStack) : base(name)
+				  int frequency, int execTime, int execStack) : base(name, Type.Thread)
 	{
 		this.frequency = frequency;
 		this.execTime  = execTime;
 		this.execStack = execStack;
 	}
 	public Thread(string name,
-				  int execTime, int execStack) : base(name)
+				  int execTime, int execStack) : base(name, Type.Thread)
 	{
 		this.execTime   = execTime;
 		this.execStack  = execStack;
@@ -219,8 +213,8 @@ public class Thread : Component
 	{
  		foreach(Port c in newChildren) {
 			this.AddChild(c);
-			c.SetParent(this);
-			Console.WriteLine(c.GetName());
+			c.Parent = this;
+			Console.WriteLine(c.Name);
 
 		}
 	}
@@ -228,21 +222,19 @@ public class Thread : Component
 	
     public override string GetInfo()
 	{
-		Console.WriteLine("|" + this.GetName());
+		Console.WriteLine("|" + this.Name);
 		foreach(var test in connections){
-			Console.WriteLine("---->" + test.Key.GetName() + "Connection Weight: " + test.Value);
+			Console.WriteLine("---->" + test.Key.Name + "Connection Weight: " + test.Value);
 		}
 		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
 	}
-
-	public override string type {get => "Thread";}
 }
 
 /*__________P_O_R_T___________*/
-public class Port : Component
+class Port : Component
 {
 	public Port(string name, 
-				string interf, string role) : base(name)
+				string interf, string role) : base(name, Type.Thread)
 	{
 			this.interf = interf;
 			this.role = role;
@@ -255,7 +247,6 @@ public class Port : Component
 			}
 		}
 	}
-	public override string type {get => "Port";}		
 	public string interf 	= ""; 
 	public string role		= "";
 }
