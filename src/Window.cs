@@ -149,7 +149,7 @@ public class Window : Game
             {
                 if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.Rectangle)))
                 {
-                    updateCanvas = true;
+                    //updateCanvas = true;
                     if (Selection.LeftMouseJustReleased())
                     {
 
