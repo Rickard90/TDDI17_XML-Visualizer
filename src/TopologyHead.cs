@@ -8,11 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 //namespace XML_Visualizer;
 public class TopologyHead
 {
-	
 	//This is the texture that draws the head of arrows
-	public static Texture2D arrowhead; 
-    
-	public TopologyHead(string folderName)
+	public static Texture2D arrowhead;
+
+    public TopologyHead(string folderName)
 	{
         //Filereader:
 		XmlReader fileRead = new();
@@ -45,6 +44,8 @@ public class TopologyHead
         {
             width = 480;
         }
+        
+
         //The following three variables serve to decide edge and spacing layout:
         int startX  = width/24;
         int startY  = 100;
@@ -114,4 +115,6 @@ public class TopologyHead
 
 	private List<Component> path = new();
 	private readonly Component head = new();
+
+   //public static int Spacing { get => spacing; set => spacing = value; }
 }
