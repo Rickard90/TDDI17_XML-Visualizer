@@ -85,6 +85,7 @@ public class LinkButton : Button
         this.height       = height;
     }
 
+    /*
     public void Draw(SpriteBatch sb, FontSystem fontSystem)
     {
         base.rectangle.X = this.component.GetPosition().X + this.component.width;
@@ -94,6 +95,14 @@ public class LinkButton : Button
         Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(base.rectangle);
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Chocolate);
         sb.DrawString(fontSystem.GetFont(modifiedArea.Height), this.component.GetName(), new Vector2(modifiedArea.X, modifiedArea.Y), Color.Black);
+    }
+    */
+
+    public void Draw(SpriteBatch sb, SpriteFontBase font, Point pos, int height)
+    {
+        Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(new Rectangle(pos.X, pos.Y, 120, height));
+        sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Chocolate);
+        sb.DrawString(font, this.component.GetName(), new Vector2(modifiedArea.X, modifiedArea.Y), Color.Black);
     }
 
 }

@@ -58,7 +58,7 @@ public class Component
 		}
 		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
 	}
-	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int size)
+	public virtual void Draw(FontSystem fontSystem, Point pos, SpriteBatch sb, SpriteFontBase font, int size)
 	{
 		this.width  = 5 * size/24;
 		this.height = 4 * size/24;
@@ -86,8 +86,21 @@ public class Component
 		// }
 		//Draws out the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
-		
+
 		this.width = this.height;
+
+		// Draw linkbuttons
+		if (this.linkButtons.Count > 0)
+		{
+			pos.X += this.width;
+			int linkButtonHeight = this.height / this.linkButtons.Count;
+			foreach(LinkButton B in this.linkButtons)
+			{
+				B.Draw(sb, fontSystem.GetFont(linkButtonHeight), pos, linkButtonHeight);
+				pos.Y += linkButtonHeight;
+				//Console.WriteLine("HEJ");
+			}
+		}
 	}
 	//Protected functions:
 	protected virtual void UpdateStats(Component child)
