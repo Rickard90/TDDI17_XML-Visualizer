@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
-public abstract class Button
+abstract class Button
 {
     public Rectangle rectangle;
 
@@ -38,16 +38,16 @@ class HighlightButton
         Color color = Color.Red;
         int lineWidth = 3;
 
-        Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.component.GetRectangle());
+        Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.component.Rectangle);
 
         // Draw top side
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, lineWidth), color);
         // Draw left side
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height), color);
         // Draw right side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width, rectangle.Y, lineWidth, rectangle.Height), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width - 1, rectangle.Y, lineWidth, rectangle.Height), color);
         // Draw bottom side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height, rectangle.Width, lineWidth), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - lineWidth, rectangle.Width, lineWidth), color);
     }
 }
 
@@ -65,25 +65,16 @@ class ComponentButton : Button
 }
 */
 
-public class LinkButton : Button
+class LinkButton : Button
 {
-    public readonly Component component;
-    public readonly int       heightOffset;
-    public readonly int       height;
+    private Component component;
 
-    public LinkButton(Rectangle rectangle, Component component)
-        :   base(rectangle)
+    public LinkButton(Component component)
+        :   base(new())
     {
         this.component = component;
     }
 
-    public LinkButton(Component component, int heightOffset, int height)
-        :   base(new())
-    {
-        this.component    = component;
-        this.heightOffset = heightOffset;
-        this.height       = height;
-    }
 
     /*
     public void Draw(SpriteBatch sb, FontSystem fontSystem)
@@ -91,10 +82,10 @@ public class LinkButton : Button
         base.rectangle.X = this.component.GetPosition().X + this.component.width;
         base.rectangle.Y = this.component.GetPosition().Y + this.heightOffset;
         base.rectangle.Width = 120;
-        base.rectangle.Height = this.height;
+        base.rectangle.Height = height;
         Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(base.rectangle);
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Chocolate);
-        sb.DrawString(fontSystem.GetFont(modifiedArea.Height), this.component.GetName(), new Vector2(modifiedArea.X, modifiedArea.Y), Color.Black);
+        sb.DrawString(font, this.component.GetName(), new Vector2(modifiedArea.X, modifiedArea.Y), Color.Black);
     }
     */
 
@@ -109,7 +100,7 @@ public class LinkButton : Button
 
 class BackButton : Button
 {
-    private string description;
+    private readonly string description;
 
     public BackButton(Rectangle rectangle, string description)
         :   base(rectangle)
@@ -121,6 +112,6 @@ class BackButton : Button
     {
         Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(this.rectangle);
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Black);
-        sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);
+        sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);  //  consider cacheing drawing fonts
     }
 }
