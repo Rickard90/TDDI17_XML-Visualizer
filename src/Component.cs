@@ -34,7 +34,7 @@ class Component
     public Rectangle Rectangle => new(this.position.X, this.position.Y, this.width, this.height);
     public Component Parent		{get => this.parent; set => this.parent = value;}
     public List<Component> Children => this.children;
-	private int textMaxWidth {get {
+	private int TextMaxWidth {get {
 		return this.width - (3 * 2 * 2);		//	this calculation is incorrect, please fix this
 	}}
 
@@ -125,7 +125,7 @@ class Component
 
 	public string CalculateDisplayName(SpriteFontBase font)
 	{
-		return this.CalculateDisplayName(font, textMaxWidth);
+		return this.CalculateDisplayName(font, TextMaxWidth);
 	}
 	public string CalculateDisplayName(SpriteFontBase font, int innerWidth)
 	{
