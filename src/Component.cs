@@ -46,7 +46,7 @@ class Component
     public Component Parent		{get => this.parent; set => this.parent = value;}
     public List<Component> Children => this.children;
 	private int TextMaxWidth {get{
-		return this.width - (4*Component.lineThickness);
+		return (this.width - (4*Component.lineThickness));
 	}}
 
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
@@ -137,6 +137,8 @@ class Component
 	public string CalculateDisplayName(SpriteFontBase font, int innerWidth)
 	{
 		string displayName = this.name;
+		float excess = new();
+		int reduceBy = new();
 
 		Vector2 size = font.MeasureString(displayName);
 
@@ -152,12 +154,12 @@ class Component
 
 			do
 			{
-				float excess = (size.X - innerWidth) / font.FontSize;
-				int reduceBy = Math.Max(1, (int)excess) + "...".Length;
+				excess = (size.X - innerWidth) / font.FontSize;
+				reduceBy = Math.Max(1, (int)excess) + "...".Length;
 				displayName = displayName[..^reduceBy] + "...";
 				size = font.MeasureString(displayName);
 			}
-			while (size.X < innerWidth);
+			while (size.X > innerWidth);
 
 			return displayName;
 
