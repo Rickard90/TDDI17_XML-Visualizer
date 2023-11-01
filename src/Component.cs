@@ -118,6 +118,35 @@ class Component
 		}
 	}
 
+	public string CalculateDisplayName(SpriteFontBase font)
+	{
+		int innerWidth = this.width - 3;
+		string displayName = this.name;
+
+		Vector2 size = font.MeasureString(displayName);
+
+		if (size.X < innerWidth)
+			return displayName;
+		else
+		{
+			displayName += "...";
+			size = font.MeasureString(displayName);
+
+			do
+			{
+				float excess = (size.X - innerWidth) / font.FontSize;
+				int reduceBy = Math.Max(1, (int)excess) + "...".Length;
+				displayName = displayName[..^reduceBy] + "...";
+				size = font.MeasureString(displayName);
+			}
+			while (size.X < innerWidth);
+
+			return displayName;
+
+		}
+
+	}
+
     public override string ToString()
     {
         return $"({this.Name}:{this.type})";
