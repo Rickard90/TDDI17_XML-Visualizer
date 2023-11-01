@@ -20,16 +20,21 @@ class Component
 	{
 		
 	}
-	public Component(Type type)
+	public Component(string name, List<Component> children)
+		: this(name, Type.Top)
+	{
+		this.SetChildren(children);
+	}
+	protected Component(Type type)
 	{
 		this.type = type;
 	}
-    public Component(string name, Type type)
+    protected Component(string name, Type type)
 		: this(type)
     {
         this.name = name;
     }
-    public Component(string name, List<Component> children, Type type)
+    protected Component(string name, List<Component> children, Type type)
 		: this(name, type)
 	{
 		this.SetChildren(children);
@@ -41,7 +46,7 @@ class Component
     public Component Parent		{get => this.parent; set => this.parent = value;}
     public List<Component> Children => this.children;
 	private int TextMaxWidth {get{
-		return this.width - (3*Component.lineThickness);
+		return this.width - (4*Component.lineThickness);
 	}}
 
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
@@ -166,6 +171,8 @@ class Component
     }
 
 	//Fields:		
+	public 				enum 				Type{Top, Computer, Partition, Application, Thread, Port} //Should probably be named component rather than Top?
+	public	  readonly 	Type 				type 		= Type.Top;
 	protected 		 	string				name		= "";
 	protected 		   	int 				width		= 125;
 	protected 		   	int 				height		= 100;
@@ -173,8 +180,7 @@ class Component
     protected 			Component 			parent 		= null;
 	protected 		 	List<Component> 	children	= new();
 	public	 			Dictionary<Component, int> 	connections	= new();
-	public 				enum 				Type{Top, Computer, Partition, Application, Thread, Port}
-	public	  readonly 	Type 				type 		= Type.Top;
+	
 
 	
 	//Info:

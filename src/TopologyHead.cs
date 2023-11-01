@@ -12,7 +12,7 @@ class TopologyHead
 
     public TopologyHead(string folderName)
 	{		
-		this.head = new Component("Top", XmlReader.ReadComponents(folderName), Component.Type.Top);
+		this.head = new Component("Top", XmlReader.ReadComponents(folderName));
 		this.path = new List<Component>{this.head};
 	}
 
