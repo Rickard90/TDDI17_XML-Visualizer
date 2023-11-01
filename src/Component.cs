@@ -13,7 +13,13 @@ using Microsoft.Xna.Framework.Input;
 //All types of components inherit constructor and fields from the component-type
 class Component
 {
+	protected static readonly int lineThickness = 3;
+
 	//Constructors:
+	public Component()
+	{
+		
+	}
 	public Component(Type type)
 	{
 		this.type = type;
@@ -34,8 +40,8 @@ class Component
     public Rectangle Rectangle => new(this.position.X, this.position.Y, this.width, this.height);
     public Component Parent		{get => this.parent; set => this.parent = value;}
     public List<Component> Children => this.children;
-	private int TextMaxWidth {get {
-		return this.width - (3 * 2 * 2);		//	this calculation is incorrect, please fix this
+	private int TextMaxWidth {get{
+		return this.width - (3*Component.lineThickness);
 	}}
 
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
@@ -60,30 +66,26 @@ class Component
 	}
 	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int size)
 	{
-		this.width  = 5 * size/24;
-		this.height = 4 * size/24;
-		int lineThickness = 3;
-		int smallWidth  = this.width/6;
-		int smallHeight = this.height/10; 
-		int innerHeight = this.height - 2*lineThickness;
-		int innerWidth  = 5 * smallWidth  - 2*lineThickness;
-		string name = this.name; 
+		this.width  = size/6;
+		this.height = this.width;
+		int spacing = size/24; //Each component is measured in a number of blocks of this size
+		int border = Component.lineThickness; //Just for reading clarity's sake
+		int innerHeight = this.height - 2*border;
+		int innerWidth  = this.width  - 2*border;
 
 		//Updates component's position
 		this.position = pos;
 
 		//Draws small square to the right:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight, smallWidth, 8 * smallHeight), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight + lineThickness, smallWidth - lineThickness, 8 * smallHeight - 2 * lineThickness), Color.White);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width, pos.Y + spacing/2, spacing, 3*spacing), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width, pos.Y + spacing/2 + border, spacing - border, 3*spacing - 2*border), Color.White);
 		//Draws big square:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, this.width, this.height), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + border, pos.Y + border, innerWidth, innerHeight), Color.White);
 		
 		//Draws out the name
 		string displayName = this.CalculateDisplayName(font);
-		//Console.WriteLine($"		{displayName}");
-		sb.DrawString(font, displayName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
-		
+		sb.DrawString(font, displayName, new Vector2(pos.X + 2*border , pos.Y + 2*border), Color.Black);
 		
 		//Draws connection-arrows
 		int counter = 0;
@@ -91,9 +93,9 @@ class Component
 		{	
 			counter++;
 			//Draws the arrow-body
-			sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width - 2*lineThickness, pos.Y + counter*smallHeight + smallWidth/6 + lineThickness , 2*smallWidth/3, lineThickness), Color.Black); //black outline
+			sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*spacing, pos.Y + spacing/2 + (counter*spacing/2), spacing/2, spacing/8), Color.Black);
 			//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
-			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + this.width + smallWidth/6, pos.Y + counter*smallHeight, 2*smallWidth/3+ lineThickness, smallHeight + lineThickness ), Color.White);
+			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + 5*spacing + spacing/4, pos.Y + spacing/4 + spacing/16 + (counter*spacing/2), 3*spacing/4, spacing/2), Color.White);
 		}
 		
 		this.width = this.height;
@@ -163,17 +165,17 @@ class Component
         return $"({this.Name}:{this.type})";
     }
 
-	public enum Type{Top, Computer, Partition, Application, Thread, Port}
-	public readonly Type type = Type.Top;
-
 	//Fields:		
-	protected 		 	string				name	= "";
-	protected 		   	int 				width			= 125;
-	protected 		   	int 				height			= 100;
-	protected			Point				position		= new(0,0);
-    protected 			Component 			parent 			= null;
-	protected 		 	List<Component> 	children		= new();
-	public	 			Dictionary<Component, int> 	connections		= new();
+	protected 		 	string				name		= "";
+	protected 		   	int 				width		= 125;
+	protected 		   	int 				height		= 100;
+	protected			Point				position	= new(0,0);
+    protected 			Component 			parent 		= null;
+	protected 		 	List<Component> 	children	= new();
+	public	 			Dictionary<Component, int> 	connections	= new();
+	public 				enum 				Type{Top, Computer, Partition, Application, Thread, Port}
+	public	  readonly 	Type 				type 		= Type.Top;
+
 	
 	//Info:
 	public int ramSize 	 = 0;
