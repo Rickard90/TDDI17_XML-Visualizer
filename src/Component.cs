@@ -34,6 +34,9 @@ class Component
     public Rectangle Rectangle => new(this.position.X, this.position.Y, this.width, this.height);
     public Component Parent		{get => this.parent; set => this.parent = value;}
     public List<Component> Children => this.children;
+	private int textMaxWidth {get {
+		return this.width - (3 * 2 * 2);		//	this calculation is incorrect, please fix this
+	}}
 
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
 	
@@ -77,7 +80,9 @@ class Component
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
 		
 		//Draws out the name
-		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
+		string displayName = this.CalculateDisplayName(font);
+		//Console.WriteLine($"		{displayName}");
+		sb.DrawString(font, displayName, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
 		
 		
 		//Draws connection-arrows
@@ -120,13 +125,19 @@ class Component
 
 	public string CalculateDisplayName(SpriteFontBase font)
 	{
-		int innerWidth = this.width - 3;
+		return this.CalculateDisplayName(font, textMaxWidth);
+	}
+	public string CalculateDisplayName(SpriteFontBase font, int innerWidth)
+	{
 		string displayName = this.name;
 
 		Vector2 size = font.MeasureString(displayName);
 
 		if (size.X < innerWidth)
+		{
+			//Console.WriteLine($"			 name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
 			return displayName;
+		}
 		else
 		{
 			displayName += "...";
