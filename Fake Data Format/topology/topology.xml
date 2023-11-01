@@ -49,4 +49,50 @@
 	
   </Computer>
 
+  <Computer name="Navigation_Computer">
+
+    <Partition name="NC_0">
+      <Application name="MAP_DATA"/>
+      <Application name="Navigation_Data"/>
+    </Partition>
+
+    <Partition name="NC_1">
+      <Application name="GPS_DATA"/>
+    </Partition>
+
+    <Partition name="NC_2">
+      <Application name="Compass_DATA"/>
+    </Partition>
+
+    <Partition name="NC_3">
+      <Application name="Direction_Indicator_DATA"/>
+    </Partition>
+
+    <Partition name="NC_4">
+      <Application name="Latitude_DATA"/>
+    </Partition>
+
+    <Partition name="NC_5">
+      <Application name="Longitude_DATA"/>
+    </Partition>
+
+    <Partition name="NC_6">
+      <Application name="Automstic_Direction_Finder_Data"/>
+    </Partition>
+
+    <Partition name="NC_7">
+      <Application name="Inertial_Navigation_DATA"/>
+    </Partition>
+
+    <Partition name="NC_8">
+      <Application name="GNSS_Data"/>
+    </Partition>
+
+    <Partition name="NC_9">
+      <Application name="VOR_DATA"/>
+    </Partition>
+	
+  </Computer>
+
+
 </Topology>
