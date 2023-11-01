@@ -106,7 +106,7 @@ public class Window : Game
                             Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
                         Console.WriteLine("Component children: {0}", child.Children.Count);
-						if(child.type != Component.Type.Thread && child.Children.Count() > 0)
+						if(child.type == Component.Type.Thread || child.Children.Count() > 0)
                         {
                             this.top.Goto(child);
                             if (child.Children.Count == 0)

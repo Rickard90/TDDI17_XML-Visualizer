@@ -102,8 +102,6 @@ class Component
 			//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
 			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + 5*spacing + spacing/4, pos.Y + spacing/4 + spacing/16 + (counter*spacing/2), 3*spacing/4, spacing/2), Color.White);
 		}
-		
-		this.width = this.height;
 	}
 	//Protected functions:
 	protected virtual void UpdateStats(Component child)
@@ -277,6 +275,30 @@ class Thread : Component
 			Console.WriteLine("---->" + test.Key.Name + "Connection Weight: " + test.Value);
 		}
 		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
+	}
+	
+	//OBS: Does not overload Component.Draw(), Used if you explicitly cast into a thread
+	public new void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int size)
+	{
+		this.width  = size/6;
+		this.height = size/3;
+		int spacing = size/24; //Each component is measured in a number of blocks of this size
+		int border = Component.lineThickness; //Just for reading clarity's sake
+		int innerHeight = this.height - 2*border;
+		int innerWidth  = this.width  - 2*border;
+
+		//Updates component's position
+		this.position.X = pos.X - this.width/2;
+		this.position.Y = pos.Y - this.height/2;
+
+		//Draws big square:
+		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X, this.position.Y, this.width, this.height), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X + border, this.position.Y + border, innerWidth, innerHeight), Color.White);
+		
+		//Draws out the name
+		string displayName = this.CalculateDisplayName(font);
+		sb.DrawString(font, displayName, new Vector2(this.position.X + 2*border , this.position.Y + 2*border), Color.Black);
+		
 	}
 }
 

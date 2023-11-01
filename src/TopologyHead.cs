@@ -23,7 +23,18 @@ class TopologyHead
 			width = 480;
 		}
 		
-		switch((this.GetCurrent()).Type)
+		// For printing the path as text
+		String pathString = "";
+		foreach(Component C in path)
+		{
+			pathString += C.Name;
+			pathString += " > ";
+		}
+		pathString = pathString.Remove(pathString.Length - 3);
+		sb.DrawString(font, pathString, new Vector2(width/48, 0), Color.Black);
+	
+		
+		switch((this.GetCurrent()).type)
         {
 			case Component.Type.Thread:
 				DrawThread(sb, font, width, height);
@@ -73,17 +84,7 @@ class TopologyHead
 		int spacing = width/24;
 
 		Point pos = new(startX, startY);
-
-		// For printing the path as text
-		String pathString = "";
-		foreach(Component C in path)
-		{
-			pathString += C.Name;
-			pathString += " > ";
-		}
-		pathString = pathString.Remove(pathString.Length - 3);
-		sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
-	
+		
 		int count = 0;
 		foreach(Component C in path.Last().Children)
 		{
@@ -104,24 +105,7 @@ class TopologyHead
 	private void DrawThread(SpriteBatch sb, SpriteFontBase font, int width, int height)
     {
 		Thread thread = (Thread)this.GetCurrent();
-		//The following three variables serve to decide edge and spacing layout:
-		int startX  = width/2;
-		int startY  = height/2;
-		int spacing = width/24;
-
-		Point pos = new(startX, startY);
-		
-		// For printing the path as text
-		String pathString = "";
-		foreach(Component C in path)
-		{
-			pathString += C.Name;
-			pathString += " > ";
-		}
-		pathString = pathString.Remove(pathString.Length - 3);
-		sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
-	
-	
+		Point pos = new(width/2, height/2);
 		thread.Draw(pos, sb, font, width);
 	}
 	
