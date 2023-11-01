@@ -83,6 +83,16 @@ public class Window : Game
             Exit();
 
         Selection.Update();
+
+        Component curr = null;
+        if (this.backButton.IsReleased(ref this.updateCanvas, this.top, this.highlightButton)) {}
+        else if ((curr = Selection.CursorIsInsideAnyComponent()) != null) {
+            
+        }
+        else if (Selection.AnyComponentIsClicked()) {}
+        else if (highlightButton.GoRight()) {}
+
+
         if (Selection.LeftMouseJustReleased()) // && Selection.CursorIsInside(this.backButton.GetRectangle()))
         {
             //Component currComponent = this.top.GetCurrent();
@@ -203,16 +213,9 @@ public class Window : Game
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
         this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
-        //foreach(var child in this.top.GetCurrent().GetChildren()) {
-        //    foreach(var linkButton in child.linkButtons) {
-        //        linkButton.Draw(this.spriteBatch, this.fontSystem);
-        //    }
-        //}
         this.highlightButton.Draw(this.spriteBatch);
 
         Tooltip.DrawCurrent();
-
-     
         
         //this.RenderTopology();
         this.spriteBatch.End();

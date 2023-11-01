@@ -75,25 +75,12 @@ class LinkButton : Button
         this.component = component;
     }
 
-
-    /*
-    public void Draw(SpriteBatch sb, FontSystem fontSystem)
-    {
-        base.rectangle.X = this.component.GetPosition().X + this.component.width;
-        base.rectangle.Y = this.component.GetPosition().Y + this.heightOffset;
-        base.rectangle.Width = 120;
-        base.rectangle.Height = height;
-        Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(base.rectangle);
-        sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Chocolate);
-        sb.DrawString(font, this.component.GetName(), new Vector2(modifiedArea.X, modifiedArea.Y), Color.Black);
-    }
-    */
-
     public void Draw(SpriteBatch sb, SpriteFontBase font, Point pos, int height)
     {
-        Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(new Rectangle(pos.X, pos.Y, 120, height));
-        sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Chocolate);
-        sb.DrawString(font, this.component.GetName(), new Vector2(modifiedArea.X, modifiedArea.Y), Color.Black);
+        //Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(new Rectangle(pos.X, pos.Y, 120, height));
+        Rectangle drawArea = new Rectangle(pos.X, pos.Y, 120, height);
+        sb.Draw(Window.whitePixelTexture, drawArea, Color.Chocolate);
+        sb.DrawString(font, this.component.GetName(), new Vector2(drawArea.X, drawArea.Y), Color.Black);
     }
 
 }
@@ -113,5 +100,18 @@ class BackButton : Button
         Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(this.rectangle);
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Black);
         sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);  //  consider cacheing drawing fonts
+    }
+
+    public bool IsReleased(ref bool updateCanvas, TopologyHead top, HighlightButton highlightButton)
+    {
+        if (Selection.LeftMouseJustReleased() && Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.rectangle)))
+        {
+            updateCanvas = true;
+            Console.WriteLine("BACK-BUTTON SELECTED");
+            top.GoBack();
+            highlightButton.component = top.GetCurrent().Children.First();
+            return true;
+        }
+        else return false;
     }
 }

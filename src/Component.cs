@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
 
 //using System.Drawing;
 using System.Linq.Expressions;
@@ -86,6 +88,7 @@ class Component
 		{
 			pos.X += this.width;
 			int linkButtonHeight = this.height / this.linkButtons.Count;
+			linkButtonHeight = linkButtonHeight > 20 ? 20 : linkButtonHeight;
 			foreach(LinkButton B in this.linkButtons)
 			{
 				B.Draw(sb, fontSystem.GetFont(linkButtonHeight), pos, linkButtonHeight);
@@ -96,6 +99,7 @@ class Component
 		
 		
 		//Draws connection-arrows
+		/*
 		int counter = 0;
 		foreach(var connection in connections)
 		{	
@@ -105,22 +109,9 @@ class Component
 			//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
 			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + this.width + smallWidth/6, pos.Y + counter*smallHeight, 2*smallWidth/3+ lineThickness, smallHeight + lineThickness ), Color.White);
 		}
+		*/
 		
 		this.width = this.height;
-
-        //////// Drawing LinkButtons ////////
-
-        if (this.connections.Count > 0)
-        {
-            int buttonHeight = this.height / this.connections.Count;
-            buttonHeight = buttonHeight > 20 ? 20 : buttonHeight;
-            int count = 0;
-            foreach (LinkButton linkButton in this.linkButtons)
-            {
-                linkButton.Draw(sb, font, this.position + new Point(this.width+1, count*buttonHeight), buttonHeight);
-                count += 1;
-            }
-        }
 	}
 	//Protected functions:
 	protected virtual void UpdateStats(Component child)

@@ -15,7 +15,7 @@ public static class Selection
 
     private static Point mouseCursorPosition;
     private static bool leftMouseJustReleased = false;
-    public  static bool componentGoRight = false;
+    public  static bool ComponentGoRight = false;
 
     public static void Update()
     {
@@ -39,24 +39,6 @@ public static class Selection
         {
             leftMouseJustReleased = false;
         }
-
-        /*
-        MouseState mouseState = Mouse.GetState();
-
-        mouseCursorPosition = new Point( mouseState.X, mouseState.Y );
-
-        bool pressed  = (mouseState.LeftButton == ButtonState.Pressed);
-        bool released = (mouseState.LeftButton == ButtonState.Released);
-
-        if (released && leftMouseBeingPressed) {
-            leftMouseJustReleased = true;
-        } else {
-            leftMouseJustReleased = false;
-            //leftMouseBeingPressed = !released;
-        }
-
-        leftMouseBeingPressed = pressed;
-        */
     }
 
     private static void UpdateKeyInfo()
@@ -67,11 +49,11 @@ public static class Selection
         if (previousKeyboardState.IsKeyDown(Keys.D) &&
             currentKeyboardState.IsKeyUp(Keys.D))
         {
-            componentGoRight = true;
+            ComponentGoRight = true;
         }
         else
         {
-            componentGoRight = false;
+            ComponentGoRight = false;
         }
     }
 
@@ -90,5 +72,7 @@ public static class Selection
         return (mouseCursorPosition.X >= rect.X && mouseCursorPosition.X <= (rect.X + rect.Width) &&
 				mouseCursorPosition.Y >= rect.Y && mouseCursorPosition.Y <= (rect.Y + rect.Height));
     }
+
+    public static bool AnyComponentIsClicked()
 
 }
