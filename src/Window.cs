@@ -84,120 +84,82 @@ public class Window : Game
 
         Selection.Update();
 
-        Component curr = null;
-        if (this.backButton.IsReleased(ref this.updateCanvas, this.top, this.highlightButton)) {}
-        else if ((curr = Selection.CursorIsInsideAnyComponent()) != null) {
-            
-        }
-        else if (Selection.AnyComponentIsClicked()) {}
-        else if (highlightButton.GoRight()) {}
+        Component child = null;
+        LinkButton linkButton = null;
+        Tooltip.SetTooltip(null, Selection.MouseCursorPosition(), null);
 
-
-        if (Selection.LeftMouseJustReleased()) // && Selection.CursorIsInside(this.backButton.GetRectangle()))
+        if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null)
         {
-            //Component currComponent = this.top.GetCurrent();
-
-            if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.rectangle)))
+            this.updateCanvas = true;
+            if (Selection.LeftMouseJustReleased())
             {
-                updateCanvas = true;
-                Console.WriteLine("BACK-BUTTON SELECTED");
-                this.top.GoBack();
-                this.highlightButton.component = this.top.GetCurrent().Children.First();
-            }
-            else
-            {
-                foreach (Component child in this.top.GetCurrent().Children)
+                if(child.GetInfo() != "")
                 {
-                    if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.Rectangle)))
-                    {
-                        updateCanvas = true;
-                        if(child.GetInfo() != "")
-                        {
-                            Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
-                        }
-                        Console.WriteLine("Component children: {0}", child.Children.Count);
-						if(child.type != Component.Type.Thread && child.Children.Count() > 0)
-                        {
-                            this.top.Goto(child);
-                            if (child.Children.Count == 0)
-                            {
-                                this.highlightButton.component = null;
-                            }
-                            else
-                            {
-                                this.highlightButton.component = this.top.GetCurrent().Children.First();
-                            }
-                            Console.WriteLine("BREAK");
-						}
-                        else
-                        {
-                            //Console.WriteLine("Lowest level already reached");
-                        }
-                        break;
-                    }
+                    Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
                 }
-            }
-        }
-        else if (Selection.componentGoRight)
-        {
-            updateCanvas = true;
-            List<Component> children = this.top.GetCurrent().Children;
-            if (this.highlightButton.component == children.Last())
-            {
-                this.highlightButton.component = children.First();
-            }
-            else
-            {
-                this.highlightButton.component = children[children.IndexOf(this.highlightButton.component) + 1];
-            }
-        }
-        else
-        {
-            Component currComponent = this.top.GetCurrent();
-            bool drawTooltip = false;
-            foreach (Component child in currComponent.Children)
-            {
-                if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.Rectangle)))
+                Console.WriteLine("Component children: {0}", child.Children.Count);
+                if(child.type != Component.Type.Thread && child.Children.Count() > 0)
                 {
-                    updateCanvas = true;
-                    if (Selection.LeftMouseJustReleased())
+                    this.top.Goto(child);
+                    if (child.Children.Count == 0)
                     {
-
-                        Console.WriteLine("Clicked component: {0} of type {1}", child.Name, child.type);
-                        if(child.GetInfo() != "")
-                        {
-                            Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
-                        }
-                        //Console.WriteLine("Component children: {0}", child.GetChildren().Count);
-                        if(child.Children.Count() > 0 && child.type != Component.Type.Thread)
-                        {
-                            this.top.Goto(child);
-                            this.highlightButton.component = this.top.GetCurrent().Children.First();
-                            Console.WriteLine("BREAK");
-                        }
-                        else
-                        {
-                            //Console.WriteLine("Lowest level already reached");
-                        }
-                        break;
+                        this.highlightButton.Component = null;
                     }
                     else
                     {
-                        // Rita tooltip
-                        Tooltip.SetTooltip(child, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
-                        drawTooltip = true;
-                        break;
+                        this.highlightButton.Component = this.top.GetCurrent().Children.First();
                     }
                 }
             }
-            if (!drawTooltip)
+            else
             {
-                Tooltip.SetTooltip(null, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
+                Tooltip.SetTooltip(child, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
+            }
+        }
+        else if (Selection.LeftMouseJustReleased() && (linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null)
+        {
+            this.updateCanvas = true;
+            if (linkButton.Component.Children.Count == 0)
+            {
+                this.highlightButton.Component = null;
+            }
+            else
+            {
+                this.highlightButton.Component = this.top.GetCurrent().Children.First();
+            }
+
+            List<Component> topPath = this.top.GetPath();
+            topPath.Clear();
+            topPath.Add(linkButton.Component);
+            while (topPath.Last().Parent != null)
+            {
+                topPath.Add(topPath.Last().Parent);
+            }
+            topPath.Reverse();
+        }
+        else if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.rectangle)) && Selection.LeftMouseJustReleased())
+        {
+            this.updateCanvas = true;
+            Console.WriteLine("BACK-BUTTON SELECTED");
+            this.top.GoBack();
+            this.highlightButton.Component = this.top.GetCurrent().Children.First();
+        }
+
+        if (Selection.ComponentGoRight)
+        {
+            updateCanvas = true;
+            List<Component> children = this.top.GetCurrent().Children;
+            if (this.highlightButton.Component == children.Last())
+            {
+                this.highlightButton.Component = children.First();
+            }
+            else
+            {
+                this.highlightButton.Component = children[children.IndexOf(this.highlightButton.Component) + 1];
             }
         }
 
         canvas.Update(Mouse.GetState(), Keyboard.GetState());
-
         base.Update(gameTime);
     }
 
@@ -231,7 +193,7 @@ public class Window : Game
         this.top.Draw(this.fontSystem, this.spriteBatch, this.fontSystem.GetFont(fontSize), canvasSize.X, canvasSize.Y);
         if(!top.IsHead())
         {
-            //this.backButton.Draw(this.spriteBatch, this.font);
+            //this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
         }
     }
 }

@@ -73,6 +73,22 @@ public static class Selection
 				mouseCursorPosition.Y >= rect.Y && mouseCursorPosition.Y <= (rect.Y + rect.Height));
     }
 
-    public static bool AnyComponentIsClicked()
+    public static Component CursorIsInsideAnyComponent(List<Component> components)
+    {
+        foreach(Component c in components)
+            if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(c.Rectangle)))
+                return c;
+        return null;
+    }
+
+    public static LinkButton CursorIsInsideAnyLinkButton(List<Component> components)
+    {
+        foreach(Component c in components)
+            foreach(LinkButton b in c.linkButtons)
+                if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(b.rectangle)))
+                //if (Selection.CursorIsInside(b.rectangle))
+                    return b;
+        return null;
+    }
 
 }

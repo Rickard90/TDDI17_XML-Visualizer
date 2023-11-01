@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 //All types of components inherit constructor and fields from the component-type
-class Component
+public class Component
 {
 	//Constructors:
 	public Component(Type type)
@@ -93,10 +93,8 @@ class Component
 			{
 				B.Draw(sb, fontSystem.GetFont(linkButtonHeight), pos, linkButtonHeight);
 				pos.Y += linkButtonHeight;
-				//Console.WriteLine("HEJ");
 			}
 		}
-		
 		
 		//Draws connection-arrows
 		/*
@@ -167,7 +165,7 @@ class Component
     protected 			Component 			        parent 			= null;
 	protected 		 	List<Component> 	        children		= new();
 	public	 			Dictionary<Component, int> 	connections		= new();
-    protected           List<LinkButton>            linkButtons     = new();
+    public              List<LinkButton>            linkButtons     = new();
 	
 	//Info:
 	public int ramSize 	 = 0;

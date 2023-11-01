@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
-abstract class Button
+public abstract class Button
 {
     public Rectangle rectangle;
 
@@ -19,71 +19,35 @@ abstract class Button
     //public abstract void DoAction();
 }
 
-class HighlightButton
+/*---------------------------*/
+/*      LinkButton           */
+/*---------------------------*/
+
+public class LinkButton : Button
 {
-    public Component component;
+    public Component Component;
 
-    public HighlightButton(Component component)
-    {
-        this.component = component;
-    }
-
-    public void Draw(SpriteBatch sb)
-    {
-        if (this.component == null)
-        {
-            return;
-        }
-
-        Color color = Color.Red;
-        int lineWidth = 3;
-
-        Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.component.Rectangle);
-
-        // Draw top side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, lineWidth), color);
-        // Draw left side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height), color);
-        // Draw right side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width - 1, rectangle.Y, lineWidth, rectangle.Height), color);
-        // Draw bottom side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - lineWidth, rectangle.Width, lineWidth), color);
-    }
-}
-
-/*
-class ComponentButton : Button
-{
-    // Reference to a component
-    private Component component;
-
-    public ComponentButton(Rectangle rectangle, Component component)
-    :   base(rectangle)
-    {
-        this.component = component;
-    }
-}
-*/
-
-class LinkButton : Button
-{
-    private Component component;
-
-    public LinkButton(Component component)
+    public LinkButton(Component Component)
         :   base(new())
     {
-        this.component = component;
+        this.Component = Component;
     }
 
     public void Draw(SpriteBatch sb, SpriteFontBase font, Point pos, int height)
     {
-        //Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(new Rectangle(pos.X, pos.Y, 120, height));
-        Rectangle drawArea = new Rectangle(pos.X, pos.Y, 120, height);
-        sb.Draw(Window.whitePixelTexture, drawArea, Color.Chocolate);
-        sb.DrawString(font, this.component.GetName(), new Vector2(drawArea.X, drawArea.Y), Color.Black);
+        this.rectangle.X = pos.X;
+        this.rectangle.Y = pos.Y;
+        this.rectangle.Width = 120;
+        this.rectangle.Height = height;
+        sb.Draw(Window.whitePixelTexture, this.rectangle, Color.Chocolate);
+        sb.DrawString(font, this.Component.GetName(), new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
     }
 
 }
+
+/*---------------------------*/
+/*      BackButton           */
+/*---------------------------*/
 
 class BackButton : Button
 {
@@ -101,17 +65,38 @@ class BackButton : Button
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Black);
         sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);  //  consider cacheing drawing fonts
     }
+}
 
-    public bool IsReleased(ref bool updateCanvas, TopologyHead top, HighlightButton highlightButton)
+/*---------------------------*/
+/*      HighlightButton      */
+/*---------------------------*/
+
+class HighlightButton
+{
+    public Component Component;
+
+    public HighlightButton(Component Component)
     {
-        if (Selection.LeftMouseJustReleased() && Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.rectangle)))
-        {
-            updateCanvas = true;
-            Console.WriteLine("BACK-BUTTON SELECTED");
-            top.GoBack();
-            highlightButton.component = top.GetCurrent().Children.First();
-            return true;
-        }
-        else return false;
+        this.Component = Component;
+    }
+
+    public void Draw(SpriteBatch sb)
+    {
+        if (this.Component == null)
+            return;
+
+        Color color = Color.Red;
+        const int lineWidth = 3;
+
+        Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.Component.Rectangle);
+
+        // Draw top side
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, lineWidth), color);
+        // Draw left side
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height), color);
+        // Draw right side
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width - 1, rectangle.Y, lineWidth, rectangle.Height), color);
+        // Draw bottom side
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - lineWidth, rectangle.Width, lineWidth), color);
     }
 }
