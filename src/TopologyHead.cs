@@ -18,43 +18,20 @@ class TopologyHead
 
     public void Draw(SpriteBatch sb, SpriteFontBase font, int width, int height)
     {
-        int count = 0;
-        if(width < 480)
+		if(width < 480)
+		{
+			width = 480;
+		}
+		
+		switch((this.GetCurrent()).Type)
         {
-            width = 480;
-        }
-        
-        //The following three variables serve to decide edge and spacing layout:
-        int startX  = width/24;
-        int startY  = 100;
-        int spacing = width/24;
-
-        Point pos = new(startX, startY);
-
-        // For printing the path as text
-        String pathString = "";
-        foreach(Component C in path)
-        {
-            pathString += C.Name;
-            pathString += " > ";
-        }
-        pathString = pathString.Remove(pathString.Length - 3);
-        sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
-        foreach(Component C in path.Last().Children)
-        {
-            C.Draw(pos, sb, font, width);
-            count++;
-            if(count < 3)
-            {
-                pos.X += C.Rectangle.Width + 4*spacing;
-            }
-            else
-            {
-                count = 0;
-                pos.X = startX;
-                pos.Y += C.Rectangle.Height + 2*spacing;
-            }
-        }
+			case Component.Type.Thread:
+				DrawThread(sb, font, width, height);
+				break;
+			default:
+				DrawDefault(sb, font, width, height);
+				break;
+		}
     }
     public bool IsHead()
     {
@@ -85,6 +62,67 @@ class TopologyHead
 	public void Goto(Component newComponent)
 	{
 		this.path.Add(newComponent);
+	}
+	
+	//Private functions and fields:
+	private void DrawDefault(SpriteBatch sb, SpriteFontBase font, int width, int height)
+    {		
+		//The following three variables serve to decide edge and spacing layout:
+		int startX  = width/24;
+		int startY  = 100;
+		int spacing = width/24;
+
+		Point pos = new(startX, startY);
+
+		// For printing the path as text
+		String pathString = "";
+		foreach(Component C in path)
+		{
+			pathString += C.Name;
+			pathString += " > ";
+		}
+		pathString = pathString.Remove(pathString.Length - 3);
+		sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
+	
+		int count = 0;
+		foreach(Component C in path.Last().Children)
+		{
+			C.Draw(pos, sb, font, width);
+			count++;
+			if(count < 3)
+			{
+				pos.X += C.Rectangle.Width + 4*spacing;
+			}
+			else
+			{
+				count = 0;
+				pos.X = startX;
+				pos.Y += C.Rectangle.Height + 2*spacing;
+			}
+		}
+	}
+	private void DrawThread(SpriteBatch sb, SpriteFontBase font, int width, int height)
+    {
+		Thread thread = (Thread)this.GetCurrent();
+		//The following three variables serve to decide edge and spacing layout:
+		int startX  = width/2;
+		int startY  = height/2;
+		int spacing = width/24;
+
+		Point pos = new(startX, startY);
+		
+		// For printing the path as text
+		String pathString = "";
+		foreach(Component C in path)
+		{
+			pathString += C.Name;
+			pathString += " > ";
+		}
+		pathString = pathString.Remove(pathString.Length - 3);
+		sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
+	
+	
+		thread.Draw(pos, sb, font, width);
 	}
 	
 	private List<Component> path = new();
