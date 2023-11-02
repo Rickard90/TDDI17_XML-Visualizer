@@ -127,10 +127,9 @@ public class Window : Game
             {
                 this.highlightButton.Component = this.top.GetCurrent().Children.First();
             }
-
             List<Component> topPath = this.top.GetPath();
             topPath.Clear();
-            topPath.Add(linkButton.Component);
+            topPath.Add(linkButton.Component.Parent);
             while (topPath.Last().Parent != null)
             {
                 topPath.Add(topPath.Last().Parent);

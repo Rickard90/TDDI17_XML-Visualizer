@@ -108,8 +108,6 @@ public class Component
 			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + this.width + smallWidth/6, pos.Y + counter*smallHeight, 2*smallWidth/3+ lineThickness, smallHeight + lineThickness ), Color.White);
 		}
 		*/
-		
-		this.width = this.height;
 	}
 	//Protected functions:
 	protected virtual void UpdateStats(Component child)

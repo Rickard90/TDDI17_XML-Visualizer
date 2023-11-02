@@ -95,7 +95,7 @@ class HighlightButton
         // Draw left side
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height), color);
         // Draw right side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width - 1, rectangle.Y, lineWidth, rectangle.Height), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width, rectangle.Y, lineWidth, rectangle.Height), color);
         // Draw bottom side
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - lineWidth, rectangle.Width, lineWidth), color);
     }
