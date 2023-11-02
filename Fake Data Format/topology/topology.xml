@@ -53,7 +53,7 @@
 
     <Partition name="NC_0">
       <Application name="MAP_DATA"/>
-      <Application name="Navigation_Data"/>
+      <Application name="Navigation_DATA"/>
     </Partition>
 
     <Partition name="NC_1">
@@ -77,7 +77,7 @@
     </Partition>
 
     <Partition name="NC_6">
-      <Application name="Automstic_Direction_Finder_Data"/>
+      <Application name="Automstic_Direction_Finder_DATA"/>
     </Partition>
 
     <Partition name="NC_7">
@@ -85,7 +85,7 @@
     </Partition>
 
     <Partition name="NC_8">
-      <Application name="GNSS_Data"/>
+      <Application name="GNSS_DATA"/>
     </Partition>
 
     <Partition name="NC_9">
@@ -94,5 +94,28 @@
 	
   </Computer>
 
+  <Computer name="TestComputer1">
+
+  </Computer>
+
+  <Computer name="TestComputer2">
+
+  </Computer>
+
+  <Computer name="TestComputer3">
+
+  </Computer>
+
+  <Computer name="TestComputer4">
+
+  </Computer>
+
+  <Computer name="TestComputer5">
+
+  </Computer>
+
+  <Computer name="TestComputer6">
+
+  </Computer>
 
 </Topology>
