@@ -186,7 +186,7 @@ public class Window : Game
         }
 
         canvas.Update(Mouse.GetState(), Keyboard.GetState());
-
+        canvas.OffetControl(Window.ClientBounds);
         base.Update(gameTime);
     }
 

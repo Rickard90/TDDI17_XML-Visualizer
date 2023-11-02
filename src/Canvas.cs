@@ -49,6 +49,19 @@ partial class Canvas
         Camera.UpdateByKeyboard(keyboardState);
         Camera.UpdateByMouse(mouseState);
     }
+
+    public void OffetControl(Rectangle WindowSize) {
+        Camera.offset.X = Math.Min(0, Camera.offset.X);
+        Camera.offset.Y = Math.Min(0, Camera.offset.Y);
+        //Camera.offset.X = Math.Min(0, Camera.offset.X);
+        //Camera.offset.Y = Math.Min(0, Camera.offset.Y);
+        //if (Camera.offset.Y+windowSize.Y > WindowSize.Height) {
+        Camera.offset.Y = Math.Max(WindowSize.Y-WindowSize.Height, Camera.offset.Y);
+        Console.WriteLine("Current window height: " + WindowSize.Height);
+        Console.WriteLine("Current canvas height: " + WindowSize.Y);
+        //}
+        //Camera.offset.X = Math.Max(WindowSize.X-WindowSize.Width, Camera.offset.X);
+    }
     public void UpdateTexture()
     {
         if (this.renderFunction == null)
