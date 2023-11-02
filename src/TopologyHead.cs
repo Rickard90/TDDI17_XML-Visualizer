@@ -38,8 +38,9 @@ class TopologyHead
 		this.path = new List<Component>{this.head};
 	}
 
-    public void Draw(SpriteBatch sb, SpriteFontBase font, int width, int height)
+    public void Draw(SpriteBatch sb, SpriteFontBase font, int zoomLevel)
     {
+        int width = 67*zoomLevel;
         int count = 0;
         if(width < 480)
         {
@@ -66,7 +67,7 @@ class TopologyHead
         sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
         foreach(Component C in path.Last().Children)
         {
-            C.Draw(pos, sb, font, width);
+            C.Draw(pos, sb, font, zoomLevel);
             count++;
             if(count < 3)
             {

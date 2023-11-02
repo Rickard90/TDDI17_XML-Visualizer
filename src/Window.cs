@@ -1,4 +1,5 @@
-﻿using FontStashSharp;
+﻿using System.Runtime.CompilerServices;
+using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -35,7 +36,6 @@ public class Window : Game
     public void OnResize(Object sender, EventArgs e)
     {
         Console.WriteLine($"Window bounds = {base.Window.ClientBounds}");
-        //this.canvas.CanvasSize = base.Window.ClientBounds.Size;
     }
 
 
@@ -82,7 +82,6 @@ public class Window : Game
         Selection.Update();
         if (Selection.LeftMouseJustReleased()) // && Selection.CursorIsInside(this.backButton.GetRectangle()))
         {
-            //Component currComponent = this.top.GetCurrent();
 
             if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.rectangle)))
             {
@@ -155,7 +154,6 @@ public class Window : Game
                         {
                             Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
-                        //Console.WriteLine("Component children: {0}", child.GetChildren().Count);
                         if(child.Children.Count() > 0 && child.type != Component.Type.Thread)
                         {
                             this.top.Goto(child);
@@ -182,31 +180,30 @@ public class Window : Game
                 Tooltip.SetTooltip(null, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
             }
         }
-
+        
         canvas.Update(Mouse.GetState(), Keyboard.GetState());
         canvas.OffetControl(Window.ClientBounds);
+        if (Keyboard.GetState().IsKeyDown(Keys.I) || Keyboard.GetState().IsKeyDown(Keys.O)) {
+            updateCanvas = true;
+        }
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {   
         if (updateCanvas) {
-            this.canvas.ReSize(new Point(canvas.CanvasSize.X , (((this.top.NumberOfChildren()-1) / 3 + 1) * 188) + 95));
+            this.canvas.ReSize(new Point(67*canvas.zoomLevel , (((this.top.NumberOfChildren()-1) / 3 + 1) * 17*canvas.zoomLevel) + 95));
             this.canvas.UpdateTexture();  // only updated if needed
         }
         updateCanvas = false;
         base.GraphicsDevice.Clear(Color.Black);
         this.spriteBatch.Begin();
         this.canvas.Draw();
-        //this.top.Draw(this.spriteBatch, this.font);
         this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
         this.highlightButton.Draw(this.spriteBatch);
 
         Tooltip.DrawCurrent();
 
-     
-        
-        //this.RenderTopology();
         this.spriteBatch.End();
         
         base.Draw(gameTime);
@@ -215,13 +212,10 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-       // int fontSize = canvasSize.X/60;
-       // fontSize = fontSize<8?8:fontSize;
         Console.WriteLine("Number of children " + this.top.NumberOfChildren());
         Console.WriteLine("Number X" + canvasSize.X);
-        //this.canvas.ReSize(new Point(canvasSize.X , (this.top.NumberOfChildren() / 3 + 1) * 140)); 
-        //this.canvas.ReSize(new Point(400, 400));
-        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(12), canvasSize.X, canvasSize.Y);
+        Console.WriteLine("--------------------");
+        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(canvas.zoomLevel), canvas.zoomLevel);
         if(!top.IsHead())
         {
             //this.backButton.Draw(this.spriteBatch, this.font);

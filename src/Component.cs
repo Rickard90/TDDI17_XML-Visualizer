@@ -55,10 +55,11 @@ class Component
 		}
 		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
 	}
-	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int size)
+	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int zoomLevel)
 	{
-		this.width  = 5 * 800/24;
-		this.height = 4 * 800/24;
+		Console.WriteLine("Zoomlevel is " + zoomLevel);
+		this.width  = 5 * 67*zoomLevel/24;
+		this.height = 4 * 67*zoomLevel/24;
 		int lineThickness = 3;
 		int smallWidth  = this.width/6;
 		int smallHeight = this.height/10; 

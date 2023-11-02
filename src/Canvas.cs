@@ -15,6 +15,9 @@ partial class Canvas
     private GraphicsDevice graphicsDevice;
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
+    public int zoomLevel = 12; //default zoom level
+    private const int minZoom = 6;
+    private const int maxZoom = 25;
 
     public Point CanvasSize{
         get{return canvasSize;}
@@ -47,7 +50,14 @@ partial class Canvas
     public void Update(MouseState mouseState, KeyboardState keyboardState)
     {
         Camera.UpdateByKeyboard(keyboardState);
-        Camera.UpdateByMouse(mouseState);
+        if (keyboardState.IsKeyDown(Keys.I)) {
+            zoomLevel = Math.Min(maxZoom, zoomLevel+1);
+            Console.WriteLine("zoom in " + zoomLevel);
+        }
+        if (keyboardState.IsKeyDown(Keys.O)) {
+            zoomLevel = Math.Max(minZoom, zoomLevel-1);
+            Console.WriteLine("zoom out " + zoomLevel);
+        }
     }
 
     public void OffetControl(Rectangle WindowSize) {
