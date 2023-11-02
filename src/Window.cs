@@ -30,7 +30,7 @@ public class Window : Game
         base.IsMouseVisible = true;
         
         Window.AllowUserResizing = true;
-        Window.ClientSizeChanged += this.OnResize;
+        //Window.ClientSizeChanged += this.OnResize;
         Window.AllowAltF4 = true;
     }
 
@@ -66,7 +66,6 @@ public class Window : Game
         {
             renderFunction = this.RenderTopology
         };
-
         this.top = new TopologyHead(path);
 		ComponentFinder.top = this.top;
 
@@ -193,6 +192,7 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {
+        this.canvas.ReSize(new Point(canvas.WindowSize.X , (this.top.NumberOfChildren() / 3 + 1) * 230));
         
         if (updateCanvas) {
             this.canvas.UpdateTexture();  // only updated if needed
@@ -218,9 +218,13 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        int fontSize = canvasSize.X/60;
-        fontSize = fontSize<8?8:fontSize;
-        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(fontSize), canvasSize.X, canvasSize.Y);
+       // int fontSize = canvasSize.X/60;
+       // fontSize = fontSize<8?8:fontSize;
+        Console.WriteLine("Number of children " + this.top.NumberOfChildren());
+        Console.WriteLine("Number X" + canvasSize.X);
+        //this.canvas.ReSize(new Point(canvasSize.X , (this.top.NumberOfChildren() / 3 + 1) * 140)); 
+        //this.canvas.ReSize(new Point(400, 400));
+        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(12), canvasSize.X, canvasSize.Y);
         if(!top.IsHead())
         {
             //this.backButton.Draw(this.spriteBatch, this.font);

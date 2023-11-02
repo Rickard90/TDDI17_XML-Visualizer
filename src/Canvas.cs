@@ -31,6 +31,10 @@ partial class Canvas
         this.windowSize = windowSize;
     }
 
+    public void ReSize(Point NewSize)
+    {
+        windowSize = NewSize;
+    }
     public void Draw()
     {
 
@@ -45,7 +49,6 @@ partial class Canvas
         Camera.UpdateByKeyboard(keyboardState);
         Camera.UpdateByMouse(mouseState);
     }
-
     public void UpdateTexture()
     {
         if (this.renderFunction == null)

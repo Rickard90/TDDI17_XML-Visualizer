@@ -59,7 +59,7 @@ partial class Canvas
             }
             if (keyboardState.IsKeyDown(Keys.Left))
             {
-                offset.X += 10;
+                offset.X = Math.Min(0,offset.X+10);
             }
             if (keyboardState.IsKeyDown(Keys.Down))
             {
@@ -67,7 +67,7 @@ partial class Canvas
             }
             if (keyboardState.IsKeyDown(Keys.Up))
             {
-                offset.Y += 10;
+                offset.Y = Math.Min(0,offset.Y+10);
             }
         }
 
