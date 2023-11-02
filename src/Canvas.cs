@@ -11,15 +11,15 @@ partial class Canvas
     public delegate void RenderTopology(Point canvasSize);
     public RenderTopology renderFunction = null;
 
-    private Point windowSize;
+    private Point canvasSize;
     private GraphicsDevice graphicsDevice;
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
 
-    public Point WindowSize{
-        get{return windowSize;}
+    public Point CanvasSize{
+        get{return canvasSize;}
         set{
-            this.windowSize = value;
+            this.canvasSize = value;
             this.UpdateTexture();
         }
     }
@@ -28,19 +28,19 @@ partial class Canvas
     {
         this.graphicsDevice = graphicsDevice;
         this.spriteBatch = spriteBatch;
-        this.windowSize = windowSize;
+        this.canvasSize = windowSize;
     }
 
     public void ReSize(Point NewSize)
     {
-        windowSize = NewSize;
+        canvasSize = NewSize;
     }
     public void Draw()
     {
 
         if (this.texture == null)
             throw new Exception("Tried to draw canvas without generating texture");
-        Rectangle area = Camera.ModifiedDrawArea(new Rectangle(0,0, windowSize.X, windowSize.Y));           
+        Rectangle area = Camera.ModifiedDrawArea(new Rectangle(0,0, canvasSize.X, canvasSize.Y));           
         this.spriteBatch.Draw(this.texture, area, Color.White);
     }
 
@@ -48,24 +48,23 @@ partial class Canvas
     {
         Camera.UpdateByKeyboard(keyboardState);
         Camera.UpdateByMouse(mouseState);
-        Camera.offset.X = Math.Min(0,Camera.offset.X);
-        Camera.offset.Y = Math.Min(0,Camera.offset.Y);
-        //Camera.offset.X = Math.Min(0,Camera.offset.X);
-        //Camera.offset.Y = Math.Min(0,Camera.offset.Y);
-        
     }
 
     public void OffetControl(Rectangle WindowSize) {
-        Camera.offset.X = Math.Min(0, Camera.offset.X);
-        Camera.offset.Y = Math.Min(0, Camera.offset.Y);
-        //Camera.offset.X = Math.Min(0, Camera.offset.X);
-        //Camera.offset.Y = Math.Min(0, Camera.offset.Y);
-        //if (Camera.offset.Y+windowSize.Y > WindowSize.Height) {
-        Camera.offset.Y = Math.Max(WindowSize.Y-WindowSize.Height, Camera.offset.Y);
-        Console.WriteLine("Current window height: " + WindowSize.Height);
-        Console.WriteLine("Current canvas height: " + WindowSize.Y);
-        //}
-        //Camera.offset.X = Math.Max(WindowSize.X-WindowSize.Width, Camera.offset.X);
+        if (WindowSize.Width < canvasSize.X) {
+            Camera.offset.X = Math.Min(0, Camera.offset.X);
+            Camera.offset.X = Math.Max(WindowSize.Width-canvasSize.X, Camera.offset.X);
+        } else {
+            Camera.offset.X = Math.Max(0, Camera.offset.X);
+            Camera.offset.X = Math.Min(WindowSize.Width-canvasSize.X, Camera.offset.X);
+        }
+        if (WindowSize.Height < canvasSize.Y) {
+            Camera.offset.Y = Math.Min(0, Camera.offset.Y);
+            Camera.offset.Y = Math.Max(WindowSize.Height-canvasSize.Y, Camera.offset.Y);
+        } else {
+            Camera.offset.Y = Math.Max(0, Camera.offset.Y);
+            Camera.offset.Y = Math.Min(WindowSize.Height-canvasSize.Y, Camera.offset.Y);
+        }
     }
     public void UpdateTexture()
     {
@@ -73,20 +72,20 @@ partial class Canvas
             throw new Exception("Tried to render without a render function!");
 
 
-        using (RenderTarget2D renderTargetIsAOffScreenBuffer = new (graphicsDevice, this.windowSize.X, this.windowSize.Y, false, SurfaceFormat.Color, DepthFormat.None))
+        using (RenderTarget2D renderTargetIsAOffScreenBuffer = new (graphicsDevice, this.canvasSize.X, this.canvasSize.Y, false, SurfaceFormat.Color, DepthFormat.None))
         {
 
             spriteBatch.Begin();
                 graphicsDevice.SetRenderTarget(renderTargetIsAOffScreenBuffer);
-                this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0, windowSize.X, windowSize.Y), Color.White);
-                this.renderFunction.Invoke(this.windowSize);
+                this.spriteBatch.Draw(Window.whitePixelTexture, new Rectangle(0,0, canvasSize.X, canvasSize.Y), Color.White);
+                this.renderFunction.Invoke(this.canvasSize);
             spriteBatch.End();
             
 
             this.texture?.Dispose();
             using (MemoryStream stream = new())
             {
-                renderTargetIsAOffScreenBuffer.SaveAsPng(stream, windowSize.X, windowSize.Y);
+                renderTargetIsAOffScreenBuffer.SaveAsPng(stream, canvasSize.X, canvasSize.Y);
                 this.texture = Texture2D.FromStream(graphicsDevice, stream);
             }
 

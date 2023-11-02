@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-//namespace XML_Visualizer;
-
 public class Window : Game
 {
     public static Texture2D whitePixelTexture;
@@ -30,14 +28,14 @@ public class Window : Game
         base.IsMouseVisible = true;
         
         Window.AllowUserResizing = true;
-        //Window.ClientSizeChanged += this.OnResize;
+        Window.ClientSizeChanged += this.OnResize;
         Window.AllowAltF4 = true;
     }
 
     public void OnResize(Object sender, EventArgs e)
     {
         Console.WriteLine($"Window bounds = {base.Window.ClientBounds}");
-        this.canvas.WindowSize = base.Window.ClientBounds.Size;
+        //this.canvas.CanvasSize = base.Window.ClientBounds.Size;
     }
 
 
@@ -191,10 +189,9 @@ public class Window : Game
     }
 
     protected override void Draw(GameTime gameTime)
-    {
-        this.canvas.ReSize(new Point(canvas.WindowSize.X , (((this.top.NumberOfChildren()-1) / 3 + 1) * 188) + 95));
-        
+    {   
         if (updateCanvas) {
+            this.canvas.ReSize(new Point(canvas.CanvasSize.X , (((this.top.NumberOfChildren()-1) / 3 + 1) * 188) + 95));
             this.canvas.UpdateTexture();  // only updated if needed
         }
         updateCanvas = false;
