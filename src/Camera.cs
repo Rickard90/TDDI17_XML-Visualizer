@@ -67,9 +67,8 @@ partial class Canvas
             }
             if (keyboardState.IsKeyDown(Keys.Up))
             {
-                offset.Y += 10;            }
+                offset.Y += 10;
+            }
         }
-
-
     }
 }
