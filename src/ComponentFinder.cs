@@ -1,6 +1,6 @@
 //using System.Globalization;
 
-public static class ComponentFinder
+static class ComponentFinder
 {
 
     private static Dictionary<string, Component> componentDict = new();

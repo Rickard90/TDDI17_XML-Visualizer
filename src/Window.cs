@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FontStashSharp;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -10,8 +11,7 @@ public class Window : Game
 
     private GraphicsDeviceManager graphics;
     private SpriteBatch spriteBatch;
-    private SpriteFont font;
-    //private Texture2D tex;
+    private FontSystem fontSystem;
 
     private TopologyHead top; 
 	private Canvas canvas;
@@ -19,6 +19,7 @@ public class Window : Game
     private BackButton backButton;
     private HighlightButton highlightButton;
     private string path;
+    private bool updateCanvas = true;
     
     public Window(string path)
     {
@@ -53,9 +54,13 @@ public class Window : Game
 		Console.WriteLine("Loading Content");
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        this.font = Content.Load<SpriteFont>("Text");
+        this.fontSystem = new();
+        this.fontSystem.AddFont(File.ReadAllBytes("resource/font/arial.ttf"));
+
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
         whitePixelTexture.SetData( new Color[] { Color.White });
+
+		 TopologyHead.arrowhead = Content.Load<Texture2D>("Arrowhead");
 
         this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size)
         {
@@ -65,8 +70,11 @@ public class Window : Game
         this.top = new TopologyHead(path);
 		ComponentFinder.top = this.top;
 
-        this.highlightButton = new HighlightButton(this.top.GetCurrent().GetChildren().First());
+        this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
         this.backButton = new BackButton(new Rectangle(10, 40, 100, 50), "back");
+
+        Tooltip.spriteBatch = this.spriteBatch;
+        Tooltip.graphicsDevice = this.GraphicsDevice;
     }
 
     protected override void Update(GameTime gameTime)
@@ -75,38 +83,39 @@ public class Window : Game
             Exit();
 
         Selection.Update();
-
-        if (Selection.LeftMouseJustReleased())
+        if (Selection.LeftMouseJustReleased()) // && Selection.CursorIsInside(this.backButton.GetRectangle()))
         {
             //Component currComponent = this.top.GetCurrent();
 
-            if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.GetRectangle())))
+            if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.rectangle)))
             {
+                updateCanvas = true;
                 Console.WriteLine("BACK-BUTTON SELECTED");
                 this.top.GoBack();
-                this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
+                this.highlightButton.component = this.top.GetCurrent().Children.First();
             }
             else
             {
-                foreach (Component child in this.top.GetCurrent().GetChildren())
+                foreach (Component child in this.top.GetCurrent().Children)
                 {
-                    if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.GetRectangle())))
+                    if(Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.Rectangle)))
                     {
+                        updateCanvas = true;
                         if(child.GetInfo() != "")
                         {
-                            Console.WriteLine("Clicked component info: " + child.GetName() + " Type: " + child.GetType() + "\n" + child.GetInfo());
+                            Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
                         }
-                        Console.WriteLine("Component children: {0}", child.GetChildren().Count);
-						if(child.type != "Thread") //child.GetChildren().Count() > 0)
+                        Console.WriteLine("Component children: {0}", child.Children.Count);
+						if(child.type != Component.Type.Thread && child.Children.Count() > 0)
                         {
                             this.top.Goto(child);
-                            if (child.GetChildren().Count == 0)
+                            if (child.Children.Count == 0)
                             {
                                 this.highlightButton.component = null;
                             }
                             else
                             {
-                                this.highlightButton.component = this.top.GetCurrent().GetChildren().First();
+                                this.highlightButton.component = this.top.GetCurrent().Children.First();
                             }
                             Console.WriteLine("BREAK");
 						}
@@ -119,10 +128,10 @@ public class Window : Game
                 }
             }
         }
-
-        if (Selection.componentGoRight)
+        else if (Selection.componentGoRight)
         {
-            List<Component> children = this.top.GetCurrent().GetChildren();
+            updateCanvas = true;
+            List<Component> children = this.top.GetCurrent().Children;
             if (this.highlightButton.component == children.Last())
             {
                 this.highlightButton.component = children.First();
@@ -130,6 +139,50 @@ public class Window : Game
             else
             {
                 this.highlightButton.component = children[children.IndexOf(this.highlightButton.component) + 1];
+            }
+        }
+        else
+        {
+            Component currComponent = this.top.GetCurrent();
+            bool drawTooltip = false;
+            foreach (Component child in currComponent.Children)
+            {
+                if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(child.Rectangle)))
+                {
+                    //updateCanvas = true;
+                    if (Selection.LeftMouseJustReleased())
+                    {
+
+                        Console.WriteLine("Clicked component: {0} of type {1}", child.Name, child.type);
+                        if(child.GetInfo() != "")
+                        {
+                            Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
+                        }
+                        //Console.WriteLine("Component children: {0}", child.GetChildren().Count);
+                        if(child.Children.Count() > 0 && child.type != Component.Type.Thread)
+                        {
+                            this.top.Goto(child);
+                            this.highlightButton.component = this.top.GetCurrent().Children.First();
+                            Console.WriteLine("BREAK");
+                        }
+                        else
+                        {
+                            //Console.WriteLine("Lowest level already reached");
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        // Rita tooltip
+                        Tooltip.SetTooltip(child, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
+                        drawTooltip = true;
+                        break;
+                    }
+                }
+            }
+            if (!drawTooltip)
+            {
+                Tooltip.SetTooltip(null, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
             }
         }
 
@@ -140,14 +193,22 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        //base.GraphicsDevice.Clear(Color.White);
-        this.canvas.UpdateTexture();  //  triggers an update every frame, FIX THIS, should only update when something actually change
+        
+        if (updateCanvas) {
+            this.canvas.UpdateTexture();  // only updated if needed
+        }
+        updateCanvas = false;
+        base.GraphicsDevice.Clear(Color.Black);
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
+        this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
         this.highlightButton.Draw(this.spriteBatch);
-        this.backButton.Draw(this.spriteBatch, this.font);
 
+        Tooltip.DrawCurrent();
+
+     
+        
         //this.RenderTopology();
         this.spriteBatch.End();
         
@@ -157,7 +218,9 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        this.top.Draw(this.spriteBatch, this.font, canvasSize.X, canvasSize.Y);
+        int fontSize = canvasSize.X/60;
+        fontSize = fontSize<8?8:fontSize;
+        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(fontSize), canvasSize.X, canvasSize.Y);
         if(!top.IsHead())
         {
             //this.backButton.Draw(this.spriteBatch, this.font);

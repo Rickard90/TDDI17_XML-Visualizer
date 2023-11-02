@@ -13,6 +13,7 @@ public static class Selection
     private static MouseState    currentMouseState;
     private static KeyboardState currentKeyboardState;
 
+    private static Point mouseCursorPosition;
     private static bool leftMouseJustReleased = false;
     public  static bool componentGoRight = false;
 
@@ -26,6 +27,8 @@ public static class Selection
     {
         previousMouseState = currentMouseState;
         currentMouseState = Mouse.GetState();
+        mouseCursorPosition.X = currentMouseState.X;
+        mouseCursorPosition.Y = currentMouseState.Y;
 
         if (previousMouseState.LeftButton == ButtonState.Pressed &&
             currentMouseState.LeftButton  == ButtonState.Released)
@@ -79,13 +82,13 @@ public static class Selection
 
     public static Point MouseCursorPosition()
     {
-        return new Point(currentMouseState.X, currentMouseState.Y);
+        return mouseCursorPosition;
     }
 
     public static bool CursorIsInside(Rectangle rect)
     {
-        return (currentMouseState.X >= rect.X && currentMouseState.X <= (rect.X + rect.Width) &&
-				currentMouseState.Y >= rect.Y && currentMouseState.Y <= (rect.Y + rect.Height));
+        return (mouseCursorPosition.X >= rect.X && mouseCursorPosition.X <= (rect.X + rect.Width) &&
+				mouseCursorPosition.Y >= rect.Y && mouseCursorPosition.Y <= (rect.Y + rect.Height));
     }
 
 }

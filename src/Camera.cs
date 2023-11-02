@@ -1,8 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-using Size = Microsoft.Xna.Framework.Point;
-
 partial class Canvas
 {
     public static class Camera
@@ -25,7 +23,7 @@ partial class Canvas
             return new Rectangle(xOffset, yOffset, width, height);
         }
 
-        public static void UpdateByMouse(MouseState mouseState, Size bufferSize)
+        public static void UpdateByMouse(MouseState mouseState)
         {
 
             // Calculate the scroll delta based on the change in scroll wheel value
