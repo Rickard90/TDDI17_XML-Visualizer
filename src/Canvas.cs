@@ -48,6 +48,11 @@ partial class Canvas
     {
         Camera.UpdateByKeyboard(keyboardState);
         Camera.UpdateByMouse(mouseState);
+        Camera.offset.X = Math.Min(0,Camera.offset.X);
+        Camera.offset.Y = Math.Min(0,Camera.offset.Y);
+        //Camera.offset.X = Math.Min(0,Camera.offset.X);
+        //Camera.offset.Y = Math.Min(0,Camera.offset.Y);
+        
     }
     public void UpdateTexture()
     {

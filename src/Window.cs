@@ -192,7 +192,7 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        this.canvas.ReSize(new Point(canvas.WindowSize.X , (this.top.NumberOfChildren() / 3 + 1) * 230));
+        this.canvas.ReSize(new Point(canvas.WindowSize.X , (((this.top.NumberOfChildren()-1) / 3 + 1) * 188) + 95));
         
         if (updateCanvas) {
             this.canvas.UpdateTexture();  // only updated if needed
