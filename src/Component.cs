@@ -21,7 +21,7 @@ class Component
 		
 	}
 	public Component(string name, List<Component> children)
-		: this(name, Type.Top)
+		: this(name, Type.Component)
 	{
 		this.SetChildren(children);
 	}
@@ -55,7 +55,7 @@ class Component
 	public virtual void SetChildren(List<Component> newChildren)
 	{
 		connections.Clear();
- 		foreach(Component child in newChildren) {
+ 		foreach(Component child in newChildren) { 
 			this.AddChild(child);
 			child.Parent = this;
 			UpdateStats(child);
@@ -93,7 +93,7 @@ class Component
 		sb.DrawString(font, displayName, new Vector2(pos.X + 2*border , pos.Y + 2*border), Color.Black);
 		
 		//Draws connection-arrows
-		int counter = 0;
+		int counter = 0;	//Change this into a for-loop thank you
 		foreach(var connection in connections)
 		{	
 			counter++;
@@ -142,7 +142,7 @@ class Component
 
 		if (size.X < innerWidth)
 		{
-			//Console.WriteLine($"			 name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
+			//Console.WriteLine($"name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
 			return displayName;
 		}
 		else
@@ -171,8 +171,8 @@ class Component
     }
 
 	//Fields:		
-	public 				enum 				Type{Top, Computer, Partition, Application, Thread, Port} //Should probably be named component rather than Top?
-	public	  readonly 	Type 				type 		= Type.Top;
+	public 				enum 				Type{Component, Computer, Partition, Application, Thread, Port} //Should probably be named component rather than Top?
+	public	  readonly 	Type 				type 		= Type.Component;
 	protected 		 	string				name		= "";
 	protected 		   	int 				width		= 125;
 	protected 		   	int 				height		= 100;
@@ -277,12 +277,12 @@ class Thread : Component
 		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
 	}
 	
-	//OBS: Does not overload Component.Draw(), Used if you explicitly cast into a thread
+	//OBS: Does not overload Component.Draw(), Used if you explicitly cast a component into a thread
 	public new void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int size)
 	{
-		this.width  = size/6;
-		this.height = size/3;
 		int spacing = size/24; //Each component is measured in a number of blocks of this size
+		this.width  = 4*spacing;
+		this.height = 5*spacing;
 		int border = Component.lineThickness; //Just for reading clarity's sake
 		int innerHeight = this.height - 2*border;
 		int innerWidth  = this.width  - 2*border;
@@ -291,6 +291,41 @@ class Thread : Component
 		this.position.X = pos.X - this.width/2;
 		this.position.Y = pos.Y - this.height/2;
 
+		int counter = 0;
+		int numberOfPorts = this.children.Count;
+        Point portPos = new();
+        foreach (Component port in this.children)
+		{	
+			counter++;
+			//Draws the ports
+			switch (counter%3)
+			{
+				case 1:		//Draws on the right of the thread
+					portPos.X = this.position.X + this.width - border;
+            		portPos.Y = this.position.Y + (int)Math.Ceiling(counter/3.0) * this.height/((int)Math.Ceiling(numberOfPorts/3.0)+1) - spacing/4;
+					port.Draw(portPos, sb, font, size);
+					break;
+				case 2:		//Draws on the left of the thread
+					portPos.X = this.position.X + 2*border - spacing/2;
+					//Some sort of error here, gotta write out things in console to diagnose
+					if(numberOfPorts%3 == 2)
+            		{
+						portPos.Y = this.position.Y + (int)Math.Ceiling(counter/3.0) * this.height/((int)Math.Ceiling(numberOfPorts/3.0)+1) - spacing/4;
+					}		
+					else
+					{
+						portPos.Y = this.position.Y + counter/3 * this.height/((int)Math.Floor(numberOfPorts/3.0)+1) - spacing/4;
+					}
+					port.Draw(portPos, sb, font, size);
+					break;
+				default:	//Draws on the bottom of the thread
+            		portPos.X = this.position.X + (int)Math.Floor(counter/3.0) * this.width/((int)Math.Floor(numberOfPorts/3.0)+1) - spacing/4;
+					portPos.Y = this.position.Y + this.height - border;
+					port.Draw(portPos, sb, font, size);
+					break;
+			}
+		}
+
 		//Draws big square:
 		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X, this.position.Y, this.width, this.height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X + border, this.position.Y + border, innerWidth, innerHeight), Color.White);
@@ -298,6 +333,7 @@ class Thread : Component
 		//Draws out the name
 		string displayName = this.CalculateDisplayName(font);
 		sb.DrawString(font, displayName, new Vector2(this.position.X + 2*border , this.position.Y + 2*border), Color.Black);
+		
 		
 	}
 }
@@ -318,6 +354,22 @@ class Port : Component
 				this.connections.Add(connectedTo, 1);
 			}
 		}
+	}
+	public override void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int size)
+	{
+		int border = Component.lineThickness; //Just for reading clarity's sake
+		int spacing = size/24; //Each component is measured in a number of blocks of this size
+		this.width  = spacing/2;
+		this.height = spacing/2;				
+		
+
+		//Updates component's position
+		this.position.X = pos.X - border;
+		this.position.Y = pos.Y;
+
+		//Draws square:
+		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X, this.position.Y, this.width, this.height), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X + border, this.position.Y + border, this.width - 2*border, this.height - 2*border), Color.White);
 	}
 	public string interf 	= ""; 
 	public string role		= "";
