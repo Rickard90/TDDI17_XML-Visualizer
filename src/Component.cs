@@ -84,8 +84,10 @@ public class Component
 		this.position = pos;
 
 		//Draws small square to the right:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width, pos.Y + spacing/2, spacing, 3*spacing), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width, pos.Y + spacing/2 + border, spacing - border, 3*spacing - 2*border), Color.White);
+        int smallSquareHeight = 3*spacing - 2*border;
+        int smallSquareWidth  = 3*spacing - border;
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width, pos.Y + spacing/2, smallSquareWidth + border, smallSquareHeight + 2*border), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width, pos.Y + spacing/2 + border, smallSquareWidth, smallSquareHeight), Color.White);
 		//Draws big square:
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, this.width, this.height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + border, pos.Y + border, innerWidth, innerHeight), Color.White);
@@ -96,12 +98,13 @@ public class Component
 		// Draw linkbuttons
 		if (this.linkButtons.Count > 0)
 		{
-			pos.X += this.width;
-			int linkButtonHeight = this.height / this.linkButtons.Count;
-			linkButtonHeight = linkButtonHeight > 20 ? 20 : linkButtonHeight;
+			pos.X += this.width + border;
+            pos.Y += spacing/2  + border;
+            int linkButtonHeight = (smallSquareHeight) / 5; // <--- There are 5 buttons per component
+            int linkButtonWidth  = smallSquareWidth;
 			foreach(LinkButton B in this.linkButtons)
 			{
-				B.Draw(sb, fontSystem.GetFont(linkButtonHeight), pos, linkButtonHeight);
+				B.Draw(sb, fontSystem.GetFont(linkButtonHeight - 4), pos, linkButtonHeight, linkButtonWidth);
 				pos.Y += linkButtonHeight;
 			}
 		}

@@ -33,14 +33,35 @@ public class LinkButton : Button
         this.Component = Component;
     }
 
-    public void Draw(SpriteBatch sb, SpriteFontBase font, Point pos, int height)
+    public void Draw(SpriteBatch sb, SpriteFontBase font, Point pos, int height, int width)
     {
         this.rectangle.X = pos.X;
         this.rectangle.Y = pos.Y;
-        this.rectangle.Width = 120;
+        this.rectangle.Width = width;
         this.rectangle.Height = height;
-        sb.Draw(Window.whitePixelTexture, this.rectangle, Color.Chocolate);
-        sb.DrawString(font, this.Component.Name, new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
+        sb.Draw(Window.whitePixelTexture, this.rectangle, Color.Transparent);
+
+        Vector2 size = font.MeasureString(this.Component.Name);
+        if (size.X < width)
+        {
+            sb.DrawString(font, this.Component.Name, new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
+            return;
+        }
+
+        string newName = this.Component.Name + "...";
+        size = font.MeasureString(newName);
+        float excess;
+        int reduceBy;
+        do
+        {
+            excess = (size.X - width) / font.FontSize;
+            reduceBy = Math.Max(1, (int)excess) + "...".Length;
+            newName = newName[..^reduceBy] + "...";
+            size = font.MeasureString(newName);
+        }
+        while (size.X > width);
+
+        sb.DrawString(font, newName, new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
     }
 
 }
