@@ -69,9 +69,9 @@ class TopologyHead
         {
             C.Draw(pos, sb, font, zoomLevel);
             count++;
-            if(count < 3)
+            if(count < 2)
             {
-                pos.X += C.Rectangle.Width + 4*spacing;
+                pos.X += C.Rectangle.Width + 7*spacing;
             }
             else
             {
