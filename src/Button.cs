@@ -40,7 +40,7 @@ public class LinkButton : Button
         this.rectangle.Width = 120;
         this.rectangle.Height = height;
         sb.Draw(Window.whitePixelTexture, this.rectangle, Color.Chocolate);
-        sb.DrawString(font, this.Component.GetName(), new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
+        sb.DrawString(font, this.Component.Name, new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
     }
 
 }
@@ -61,7 +61,8 @@ class BackButton : Button
 
     public void Draw(SpriteBatch sb, SpriteFontBase font)
     {
-        Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(this.rectangle);
+        //Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(this.rectangle);
+        Rectangle modifiedArea = this.rectangle;
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Black);
         sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);  //  consider cacheing drawing fonts
     }
@@ -86,17 +87,16 @@ class HighlightButton
             return;
 
         Color color = Color.Red;
-        const int lineWidth = 3;
-
         Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.Component.Rectangle);
+        int lineThickness = Component.lineThickness;
 
         // Draw top side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, lineWidth), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, lineThickness), color);
         // Draw left side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, lineThickness, rectangle.Height), color);
         // Draw right side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width, rectangle.Y, lineWidth, rectangle.Height), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width - lineThickness, rectangle.Y, lineThickness, rectangle.Height), color);
         // Draw bottom side
-        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - lineWidth, rectangle.Width, lineWidth), color);
+        sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - lineThickness, rectangle.Width, lineThickness), color);
     }
 }

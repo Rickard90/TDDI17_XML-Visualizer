@@ -173,7 +173,7 @@ public class Window : Game
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
-        this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
+        //this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
         this.highlightButton.Draw(this.spriteBatch);
 
         Tooltip.DrawCurrent();
@@ -192,7 +192,7 @@ public class Window : Game
         this.top.Draw(this.fontSystem, this.spriteBatch, this.fontSystem.GetFont(fontSize), canvasSize.X, canvasSize.Y);
         if(!top.IsHead())
         {
-            //this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
+            this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
         }
     }
 }

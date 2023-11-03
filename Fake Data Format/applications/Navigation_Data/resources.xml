@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ApplicationResourceRequirements application="NAVIGATION_DATA" initStack="32000" ramSize="128000">
+  <ThreadResourceRequirements thread="NAVIGATION_DATA_64" execStack="32000" execTime="5000000"/>
+</ApplicationResourceRequirements>
+
