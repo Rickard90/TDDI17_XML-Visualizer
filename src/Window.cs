@@ -60,7 +60,7 @@ public class Window : Game
         whitePixelTexture = new Texture2D(base.GraphicsDevice, 1, 1);
         whitePixelTexture.SetData( new Color[] { Color.White });
 
-		 TopologyHead.arrowhead = Content.Load<Texture2D>("Arrowhead");
+		TopologyHead.arrowhead = Content.Load<Texture2D>("Arrowhead");
 
         this.canvas = new Canvas(base.GraphicsDevice, spriteBatch, Window.ClientBounds.Size)
         {
@@ -119,14 +119,6 @@ public class Window : Game
         else if (Selection.LeftMouseJustReleased() && (linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null)
         {
             this.updateCanvas = true;
-            if (linkButton.Component.Children.Count == 0)
-            {
-                this.highlightButton.Component = null;
-            }
-            else
-            {
-                this.highlightButton.Component = this.top.GetCurrent().Children.First();
-            }
             List<Component> topPath = this.top.GetPath();
             topPath.Clear();
             topPath.Add(linkButton.Component.Parent);
@@ -135,6 +127,7 @@ public class Window : Game
                 topPath.Add(topPath.Last().Parent);
             }
             topPath.Reverse();
+            this.highlightButton.Component = linkButton.Component;
         }
         else if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.rectangle)) && Selection.LeftMouseJustReleased())
         {
@@ -173,8 +166,6 @@ public class Window : Game
         this.spriteBatch.Begin();
         this.canvas.Draw();
         //this.top.Draw(this.spriteBatch, this.font);
-        //this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
-        this.highlightButton.Draw(this.spriteBatch);
 
         Tooltip.DrawCurrent();
         
@@ -190,6 +181,7 @@ public class Window : Game
         int fontSize = canvasSize.X/60;
         fontSize = fontSize<8?8:fontSize;
         this.top.Draw(this.fontSystem, this.spriteBatch, this.fontSystem.GetFont(fontSize), canvasSize.X, canvasSize.Y);
+        this.highlightButton.Draw(this.spriteBatch);
         if(!top.IsHead())
         {
             this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));

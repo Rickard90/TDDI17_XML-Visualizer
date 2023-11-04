@@ -14,9 +14,6 @@ public abstract class Button
     {
         this.rectangle = rectangle;
     }
-
-    // Idea: Different types of buttons have different actions
-    //public abstract void DoAction();
 }
 
 /*---------------------------*/
@@ -35,16 +32,21 @@ public class LinkButton : Button
 
     public void Draw(SpriteBatch sb, SpriteFontBase font, Point pos, int height, int width)
     {
-        this.rectangle.X = pos.X;
+        this.rectangle.X = pos.X + width;
         this.rectangle.Y = pos.Y;
-        this.rectangle.Width = width;
+        this.rectangle.Width = width/3;
         this.rectangle.Height = height;
-        sb.Draw(Window.whitePixelTexture, this.rectangle, Color.Transparent);
+
+        //Draws the arrow-body
+        //sb.Draw(Window.whitePixelTexture, new Rectangle(this.rectangle.X, this.rectangle.Y, width/4, height/2), Color.Black);
+        //This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
+        //sb.Draw(TopologyHead.arrowhead, new Rectangle(this.rectangle.X, this.rectangle.Y, width/3, height), Color.White);
+        sb.Draw(TopologyHead.arrowhead, this.rectangle, Color.White);
 
         Vector2 size = font.MeasureString(this.Component.Name);
         if (size.X < width)
         {
-            sb.DrawString(font, this.Component.Name, new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
+            sb.DrawString(font, this.Component.Name, new Vector2(pos.X, pos.Y), Color.Black);
             return;
         }
 
@@ -61,9 +63,8 @@ public class LinkButton : Button
         }
         while (size.X > width);
 
-        sb.DrawString(font, newName, new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
+        sb.DrawString(font, newName, new Vector2(pos.X, pos.Y), Color.Black);
     }
-
 }
 
 /*---------------------------*/
@@ -108,7 +109,8 @@ class HighlightButton
             return;
 
         Color color = Color.Red;
-        Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.Component.Rectangle);
+        //Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.Component.Rectangle);
+        Rectangle rectangle = this.Component.Rectangle;
         int lineThickness = Component.lineThickness;
 
         // Draw top side

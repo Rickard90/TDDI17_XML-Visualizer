@@ -111,7 +111,7 @@ public class Component
 
 		this.width = this.height;		
 		//Draws connection-arrows
-		/*
+        /*
 		int counter = 0;
 		foreach(var connection in connections)
 		{	
