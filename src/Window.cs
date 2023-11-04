@@ -79,8 +79,9 @@ public class Window : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) {
             Exit();
+        }
 
         Selection.Update();
 
@@ -91,28 +92,22 @@ public class Window : Game
         if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null)
         {
             this.updateCanvas = true;
-            if (Selection.LeftMouseJustReleased())
-            {
-                if(child.GetInfo() != "")
-                {
+            if (Selection.LeftMouseJustReleased()) {
+                if(child.GetInfo() != "") {
                     Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
                 }
                 Console.WriteLine("Component children: {0}", child.Children.Count);
-                if(child.type != Component.Type.Thread && child.Children.Count() > 0)
-                {
+                if(child.type != Component.Type.Thread && child.Children.Count() > 0) {
                     this.top.Goto(child);
-                    if (child.Children.Count == 0)
-                    {
+                    if (child.Children.Count == 0) {
                         this.highlightButton.Component = null;
                     }
-                    else
-                    {
+                    else {
                         this.highlightButton.Component = this.top.GetCurrent().Children.First();
                     }
                 }
             }
-            else
-            {
+            else {
                 Tooltip.SetTooltip(child, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
             }
         }
@@ -122,8 +117,7 @@ public class Window : Game
             List<Component> topPath = this.top.GetPath();
             topPath.Clear();
             topPath.Add(linkButton.Component.Parent);
-            while (topPath.Last().Parent != null)
-            {
+            while (topPath.Last().Parent != null) {
                 topPath.Add(topPath.Last().Parent);
             }
             topPath.Reverse();
@@ -141,12 +135,10 @@ public class Window : Game
         {
             updateCanvas = true;
             List<Component> children = this.top.GetCurrent().Children;
-            if (this.highlightButton.Component == children.Last())
-            {
+            if (this.highlightButton.Component == children.Last()) {
                 this.highlightButton.Component = children.First();
             }
-            else
-            {
+            else {
                 this.highlightButton.Component = children[children.IndexOf(this.highlightButton.Component) + 1];
             }
         }
@@ -182,8 +174,7 @@ public class Window : Game
         fontSize = fontSize<8?8:fontSize;
         this.top.Draw(this.fontSystem, this.spriteBatch, this.fontSystem.GetFont(fontSize), canvasSize.X, canvasSize.Y);
         this.highlightButton.Draw(this.spriteBatch);
-        if(!top.IsHead())
-        {
+        if(!top.IsHead()) {
             this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
         }
     }
