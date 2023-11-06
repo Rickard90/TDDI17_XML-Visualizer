@@ -1,12 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
 <Application name="NAVIGATION_DATA">
  
   <Thread name="NAVIGATION_DATA_64" frequency="64HZ">
-    <Port name="Air_Speed" interface="Air_Data_Interface.Speed" role="Reciever"/>
-    <Port name="Altitude" interface="Air_Data_Interface.Altitude" role="Reciever"/>
-    <Port name="Pressure" interface="Air_Data_Interface.Pressure" role="Reciever"/>
-    <Port name="Temperature" interface="Air_Data_Interface.Temperature" role="Reciever"/>
+    <Port name="Levitation" interface="NAVIGATION_DATA_Interface.Levitation" role="Sender"/>
+    <Port name="Aerostat" interface="NAVIGATION_DATA_Interface.Aerostat" role="Sender"/>
+  </Thread>
+
+  <Thread name="NAVIGATION_DATA_16" frequency="16HZ">
+    <Port name="Motion" interface="NAVIGATION_DATA_Interface.Motion" role="Sender"/>
+    <Port name="Weather" interface="NAVIGATION_DATA_Interface.Weather" role="Sender"/>
   </Thread>
 
 </Application>

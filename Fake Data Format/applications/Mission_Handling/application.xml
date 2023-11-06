@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Application name="MISSION_HANDLING">
+ 
+  <Thread name="MISSION_HANDLING_64" frequency="64HZ">
+    <Port name="Levitation" interface="NAVIGATION_DATA_Interface.Levitation" role="Reciever"/>
+    <Port name="Aerostat" interface="NAVIGATION_DATA_Interface.Aerostat" role="Reciever"/>
+    <Port name="Motion" interface="NAVIGATION_DATA_Interface.Motion" role="Reciever"/>
+    <Port name="Weather" interface="NAVIGATION_DATA_Interface.Weather" role="Reciever"/>
+  </Thread>
+
+</Application>

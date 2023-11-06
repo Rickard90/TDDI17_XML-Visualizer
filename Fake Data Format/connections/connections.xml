@@ -22,4 +22,24 @@
     <RecieverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Temperature"/>
   </Connection>
 
+  <Connection>
+    <SenderPort name="NAVIGATION_DATA.NAVIGATION_DATA_64.Levitation"/>
+    <RecieverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Levitation"/>
+  </Connection>
+
+  <Connection>
+    <SenderPort name="NAVIGATION_DATA.NAVIGATION_DATA_64.Aerostat"/>
+    <RecieverPort name="FMISSION_HANDLING.MISSION_HANDLING_64.Aerostat"/>
+  </Connection>
+
+  <Connection>
+    <SenderPort name="NAVIGATION_DATA.NAVIGATION_DATA_16.Motion"/>
+    <RecieverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Motion"/>
+  </Connection>
+
+  <Connection>
+    <SenderPort name="NAVIGATION_DATA.NAVIGATION_DATA_16.Weather"/>
+    <RecieverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Weather"/>
+  </Connection>
+
 </Connections>
