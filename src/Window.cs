@@ -36,14 +36,12 @@ public class Window : Game
     public void OnResize(Object sender, EventArgs e)
     {
         Console.WriteLine($"Window bounds = {base.Window.ClientBounds}");
+        Canvas.Camera.offset.X = (Window.ClientBounds.Size.X - canvas.CanvasSize.X) / 2;
     }
-
-
     protected override void Initialize()
     {
 		Console.WriteLine("Initializing");
         base.Initialize();
-
         Window.AllowUserResizing = true;
     }
 
@@ -192,7 +190,7 @@ public class Window : Game
     protected override void Draw(GameTime gameTime)
     {   
         if (updateCanvas) {
-            this.canvas.ReSize(new Point(67*canvas.zoomLevel , (((this.top.NumberOfChildren()-1) / 3 + 1) * 17*canvas.zoomLevel) + 95));
+            this.canvas.ReSize(new Point(67*canvas.zoomLevel , (((this.top.NumberOfChildren()-1) / 2 + 1) * 17*canvas.zoomLevel) + 95));
             this.canvas.UpdateTexture();  // only updated if needed
         }
         updateCanvas = false;
