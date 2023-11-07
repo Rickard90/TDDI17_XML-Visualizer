@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ApplicationResourceRequirements application="MISSION_HANDLING" initStack="32000" ramSize="128000">
+  <ThreadResourceRequirements thread="MISSION_HANDLING_64" execStack="32000" execTime="5000000"/>
+</ApplicationResourceRequirements>
+

@@ -85,7 +85,6 @@ public static class Selection
     {
         foreach(Component c in components)
             foreach(LinkButton b in c.linkButtons)
-                //if (Selection.CursorIsInside(b.rectangle))
                 if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(b.rectangle)))
                     return b;
         return null;

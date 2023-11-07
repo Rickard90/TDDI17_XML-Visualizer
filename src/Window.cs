@@ -1,9 +1,8 @@
-﻿using FontStashSharp;
+﻿using System.Runtime.CompilerServices;
+using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
-//namespace XML_Visualizer;
 
 public class Window : Game
 {
@@ -37,15 +36,12 @@ public class Window : Game
     public void OnResize(Object sender, EventArgs e)
     {
         Console.WriteLine($"Window bounds = {base.Window.ClientBounds}");
-        this.canvas.WindowSize = base.Window.ClientBounds.Size;
+        Canvas.Camera.offset.X = (Window.ClientBounds.Size.X - canvas.CanvasSize.X) / 2;
     }
-
-
     protected override void Initialize()
     {
 		Console.WriteLine("Initializing");
         base.Initialize();
-
         Window.AllowUserResizing = true;
     }
 
@@ -66,7 +62,6 @@ public class Window : Game
         {
             renderFunction = this.RenderTopology
         };
-
         this.top = new TopologyHead(path);
 		ComponentFinder.top = this.top;
 
@@ -142,15 +137,19 @@ public class Window : Game
                 this.highlightButton.Component = children[children.IndexOf(this.highlightButton.Component) + 1];
             }
         }
-
+        
         canvas.Update(Mouse.GetState(), Keyboard.GetState());
+        canvas.OffetControl(Window.ClientBounds);
+        if (Keyboard.GetState().IsKeyDown(Keys.I) || Keyboard.GetState().IsKeyDown(Keys.O)) {
+            updateCanvas = true;
+        }
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
-    {
-        
+    {   
         if (updateCanvas) {
+            this.canvas.ReSize(new Point(67*canvas.zoomLevel , (((this.top.NumberOfChildren()-1) / 2 + 1) * 17*canvas.zoomLevel) + 95));
             this.canvas.UpdateTexture();  // only updated if needed
         }
         updateCanvas = false;
@@ -170,9 +169,10 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        int fontSize = canvasSize.X/60;
-        fontSize = fontSize<8?8:fontSize;
-        this.top.Draw(this.fontSystem, this.spriteBatch, this.fontSystem.GetFont(fontSize), canvasSize.X, canvasSize.Y);
+        Console.WriteLine("Number of children " + this.top.NumberOfChildren());
+        Console.WriteLine("Number X" + canvasSize.X);
+        Console.WriteLine("--------------------");
+        this.top.Draw(this.spriteBatch, this.fontSystem, canvas.zoomLevel);
         this.highlightButton.Draw(this.spriteBatch);
         if(!top.IsHead()) {
             this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
