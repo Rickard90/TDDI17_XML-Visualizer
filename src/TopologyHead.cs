@@ -104,9 +104,12 @@ class TopologyHead
 	}
 	private void DrawThread(SpriteBatch sb, SpriteFontBase font, int width, int height)
     {
-		Thread thread = (Thread)this.GetCurrent();
-		Point pos = new(width/2, height/2);
-		thread.Draw(pos, sb, font, width);
+		try{
+			Thread thread = (Thread)this.GetCurrent();
+			Point pos = new(width/2, height/2);
+			thread.Draw(pos, sb, font, width);
+		}
+		catch{};
 	}
 	
 	private List<Component> path = new();
