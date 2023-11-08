@@ -26,8 +26,8 @@ class Port : Component
 		this.height = spacing/2;				
 		
 		//Updates component's position
-		this.position.X = pos.X - border;
-		this.position.Y = pos.Y;
+		this.position.X = pos.X - width /2;
+		this.position.Y = pos.Y - height/2;
 
 		//Draws square:
 		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X, this.position.Y, this.width, this.height), Color.Black); //black outline
