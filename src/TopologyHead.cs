@@ -78,7 +78,11 @@ class TopologyHead
 	{
 		this.path.Add(newComponent);
 	}
-	
+	public int NumberOfChildren()
+    {
+        return this.path.Last().Children.Count;
+    }
+
 	//Private functions and fields:
 	private void DrawDefault(SpriteBatch sb, SpriteFontBase font, int width)
     {		
