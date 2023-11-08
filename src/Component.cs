@@ -27,12 +27,12 @@ class Component
 	{
 		this.type = type;
 	}
-    protected Component(string name, Type type)
+    public Component(string name, Type type)
 		: this(type)
     {
         this.name = name;
     }
-    protected Component(string name, List<Component> children, Type type)
+    public Component(string name, List<Component> children, Type type)
 		: this(name, type)
 	{
 		this.SetChildren(children);
@@ -67,14 +67,12 @@ class Component
 	}
 	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int size)
 	{
+		int spacing = size/24;
 		this.width  = size/6;
-		this.height = this.width;
-		int spacing = size/24; //Each component is measured in a number of blocks of this size
+		this.height = size/6;
 		int border = Component.lineThickness; //Just for reading clarity's sake
 		int innerHeight = this.height - 2*border;
 		int innerWidth  = this.width  - 2*border;
-
-		this.DrawArrowHead(sb, new Point(size/2, size/2), spacing, 0);
 
 		//Updates component's position
 		this.position = pos;
@@ -90,6 +88,7 @@ class Component
 		string displayName = this.CalculateDisplayName(font);
 		sb.DrawString(font, displayName, new Vector2(pos.X + 2*border , pos.Y + 2*border), Color.Black);
 		
+		
 		//Draws connection-arrows
 		int counter = 0;	//Change this into a for-loop thank you
 		foreach(var connection in connections)
@@ -98,7 +97,7 @@ class Component
 			//Draws the arrow-body
 			//this.DrawArrowBody(sb, new Point(pos.X + 5*spacing, pos.Y + spacing/2 + (counter*spacing/2)), new Point(pos.X + 5*spacing, pos.Y + spacing/2 + (counter*spacing/2)), spacing/8);
 			sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*spacing, pos.Y + spacing/2 + (counter*spacing/2), spacing/2, spacing/8), Color.Black);
-			//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
+			//This draws an arrowhead
 			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + 5*spacing + spacing/4, pos.Y + spacing/4 + spacing/16 + (counter*spacing/2), 3*spacing/4, spacing/2), Color.White);
 			//this.DrawArrowHead(sb, new Point(pos.X + 5*spacing + spacing/4, pos.Y + spacing/4 + spacing/16 + (counter*spacing/2)), spacing, 0.0f);
 		}

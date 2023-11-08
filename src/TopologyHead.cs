@@ -3,21 +3,25 @@ using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-//Top is an object that keeps track of a full loaded topography
-//A topography is stored as a tree with a top component
+//TopologyHead is an object that keeps track of a full loaded topography
+//A topography is stored as a tree with a topologyHead-component
+//namespace XML_Visualizer;
 class TopologyHead
 {
+	
 	//This is the texture that draws the head of arrows
-	public static Texture2D arrowhead;
-
-    public TopologyHead(string folderName)
-	{		
-		this.head = new Component("Top", XmlReader.ReadComponents(folderName));
+	public static Texture2D arrowhead; 
+    
+	public TopologyHead(string folderName)
+	{
+		this.head = new Component("", XmlReader.ReadComponents(folderName));
 		this.path = new List<Component>{this.head};
 	}
 
-    public void Draw(SpriteBatch sb, SpriteFontBase font, int width, int height)
+    public void Draw(SpriteBatch sb, SpriteFontBase font, int zoomLevel)
     {
+		int width = 67*zoomLevel;
+
 		if(width < 480)
 		{
 			width = 480;
@@ -37,10 +41,10 @@ class TopologyHead
 		switch((this.GetCurrent()).type)
         {
 			case Component.Type.Thread:
-				DrawThread(sb, font, width, height);
+				DrawThread(sb, font, width);
 				break;
 			default:
-				DrawDefault(sb, font, width, height);
+				DrawDefault(sb, font, width);
 				break;
 		}
     }
@@ -76,7 +80,7 @@ class TopologyHead
 	}
 	
 	//Private functions and fields:
-	private void DrawDefault(SpriteBatch sb, SpriteFontBase font, int width, int height)
+	private void DrawDefault(SpriteBatch sb, SpriteFontBase font, int width)
     {		
 		//The following three variables serve to decide edge and spacing layout:
 		int startX  = width/24;
@@ -102,11 +106,11 @@ class TopologyHead
 			}
 		}
 	}
-	private void DrawThread(SpriteBatch sb, SpriteFontBase font, int width, int height)
+	private void DrawThread(SpriteBatch sb, SpriteFontBase font, int width)
     {
 		try{
 			Thread thread = (Thread)this.GetCurrent();
-			Point pos = new(width/2, height/2);
+			Point pos = new(width/2, width/2);
 			thread.Draw(pos, sb, font, width);
 		}
 		catch{};
