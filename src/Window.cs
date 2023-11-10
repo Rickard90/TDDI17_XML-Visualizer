@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Dynamic;
+using System.Runtime.CompilerServices;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,9 +8,10 @@ using Microsoft.Xna.Framework.Input;
 public class Window : Game
 {
     public static Texture2D whitePixelTexture;
+    public static SpriteBatch spriteBatch;
+    public static GraphicsDevice graphicsDevice;
 
     private GraphicsDeviceManager graphics;
-    private SpriteBatch spriteBatch;
     private FontSystem fontSystem;
 
     private TopologyHead top; 
@@ -17,8 +19,12 @@ public class Window : Game
 
     private BackButton backButton;
     private HighlightButton highlightButton;
+    private Textbox enterFolderTextbox;
+
     private string path;
     private bool updateCanvas = true;
+
+    public Point WindowSize {get; private set;} = new Point(800,400);
     
     public Window(string path)
     {
@@ -36,7 +42,9 @@ public class Window : Game
     public void OnResize(Object sender, EventArgs e)
     {
         Console.WriteLine($"Window bounds = {base.Window.ClientBounds}");
+        this.WindowSize = base.Window.ClientBounds.Size;
         Canvas.Camera.offset.X = (Window.ClientBounds.Size.X - canvas.CanvasSize.X) / 2;
+        this.enterFolderTextbox.OnResize(WindowSize);
     }
     protected override void Initialize()
     {
@@ -48,7 +56,8 @@ public class Window : Game
     protected override void LoadContent()
     {
 		Console.WriteLine("Loading Content");
-        this.spriteBatch = new SpriteBatch(GraphicsDevice);
+        spriteBatch = new SpriteBatch(GraphicsDevice);
+        graphicsDevice = this.GraphicsDevice;
 
         this.fontSystem = new();
         this.fontSystem.AddFont(File.ReadAllBytes("resource/font/arial.ttf"));
@@ -68,12 +77,16 @@ public class Window : Game
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
         this.backButton = new BackButton(new Rectangle(10, 40, 100, 50), "back");
 
-        Tooltip.spriteBatch = this.spriteBatch;
-        Tooltip.graphicsDevice = this.GraphicsDevice;
+        Tooltip.spriteBatch = spriteBatch;
+        Tooltip.graphicsDevice = this.GraphicsDevice;    
+
+        this.enterFolderTextbox = new Textbox(this.WindowSize, this.fontSystem.GetFont(18));
+        this.Window.TextInput += enterFolderTextbox.RegisterTextInput;
     }
 
     protected override void Update(GameTime gameTime)
     {
+
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
@@ -184,6 +197,8 @@ public class Window : Game
         if (Keyboard.GetState().IsKeyDown(Keys.I) || Keyboard.GetState().IsKeyDown(Keys.O)) {
             updateCanvas = true;
         }
+
+        this.enterFolderTextbox.Update(Mouse.GetState());
         base.Update(gameTime);
     }
 
@@ -195,14 +210,15 @@ public class Window : Game
         }
         updateCanvas = false;
         base.GraphicsDevice.Clear(Color.Black);
-        this.spriteBatch.Begin();
+        spriteBatch.Begin();
         this.canvas.Draw();
-        this.backButton.Draw(this.spriteBatch, this.fontSystem.GetFont(32));
-        this.highlightButton.Draw(this.spriteBatch);
+        this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
+        this.highlightButton.Draw(spriteBatch);
+        this.enterFolderTextbox.Draw();
 
         Tooltip.DrawCurrent();
 
-        this.spriteBatch.End();
+        spriteBatch.End();
         
         base.Draw(gameTime);
     }
@@ -213,7 +229,7 @@ public class Window : Game
         Console.WriteLine("Number of children " + this.top.NumberOfChildren());
         Console.WriteLine("Number X" + canvasSize.X);
         Console.WriteLine("--------------------");
-        this.top.Draw(this.spriteBatch, this.fontSystem.GetFont(canvas.zoomLevel), canvas.zoomLevel);
+        this.top.Draw(spriteBatch, this.fontSystem.GetFont(canvas.zoomLevel), canvas.zoomLevel);
         if(!top.IsHead())
         {
             //this.backButton.Draw(this.spriteBatch, this.font);
