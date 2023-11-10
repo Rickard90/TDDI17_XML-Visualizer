@@ -86,8 +86,8 @@ public class Window : Game
 
         if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null)
         {
-            this.updateCanvas = true;
             if (Selection.LeftMouseJustReleased()) {
+                this.updateCanvas = true;
                 if(child.GetInfo() != "") {
                     Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
                 }
