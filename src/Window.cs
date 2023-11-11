@@ -141,6 +141,7 @@ public class Window : Game
 
         if (Selection.ComponentGoRight)
         {
+            // TODO (Mattias): Updating highlightButton shouldn't have to update canvas.
             updateCanvas = true;
             List<Component> children = this.top.GetCurrent().Children;
             if (this.highlightButton.Component == children.Last()) {
@@ -172,8 +173,8 @@ public class Window : Game
         spriteBatch.Begin();
         this.canvas.Draw();
 
-        this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
-        this.highlightButton.Draw(spriteBatch);
+        //this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
+        //this.highlightButton.Draw(spriteBatch);
         this.enterFolderTextbox.Draw();
 
         Tooltip.DrawCurrent();
