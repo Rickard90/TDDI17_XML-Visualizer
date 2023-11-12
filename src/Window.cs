@@ -97,7 +97,38 @@ public class Window : Game
         LinkButton linkButton = null;
         Tooltip.SetTooltip(null, Selection.MouseCursorPosition(), null);
 
-        if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null)
+        if (Selection.GoToLink != -1)
+        {
+            int offset = Selection.GoToLink - 1;
+            Component currComponent = this.highlightButton.Component;
+            if (currComponent.linkDrawIndex + offset < currComponent.connections.Count) {
+                this.updateCanvas = true;
+                List<Component> topPath = this.top.GetPath();
+                topPath.Clear();
+                //topPath.Add(linkButton.Component.Parent);
+                topPath.Add(currComponent.linkButtons[currComponent.linkDrawIndex + offset].Component.Parent);
+                while (topPath.Last().Parent != null) {
+                    topPath.Add(topPath.Last().Parent);
+                }
+                topPath.Reverse();
+                //this.highlightButton.Component = linkButton.Component;
+                this.highlightButton.Component = currComponent.linkButtons[currComponent.linkDrawIndex + offset].Component;
+            }
+        }
+        else if (Selection.linkScroll != Selection.LinkScroll.Nothing)
+        {
+            Component currComponent = this.highlightButton.Component;
+            if (Selection.linkScroll == Selection.LinkScroll.Up) {
+                if (currComponent.linkDrawIndex > 0) {
+                    currComponent.linkDrawIndex -= 1;
+                }
+            } else if (Selection.linkScroll == Selection.LinkScroll.Down) {
+                if (currComponent.connections.Count - currComponent.linkDrawIndex > Component.numberOfVisibleLinks) {
+                    currComponent.linkDrawIndex += 1;
+                }
+            }
+        }
+        else if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null)
         {
             if (Selection.LeftMouseJustReleased()) {
                 this.updateCanvas = true;
