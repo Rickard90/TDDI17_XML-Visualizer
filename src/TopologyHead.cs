@@ -10,8 +10,10 @@ class TopologyHead
 {
 	
 	//This is the texture that draws the head of arrows
-	public static Texture2D arrowhead; 
-    
+    private          List<Component> path;
+	private readonly Component       head;
+    public  static   Texture2D       arrowhead;
+
 	public TopologyHead(string folderName)
 	{
         //Filereader:
@@ -107,17 +109,40 @@ class TopologyHead
         this.path = new List<Component>{head};
     }
 
-	public void Goto(Component newComponent)
-	{
-		this.path.Add(newComponent);
-	}
     public int NumberOfChildren()
     {
         return this.path.Last().Children.Count;
     }
 
+	public void GoToChild(Component child, HighlightButton highlightButton)
+	{
+        if(child.GetInfo() != "") {
+            Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
+        }
+        Console.WriteLine("Component children: {0}", child.Children.Count);
+        if(child.type != Component.Type.Thread && child.Children.Count() > 0) {
+            this.path.Add(child);
+            if (child.Children.Count == 0) {
+                highlightButton.Component = null;
+            }
+            else {
+                highlightButton.Component = child.Children.First();
+            }
+        }
+	}
 
-	private List<Component> path;
-	private readonly Component head;
+    public void GoToAny(Component component, HighlightButton highlightButton)
+    {
+        this.path.Clear();
+        this.path.Add(component.Parent);
+        while (this.path.Last().Parent != null) {
+            this.path.Add(this.path.Last().Parent);
+        }
+        this.path.Reverse();
+        highlightButton.Component = component;
+    }
+
+
+
 }
 

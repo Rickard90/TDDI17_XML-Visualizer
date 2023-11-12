@@ -235,8 +235,18 @@ public class Component
 			return displayName;
 
 		}
-
 	}
+
+    public void UpdateLinkDrawIndex()
+    {
+        if (Selection.linkScroll == Selection.LinkScroll.Up &&
+            this.linkDrawIndex > 0) {
+            this.linkDrawIndex -= 1;
+        } else if (Selection.linkScroll == Selection.LinkScroll.Down &&
+                   this.connections.Count - this.linkDrawIndex > Component.numberOfVisibleLinks) {
+            this.linkDrawIndex += 1;
+        }
+    }
 }
 //Sub-Components:
 
