@@ -122,4 +122,12 @@ class HighlightButton
         // Draw bottom side
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - lineThickness, rectangle.Width, lineThickness), color);
     }
+
+    public void GoRight(List<Component> components)
+    {
+        if (this.Component == components.Last())
+            this.Component = components.First();
+        else
+            this.Component = components[components.IndexOf(this.Component) + 1];
+    }
 }

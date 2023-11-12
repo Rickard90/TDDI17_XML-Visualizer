@@ -88,34 +88,41 @@ public class Component
 		string displayName = this.CalculateDisplayName(fontSystem.GetFont(zoomLevel));
 		sb.DrawString(fontSystem.GetFont(zoomLevel), displayName, new Vector2(pos.X + 2*LT , pos.Y + 2*LT), Color.Black);
 
-        
-		// Draw linkbuttons
-		if (this.linkButtons.Count > 0)
+        if (this.connections.Count == 0) return;
+
+        // Draw linkbuttons
+        int numberOfLinks = Component.numberOfVisibleLinks;
+		smallPoint.X += LT;
+        smallPoint.Y += LT;
+        int linkButtonHeight = smallHeight / numberOfLinks;
+        int linkButtonWidth  = smallWidth - LT;
+        if (this.connections.Count > numberOfLinks)
+        {
+            if (this.linkDrawIndex > 0) {
+                // Draw an upwards arrow or something
+            }
+            if (this.connections.Count - this.linkDrawIndex > numberOfLinks) {
+                // Draw a downwards arrow or something
+            }
+            int counter = 0;
+            int i = linkDrawIndex;
+            while (counter < numberOfLinks && i < connections.Count) {
+                this.linkButtons[i].Draw(sb, fontSystem.GetFont(linkButtonHeight), smallPoint, linkButtonHeight, linkButtonWidth);
+				smallPoint.Y += linkButtonHeight;
+                counter += 1;
+                i += 1;
+            }
+            
+        }
+		else
 		{
-            smallPoint.X += LT;
-            smallPoint.Y += LT;
-            int linkButtonHeight = smallHeight / 5; // <--- There are 5 buttons per component
-            int linkButtonWidth  = smallWidth - LT;
 			foreach(LinkButton B in this.linkButtons)
 			{
 				//B.Draw(sb, fontSystem.GetFont(linkButtonHeight - 4), pos, linkButtonHeight, linkButtonWidth);
 				B.Draw(sb, fontSystem.GetFont(linkButtonHeight), smallPoint, linkButtonHeight, linkButtonWidth);
-				pos.Y += linkButtonHeight;
+				smallPoint.Y += linkButtonHeight;
 			}
 		}
-        
-
-		//this.width = this.height;		
-        /*
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight, smallWidth, 8 * smallHeight), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight + lineThickness, smallWidth - lineThickness, 8 * smallHeight - 2 * lineThickness), Color.White);
-		//Draws big square:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
-		
-		//Draws out the name
-		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
-        */
 		
 		//Draws connection-arrows
         /*
@@ -170,16 +177,18 @@ public class Component
 
 	//Fields:		
 	public 				enum 				Type{Top, Computer, Partition, Application, Thread, Port} //Should probably be named component rather than Top?
-	public	  readonly 	Type 				type 		        = Type.Top;
-	protected 		 	string				name		        = "";
-	protected 		   	int 				width		        = 125;
-	protected 		   	int 				height		        = 100;
-	protected			Point				position	        = new(0,0);
-    protected 			Component 			parent 	        	= null;
-	protected 		 	List<Component> 	children	        = new();
-	public	 			Dictionary<Component, int> 	connections	= new();
-	public              List<LinkButton>    linkButtons         = new();
-    public static readonly int              LineThickness       = 3;
+	public	  readonly 	Type 				type 		         = Type.Top;
+	protected 		 	string				name		         = "";
+	protected 		   	int 				width		         = 125;
+	protected 		   	int 				height		         = 100;
+	protected			Point				position	         = new(0,0);
+    protected 			Component 			parent 	        	 = null;
+	protected 		 	List<Component> 	children	         = new();
+	public	 			Dictionary<Component, int> 	connections	 = new();
+	public              List<LinkButton>    linkButtons          = new();
+    public              int                 linkDrawIndex        = 0;
+    public static readonly int              numberOfVisibleLinks = 5;
+    public static readonly int              LineThickness        = 3;
 	
 	//Info:
 	public int ramSize 	 = 0;
@@ -222,8 +231,18 @@ public class Component
 			return displayName;
 
 		}
-
 	}
+
+    public void UpdateLinkDrawIndex()
+    {
+        if (Selection.linkScroll == Selection.LinkScroll.Up &&
+            this.linkDrawIndex > 0) {
+            this.linkDrawIndex -= 1;
+        } else if (Selection.linkScroll == Selection.LinkScroll.Down &&
+                   this.connections.Count - this.linkDrawIndex > Component.numberOfVisibleLinks) {
+            this.linkDrawIndex += 1;
+        }
+    }
 }
 //Sub-Components:
 

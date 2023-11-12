@@ -14,8 +14,12 @@ public static class Selection
     private static KeyboardState currentKeyboardState;
 
     private static Point mouseCursorPosition;
-    private static bool leftMouseJustReleased = false;
-    public  static bool ComponentGoRight = false;
+    private static bool leftMouseJustReleased   = false;
+    public  static bool ComponentGoRight        = false;
+    public  static int  GoToLink                = -1;
+    
+    public         enum LinkScroll { Nothing, Up, Down }
+    public static       LinkScroll linkScroll = LinkScroll.Nothing;
 
     public static void Update()
     {
@@ -46,14 +50,30 @@ public static class Selection
         previousKeyboardState = currentKeyboardState;
         currentKeyboardState = Keyboard.GetState();
 
-        if (previousKeyboardState.IsKeyDown(Keys.D) &&
-            currentKeyboardState.IsKeyUp(Keys.D))
-        {
+        if (previousKeyboardState.IsKeyDown(Keys.D) && currentKeyboardState.IsKeyUp(Keys.D)) {
             ComponentGoRight = true;
         }
-        else
-        {
+        else {
             ComponentGoRight = false;
+        }
+
+        GoToLink = -1;
+        linkScroll = LinkScroll.Nothing;
+        if (currentKeyboardState.IsKeyDown(Keys.LeftControl)) {
+            int currKey = (int)Keys.D1;
+            for (int i = 1; i <= Component.numberOfVisibleLinks; ++i) {
+                if (previousKeyboardState.IsKeyDown((Keys)currKey) && currentKeyboardState.IsKeyUp((Keys)currKey)) {
+                    GoToLink = i;
+                    return;
+                }
+                currKey += 1;
+            }
+            if (previousKeyboardState.IsKeyDown(Keys.Up) && currentKeyboardState.IsKeyUp(Keys.Up)) {
+                linkScroll = LinkScroll.Up;
+            }
+            else if (previousKeyboardState.IsKeyDown(Keys.Down) && currentKeyboardState.IsKeyUp(Keys.Down)) {
+                linkScroll = LinkScroll.Down;
+            }
         }
     }
     public static int GetMouseScrollDelta()
