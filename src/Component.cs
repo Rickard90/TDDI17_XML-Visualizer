@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
 
 //using System.Drawing;
 using System.Linq.Expressions;
@@ -11,7 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 //All types of components inherit constructor and fields from the component-type
-class Component
+public class Component
 {
 	//Constructors:
 	public Component(Type type)
@@ -34,6 +36,9 @@ class Component
     public Rectangle Rectangle => new(this.position.X, this.position.Y, this.width, this.height);
     public Component Parent		{get => this.parent; set => this.parent = value;}
     public List<Component> Children => this.children;
+    private int TextMaxWidth {get{
+		return (this.width - (4*Component.LineThickness));
+	}}
 
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
 	
@@ -49,28 +54,58 @@ class Component
 	}
 	public virtual string GetInfo()
 	{
-		Console.WriteLine("|" + this.Name);
-		foreach(var test in connections){
-			Console.WriteLine("---->" + test.Key.Name + "Connection Weight: " + test.Value);
-		}
 		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
 	}
-	public virtual void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int zoomLevel)
+	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
-		Console.WriteLine("Zoomlevel is " + zoomLevel);
-		this.width  = 5 * 67*zoomLevel/24;
+        int LT = Component.LineThickness;
+		this.width  = 4 * 67*zoomLevel/24;
 		this.height = 4 * 67*zoomLevel/24;
-		int lineThickness = 3;
-		int smallWidth  = this.width/6;
-		int smallHeight = this.height/10; 
-		int innerHeight = this.height - 2*lineThickness;
-		int innerWidth  = 5 * smallWidth  - 2*lineThickness;
+		int innerWidth  = this.width  - 2*LT;
+		int innerHeight = this.height - 2*LT;
+		int smallWidth  = this.width*3/4;
+		int smallHeight = this.height*3/4; 
+        int smallInnerWidth  = smallWidth  - 2*LT;
+        int smallInnerHeight = smallHeight - 2*LT;
 		string name = this.name; 
 
 		//Updates component's position
 		this.position = pos;
 
+        Rectangle inner = new Rectangle(pos.X + LT, pos.Y + LT, innerWidth, innerHeight);
+        Point smallPoint = new Point(pos.X + this.width - LT, pos.Y + (this.height - smallHeight)/2);
+        Rectangle smallOuter = new Rectangle(smallPoint.X, smallPoint.Y, smallWidth, smallHeight);
+        Rectangle smallInner = new Rectangle(smallPoint.X + LT, smallPoint.Y + LT, smallInnerWidth, smallInnerHeight);
+
+		//Draws big square:
+		sb.Draw(Window.whitePixelTexture, this.Rectangle, Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, inner, Color.White);
 		//Draws small square to the right:
+		sb.Draw(Window.whitePixelTexture, smallOuter, Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, smallInner, Color.White);
+
+		string displayName = this.CalculateDisplayName(fontSystem.GetFont(zoomLevel));
+		sb.DrawString(fontSystem.GetFont(zoomLevel), displayName, new Vector2(pos.X + 2*LT , pos.Y + 2*LT), Color.Black);
+
+        
+		// Draw linkbuttons
+		if (this.linkButtons.Count > 0)
+		{
+            smallPoint.X += LT;
+            smallPoint.Y += LT;
+            int linkButtonHeight = smallHeight / 5; // <--- There are 5 buttons per component
+            int linkButtonWidth  = smallWidth - LT;
+			foreach(LinkButton B in this.linkButtons)
+			{
+				//B.Draw(sb, fontSystem.GetFont(linkButtonHeight - 4), pos, linkButtonHeight, linkButtonWidth);
+				B.Draw(sb, fontSystem.GetFont(linkButtonHeight), smallPoint, linkButtonHeight, linkButtonWidth);
+				pos.Y += linkButtonHeight;
+			}
+		}
+        
+
+		//this.width = this.height;		
+        /*
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight, smallWidth, 8 * smallHeight), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight + lineThickness, smallWidth - lineThickness, 8 * smallHeight - 2 * lineThickness), Color.White);
 		//Draws big square:
@@ -79,9 +114,10 @@ class Component
 		
 		//Draws out the name
 		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
-		
+        */
 		
 		//Draws connection-arrows
+        /*
 		int counter = 0;
 		foreach(var connection in connections)
 		{	
@@ -91,8 +127,7 @@ class Component
 			//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
 			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + this.width + smallWidth/6, pos.Y + counter*smallHeight, 2*smallWidth/3+ lineThickness, smallHeight + lineThickness ), Color.White);
 		}
-		
-		this.width = this.height;
+		*/
 	}
 	//Protected functions:
 	protected virtual void UpdateStats(Component child)
@@ -104,19 +139,27 @@ class Component
 		this.frequency += child.frequency;
 	}
 
-	public void UpdateConnections() {
-		foreach (Component child in children) {
+	public void UpdateConnections()
+    {
+		foreach (Component child in children)
+        {
 			if (this.type != Type.Port)
 				child.UpdateConnections();
-			foreach (var childConnection in child.connections) {
+			foreach (var childConnection in child.connections)
+            {
 				if (connections.ContainsKey(childConnection.Key.parent)) {
 					connections[childConnection.Key.parent] += childConnection.Value;
 				} else {
 					connections[childConnection.Key.parent] = childConnection.Value;
 				}
 			}
-			
 		}
+
+        // Create linkbuttons
+        foreach (var KV in connections)
+        {
+            this.linkButtons.Add(new LinkButton(KV.Key));
+        }
 	}
 
     public override string ToString()
@@ -124,17 +167,18 @@ class Component
         return $"({this.Name}:{this.type})";
     }
 
-	public enum Type{Top, Computer, Partition, Application, Thread, Port}
-	public readonly Type type = Type.Top;
-
 	//Fields:		
-	protected 		 	string				name	= "";
-	protected 		   	int 				width			= 125;
-	protected 		   	int 				height			= 100;
-	protected			Point				position		= new(0,0);
-    protected 			Component 			parent 			= null;
-	protected 		 	List<Component> 	children		= new();
-	public	 			Dictionary<Component, int> 	connections		= new();
+	public 				enum 				Type{Top, Computer, Partition, Application, Thread, Port} //Should probably be named component rather than Top?
+	public	  readonly 	Type 				type 		        = Type.Top;
+	protected 		 	string				name		        = "";
+	protected 		   	int 				width		        = 125;
+	protected 		   	int 				height		        = 100;
+	protected			Point				position	        = new(0,0);
+    protected 			Component 			parent 	        	= null;
+	protected 		 	List<Component> 	children	        = new();
+	public	 			Dictionary<Component, int> 	connections	= new();
+	public              List<LinkButton>    linkButtons         = new();
+    public static readonly int              LineThickness       = 3;
 	
 	//Info:
 	public int ramSize 	 = 0;
@@ -142,6 +186,43 @@ class Component
 	public int execTime  = 0;
 	public int execStack = 0;
 	public int frequency = 0;
+
+	public string CalculateDisplayName(SpriteFontBase font)
+	{
+		return this.CalculateDisplayName(font, TextMaxWidth);
+	}
+	public string CalculateDisplayName(SpriteFontBase font, int innerWidth)
+	{
+		string displayName = this.name;
+		float excess = new();
+		int reduceBy = new();
+
+		Vector2 size = font.MeasureString(displayName);
+
+		if (size.X < innerWidth)
+		{
+			//Console.WriteLine($"			 name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
+			return displayName;
+		}
+		else
+		{
+			displayName += "...";
+			size = font.MeasureString(displayName);
+
+			do
+			{
+				excess = (size.X - innerWidth) / font.FontSize;
+				reduceBy = Math.Max(1, (int)excess) + "...".Length;
+				displayName = displayName[..^reduceBy] + "...";
+				size = font.MeasureString(displayName);
+			}
+			while (size.X > innerWidth);
+
+			return displayName;
+
+		}
+
+	}
 }
 //Sub-Components:
 
@@ -223,10 +304,6 @@ class Thread : Component
 	
     public override string GetInfo()
 	{
-		Console.WriteLine("|" + this.Name);
-		foreach(var test in connections){
-			Console.WriteLine("---->" + test.Key.Name + "Connection Weight: " + test.Value);
-		}
 		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
 	}
 }

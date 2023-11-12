@@ -46,8 +46,6 @@ class Tooltip
             }
             CurrentArea = currentTooltip.DrawArea;
         }
-        
-        //Console.WriteLine($"Tooltip area : {CurrentArea}");
     }
     public static void DrawCurrent()
     {

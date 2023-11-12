@@ -16,8 +16,10 @@ partial class Canvas
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
     public int zoomLevel = 12; //default zoom level
-    private const int minZoom = 6;
+    private const int minZoom = 9;
     private const int maxZoom = 25;
+    private static int previousScrollValue = 0;
+
 
     public Point CanvasSize{
         get{return canvasSize;}
@@ -47,35 +49,23 @@ partial class Canvas
         this.spriteBatch.Draw(this.texture, area, Color.White);
     }
 
-    public void Update(MouseState mouseState, KeyboardState keyboardState)
+    public bool Update(MouseState mouseState, KeyboardState keyboardState, Rectangle WindowSize)
     {
-        Camera.UpdateByKeyboard(keyboardState);
-        if (keyboardState.IsKeyDown(Keys.I)) {
-            zoomLevel = Math.Min(maxZoom, zoomLevel+1);
-            Console.WriteLine("zoom in " + zoomLevel);
+        bool change = false;
+        Camera.Update(mouseState, keyboardState, WindowSize, canvasSize);
+        if (keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl)) {
+            if (keyboardState.IsKeyDown(Keys.Add) || Camera.scrollDelta > 0) {
+                zoomLevel = Math.Min(maxZoom, zoomLevel+1);
+                change = true;
+            }
+            if (keyboardState.IsKeyDown(Keys.OemMinus) || Camera.scrollDelta < 0) {
+                zoomLevel = Math.Max(minZoom, zoomLevel-1);
+                change = true;
+            }
         }
-        if (keyboardState.IsKeyDown(Keys.O)) {
-            zoomLevel = Math.Max(minZoom, zoomLevel-1);
-            Console.WriteLine("zoom out " + zoomLevel);
-        }
+        return change;
     }
 
-    public void OffetControl(Rectangle WindowSize) {
-        if (WindowSize.Width < canvasSize.X) {
-            Camera.offset.X = Math.Min(0, Camera.offset.X);
-            Camera.offset.X = Math.Max(WindowSize.Width-canvasSize.X, Camera.offset.X);
-        } else {
-            Camera.offset.X = Math.Max(0, Camera.offset.X);
-            Camera.offset.X = Math.Min(WindowSize.Width-canvasSize.X, Camera.offset.X);
-        }
-        if (WindowSize.Height < canvasSize.Y) {
-            Camera.offset.Y = Math.Min(0, Camera.offset.Y);
-            Camera.offset.Y = Math.Max(WindowSize.Height-canvasSize.Y, Camera.offset.Y);
-        } else {
-            Camera.offset.Y = Math.Max(0, Camera.offset.Y);
-            Camera.offset.Y = Math.Min(WindowSize.Height-canvasSize.Y, Camera.offset.Y);
-        }
-    }
     public void UpdateTexture()
     {
         if (this.renderFunction == null)
