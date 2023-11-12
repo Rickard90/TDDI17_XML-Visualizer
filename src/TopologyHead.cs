@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 //Top is an object that keeps track of a full loaded topography
 //A topography is stored as a tree with a top component
-//namespace XML_Visualizer;
 class TopologyHead
 {
 	
@@ -52,19 +51,19 @@ class TopologyHead
         int spacing = width/24;
 
         Point pos = new(startX, startY);
-
+        
         // For printing the path as text
-        String pathString = "";
+        /*String pathString = "";
         foreach(Component C in path)
         {
             pathString += C.Name;
             pathString += " > ";
         }
-        pathString = pathString.Remove(pathString.Length - 3);
+        pathString = pathString.Remove(pathString.Length - 3);*/
 
         //sb.DrawString(font, path.Last().GetName(), new Vector2(startX/2, 0), Color.Black);
         //sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
-        sb.DrawString(fontSystem.GetFont(zoomLevel), pathString, new Vector2(startX/2, 0), Color.Black);
+        //sb.DrawString(fontSystem.GetFont(zoomLevel), pathString, new Vector2(startX/2, 0), Color.Black);
         foreach(Component C in path.Last().Children)
         {
             C.Draw(pos, sb, fontSystem, zoomLevel);
@@ -80,6 +79,18 @@ class TopologyHead
                 pos.Y += C.Rectangle.Height + 2*spacing;
             }
         }
+    }
+    public void DrawPath(SpriteBatch sb, SpriteFontBase font)
+    {
+        // For printing the path as text
+        String pathString = "";
+        foreach(Component C in path)
+        {
+            pathString += C.Name;
+            pathString += " > ";
+        }
+        pathString = pathString.Remove(pathString.Length - 3);
+        sb.DrawString(font, pathString.Substring(3), new Vector2(105, 37), Color.Black);
     }
     public bool IsHead()
     {

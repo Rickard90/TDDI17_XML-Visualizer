@@ -16,7 +16,7 @@ partial class Canvas
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
     public int zoomLevel = 12; //default zoom level
-    private const int minZoom = 6;
+    private const int minZoom = 9;
     private const int maxZoom = 25;
 
     public Point CanvasSize{
@@ -40,24 +40,27 @@ partial class Canvas
     }
     public void Draw()
     {
-
         if (this.texture == null)
             throw new Exception("Tried to draw canvas without generating texture");
         Rectangle area = Camera.ModifiedDrawArea(new Rectangle(0,0, canvasSize.X, canvasSize.Y));           
         this.spriteBatch.Draw(this.texture, area, Color.White);
     }
 
-    public void Update(MouseState mouseState, KeyboardState keyboardState)
+    public bool Update(MouseState mouseState, KeyboardState keyboardState, Rectangle WindowSize)
     {
-        Camera.UpdateByKeyboard(keyboardState);
-        if (keyboardState.IsKeyDown(Keys.I)) {
-            zoomLevel = Math.Min(maxZoom, zoomLevel+1);
-            Console.WriteLine("zoom in " + zoomLevel);
+        bool change = false;
+        Camera.Update(mouseState, keyboardState, WindowSize, canvasSize);
+        if (keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl)) {
+            if (keyboardState.IsKeyDown(Keys.Add) || Selection.GetMouseScrollDelta() > 0) {
+                zoomLevel = Math.Min(maxZoom, zoomLevel+1);
+                change = true;
+            }
+            if (keyboardState.IsKeyDown(Keys.OemMinus) || Selection.GetMouseScrollDelta() < 0) {
+                zoomLevel = Math.Max(minZoom, zoomLevel-1);
+                change = true;
+            }
         }
-        if (keyboardState.IsKeyDown(Keys.O)) {
-            zoomLevel = Math.Max(minZoom, zoomLevel-1);
-            Console.WriteLine("zoom out " + zoomLevel);
-        }
+        return change;
     }
 
     public void OffetControl(Rectangle WindowSize) {

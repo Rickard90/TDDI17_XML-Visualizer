@@ -54,11 +54,7 @@ public class Component
 	}
 	public virtual string GetInfo()
 	{
-		Console.WriteLine("|" + this.Name);
-		foreach(var test in connections){
-			Console.WriteLine("---->" + test.Key.Name + "Connection Weight: " + test.Value);
-		}
-		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
+		return "RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency;
 	}
 	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
@@ -313,7 +309,7 @@ class Thread : Component
 		foreach(var test in connections){
 			Console.WriteLine("---->" + test.Key.Name + "Connection Weight: " + test.Value);
 		}
-		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
+		return "Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack;
 	}
 }
 

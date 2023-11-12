@@ -24,7 +24,7 @@ public class Window : Game
     private string path;
     private bool updateCanvas = true;
 
-    public Point WindowSize {get; private set;} = new Point(800,400);
+    public Point WindowSize {get; private set;} = new Point(800,480);
     
     public Window(string path)
     {
@@ -75,7 +75,7 @@ public class Window : Game
 		ComponentFinder.top = this.top;
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
-        this.backButton = new BackButton(new Rectangle(10, 40, 100, 50), "back");
+        this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");
 
         Tooltip.spriteBatch = spriteBatch;
         Tooltip.graphicsDevice = this.GraphicsDevice;    
@@ -97,7 +97,8 @@ public class Window : Game
         LinkButton linkButton = null;
         Tooltip.SetTooltip(null, Selection.MouseCursorPosition(), null);
 
-        if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null)
+        if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null
+            && Selection.CursorIsInside(new Rectangle (0, 67, Window.ClientBounds.Width, Window.ClientBounds.Height)))
         {
             if (Selection.LeftMouseJustReleased()) {
                 this.updateCanvas = true;
@@ -131,18 +132,15 @@ public class Window : Game
             topPath.Reverse();
             this.highlightButton.Component = linkButton.Component;
         }
-        else if (Selection.CursorIsInside(Canvas.Camera.ModifiedDrawArea(this.backButton.rectangle)) && Selection.LeftMouseJustReleased())
+        else if (Selection.CursorIsInside(backButton.rectangle) && Selection.LeftMouseJustReleased())
         {
             this.updateCanvas = true;
-            Console.WriteLine("BACK-BUTTON SELECTED");
             this.top.GoBack();
             this.highlightButton.Component = this.top.GetCurrent().Children.First();
         }
 
         if (Selection.ComponentGoRight)
         {
-            // TODO (Mattias): Updating highlightButton shouldn't have to update canvas.
-            updateCanvas = true;
             List<Component> children = this.top.GetCurrent().Children;
             if (this.highlightButton.Component == children.Last()) {
                 this.highlightButton.Component = children.First();
@@ -152,9 +150,7 @@ public class Window : Game
             }
         }
         
-        canvas.Update(Mouse.GetState(), Keyboard.GetState());
-        canvas.OffetControl(Window.ClientBounds);
-        if (Keyboard.GetState().IsKeyDown(Keys.I) || Keyboard.GetState().IsKeyDown(Keys.O)) {
+        if (canvas.Update(Mouse.GetState(), Keyboard.GetState(), Window.ClientBounds)) {
             updateCanvas = true;
         }
 
@@ -166,36 +162,32 @@ public class Window : Game
     {   
         if (updateCanvas) {
             this.canvas.ReSize(new Point(67*canvas.zoomLevel , (((this.top.NumberOfChildren()-1) / 2 + 1) * 17*canvas.zoomLevel) + 95));
-            this.canvas.UpdateTexture();  // only updated if needed
+            this.canvas.UpdateTexture();
         }
-        updateCanvas = false;
-        base.GraphicsDevice.Clear(Color.Black);
+        base.GraphicsDevice.Clear(Color.White);
         spriteBatch.Begin();
         this.canvas.Draw();
 
-        //this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
-        //this.highlightButton.Draw(spriteBatch);
+        this.highlightButton.Draw(spriteBatch);
+        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 0, Window.ClientBounds.Size.X, 70), new Color(190, 190, 190, 215));
+        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 67, Window.ClientBounds.Size.X, 3), Color.Gray);
+        this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
+        this.top.DrawPath(spriteBatch, this.fontSystem.GetFont(22));
+        
         this.enterFolderTextbox.Draw();
+        
 
         Tooltip.DrawCurrent();
 
         spriteBatch.End();
 
         base.Draw(gameTime);
+        updateCanvas = false;
     }
 	
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        Console.WriteLine("Number of children " + this.top.NumberOfChildren());
-        Console.WriteLine("Number X" + canvasSize.X);
-        Console.WriteLine("--------------------");
-
         this.top.Draw(spriteBatch, this.fontSystem, canvas.zoomLevel);
-        this.highlightButton.Draw(spriteBatch);
-        if(!top.IsHead()) 
-        {
-            this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
-        }
     }
 }

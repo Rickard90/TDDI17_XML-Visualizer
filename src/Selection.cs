@@ -56,7 +56,10 @@ public static class Selection
             ComponentGoRight = false;
         }
     }
-
+    public static int GetMouseScrollDelta()
+    {
+        return currentMouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue;
+    }
     public static bool LeftMouseJustReleased()
     {
         return leftMouseJustReleased;
