@@ -37,11 +37,10 @@ class Textbox
     private Texture2D drawTexture;
 
 
-    public Textbox(Point windowSize, SpriteFontBase font)//, WhenEntered response, string startString = null)
+    public Textbox(Point windowSize, SpriteFontBase font, WhenEntered response = null, string startString = null)
     {
-        String startString = "";
         this.font = font;
-        //this.whenEntered = response;
+        this.whenEntered = response;
         if (startString != null)
             this.textStr = startString;
         else
@@ -82,7 +81,7 @@ class Textbox
 
             if (validInput)
             {
-                Console.WriteLine($"Input char : {input}");
+                //Console.WriteLine($"Input char : {input}");
                 if (this.textStr == "-")
                     this.textStr = $"{input}";
                 else
@@ -92,14 +91,14 @@ class Textbox
             }
             else if (e.Key == Keys.Enter)
             {
-                Console.WriteLine("Is enter key");
+                //Console.WriteLine("Is enter key");
                 if (this.whenEntered != null)
                     this.textStr = this.whenEntered.Invoke(this.textStr);
 
             }
             else if (e.Key == Keys.Back)
             {
-                Console.WriteLine("Is backspace");
+                //Console.WriteLine("Is backspace");
                 if (this.textStr != "-")
                 {
                     this.textStr = this.textStr.Remove(this.textStr.Length - 1);
@@ -112,7 +111,7 @@ class Textbox
             }
             else
             {
-                Console.WriteLine("Ignored input");
+                //Console.WriteLine("Ignored input");
             }
 
         }
