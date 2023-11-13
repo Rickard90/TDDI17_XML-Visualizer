@@ -1,13 +1,65 @@
 <Application name="NAVIGATION_DATA">
  
-  <Thread name="NAVIGATION_DATA_64" frequency="64HZ">
+  <Thread name="N_DATA_1" frequency="16HZ">
     <Port name="Levitation" interface="NAVIGATION_DATA_Interface.Levitation" role="Sender"/>
     <Port name="Aerostat" interface="NAVIGATION_DATA_Interface.Aerostat" role="Sender"/>
   </Thread>
 
-  <Thread name="NAVIGATION_DATA_16" frequency="16HZ">
+  <Thread name="N_DATA_2" frequency="16HZ">
     <Port name="Motion" interface="NAVIGATION_DATA_Interface.Motion" role="Sender"/>
     <Port name="Weather" interface="NAVIGATION_DATA_Interface.Weather" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_3" frequency="16HZ">
+    <Port name="Humidity" interface="NAVIGATION_DATA_Interface.Humidity" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_4" frequency="16HZ">
+    <Port name="Acceleration" interface="NAVIGATION_DATA_Interface.Acceleration" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_5" frequency="16HZ">
+    <Port name="ADF" interface="NAVIGATION_DATA_Interface.ADF" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_6" frequency="16HZ">
+    <Port name="Aeroacoustics" interface="NAVIGATION_DATA_Interface.Aeroacoustics" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_7" frequency="16HZ">
+    <Port name="Aerobraking" interface="NAVIGATION_DATA_Interface.Aerobraking" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_8" frequency="16HZ">
+    <Port name="IDF" interface="NAVIGATION_DATA_Interface.IDF" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_9" frequency="16HZ">
+    <Port name="Compression" interface="NAVIGATION_DATA_Interface.Compression" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_10" frequency="16HZ">
+    <Port name="Decalage" interface="NAVIGATION_DATA_Interface.Decalage" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_11" frequency="16HZ">
+    <Port name="Deflection" interface="NAVIGATION_DATA_Interface.Deflection" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_12" frequency="16HZ">
+    <Port name="Dihedral" interface="NAVIGATION_DATA_Interface.Dihedral" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_13" frequency="16HZ">
+    <Port name="Fatigue" interface="NAVIGATION_DATA_Interface.Fatigue" role="Sender"/>
+  </Thread>
+
+<Thread name="N_DATA_14" frequency="16HZ">
+    <Port name="Floatstick" interface="NAVIGATION_DATA_Interface.Floatstick" role="Sender"/>
+  </Thread>
+
+  <Thread name="N_DATA_15" frequency="16HZ">
+    <Port name="Fuselage" interface="NAVIGATION_DATA_Interface.Fuselage" role="Sender"/>
   </Thread>
 
 </Application>

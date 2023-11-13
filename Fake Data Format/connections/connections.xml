@@ -29,7 +29,7 @@
 
   <Connection>
     <SenderPort name="NAVIGATION_DATA.NAVIGATION_DATA_64.Aerostat"/>
-    <RecieverPort name="FMISSION_HANDLING.MISSION_HANDLING_64.Aerostat"/>
+    <RecieverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Aerostat"/>
   </Connection>
 
   <Connection>
