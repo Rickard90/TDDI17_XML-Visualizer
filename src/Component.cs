@@ -94,15 +94,19 @@ public class Component
         int numberOfLinks = Component.numberOfVisibleLinks;
 		smallPoint.X += LT;
         smallPoint.Y += LT;
-        int linkButtonHeight = smallHeight / numberOfLinks;
+        int linkButtonHeight = smallInner.Height / numberOfLinks;
         int linkButtonWidth  = smallWidth - LT;
         if (this.connections.Count > numberOfLinks)
         {
             if (this.linkDrawIndex > 0) {
                 // Draw an upwards arrow or something
+                //Rectangle drawArea = new Rectangle(smallPoint.X + linkButtonWidth/2, smallPoint.Y, linkButtonWidth/4, linkButtonHeight);
+                //sb.Draw(TopologyHead.arrowhead, drawArea, null, Color.White, (float)-Math.PI/2, Vector2.Zero, SpriteEffects.None, 0.0f);
+                sb.DrawString(fontSystem.GetFont(linkButtonHeight*2), "...", new Vector2(smallPoint.X + linkButtonWidth/3, pos.Y - linkButtonHeight - 2*LT), Color.Black);
             }
             if (this.connections.Count - this.linkDrawIndex > numberOfLinks) {
                 // Draw a downwards arrow or something
+                sb.DrawString(fontSystem.GetFont(linkButtonHeight*2), "...", new Vector2(smallPoint.X + linkButtonWidth/3, pos.Y + smallOuter.Height), Color.Black);
             }
             int counter = 0;
             int i = linkDrawIndex;
