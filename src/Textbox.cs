@@ -37,10 +37,11 @@ class Textbox
     private Texture2D drawTexture;
 
 
-    public Textbox(Point windowSize, SpriteFontBase font, WhenEntered response, string startString = null)
+    public Textbox(Point windowSize, SpriteFontBase font)//, WhenEntered response, string startString = null)
     {
+        String startString = "";
         this.font = font;
-        this.whenEntered = response;
+        //this.whenEntered = response;
         if (startString != null)
             this.textStr = startString;
         else
