@@ -103,6 +103,10 @@ class HighlightButton
         this.Component = Component;
     }
 
+    public Rectangle GetArea() 
+    {
+        return Component.Rectangle;;
+    }
     public void Draw(SpriteBatch sb)
     {
         if (this.Component == null)
@@ -110,7 +114,6 @@ class HighlightButton
 
         Color color = Color.Red;
         Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.Component.Rectangle);
-        //Rectangle rectangle = this.Component.Rectangle;
         int lineThickness = Component.LineThickness;
 
         // Draw top side
@@ -129,5 +132,13 @@ class HighlightButton
             this.Component = components.First();
         else
             this.Component = components[components.IndexOf(this.Component) + 1];
+    }
+
+    public void GoLeft(List<Component> components)
+    {
+        if (this.Component == components.First())
+            this.Component = components.Last();
+        else
+            this.Component = components[components.IndexOf(this.Component) - 1];
     }
 }

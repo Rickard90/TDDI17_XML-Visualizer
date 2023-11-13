@@ -93,11 +93,6 @@ public class Window : Game
 
         this.HandleSelection();
         
-        if (canvas.Update(Mouse.GetState(), Keyboard.GetState(), Window.ClientBounds)) {
-            updateCanvas = true;
-        }
-
-        this.enterFolderTextbox.Update(Mouse.GetState());
         base.Update(gameTime);
     }
 
@@ -165,7 +160,7 @@ public class Window : Game
                 this.top.GoToChild(child, this.highlightButton);
             }
             else {
-                Tooltip.SetTooltip(child, Selection.MouseCursorPosition(), fontSystem.GetFont(12));
+                Tooltip.SetTooltip(child, Selection.MouseCursorPosition(), fontSystem.GetFont(14));
             }
         }
         else if (Selection.LeftMouseJustReleased() && (linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null
@@ -173,17 +168,36 @@ public class Window : Game
         {
             this.updateCanvas = true;
             this.top.GoToAny(linkButton.Component, this.highlightButton);
+            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
         else if (Selection.CursorIsInside(backButton.rectangle) && Selection.LeftMouseJustReleased())
         {
             this.updateCanvas = true;
             this.top.GoBack();
             this.highlightButton.Component = this.top.GetCurrent().Children.First();
+            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
 
         if (Selection.ComponentGoRight)
         {
             this.highlightButton.GoRight(this.top.GetCurrent().Children);
+            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+        } else if (Selection.ComponentGoLeft)
+        {
+            this.highlightButton.GoLeft(this.top.GetCurrent().Children);
+            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
+
+        
+        if (Selection.ZoomChange != Selection.CanvasZoomChange.Nothing) {
+            canvas.Update(Selection.ZoomChange, Window.ClientBounds);
+            updateCanvas = true;
+        }
+
+        if (Selection.ScrollChange != Selection.CanvasScroll.Nothing) {
+            Canvas.Camera.Update(Selection.ScrollChange, canvas.CanvasSize, Window.ClientBounds);
+        }
+
+        this.enterFolderTextbox.Update(Mouse.GetState());
     }
 }

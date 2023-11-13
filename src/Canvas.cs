@@ -46,38 +46,30 @@ partial class Canvas
         this.spriteBatch.Draw(this.texture, area, Color.White);
     }
 
-    public bool Update(MouseState mouseState, KeyboardState keyboardState, Rectangle WindowSize)
+    public void Update(Selection.CanvasZoomChange zoomChange, Rectangle WindowSize)
     {
-        bool change = false;
-        Camera.Update(mouseState, keyboardState, WindowSize, canvasSize);
-        if (keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl)) {
-            if (keyboardState.IsKeyDown(Keys.Add) || Selection.GetMouseScrollDelta() > 0) {
-                zoomLevel = Math.Min(maxZoom, zoomLevel+1);
-                change = true;
-            }
-            if (keyboardState.IsKeyDown(Keys.OemMinus) || Selection.GetMouseScrollDelta() < 0) {
-                zoomLevel = Math.Max(minZoom, zoomLevel-1);
-                change = true;
-            }
+        if (zoomChange == Selection.CanvasZoomChange.In) {
+            zoomLevel = Math.Min(maxZoom, zoomLevel+1);
+        } else if (zoomChange == Selection.CanvasZoomChange.Out) {
+            zoomLevel = Math.Min(maxZoom, zoomLevel-1);
         }
-        return change;
     }
 
-    public void OffetControl(Rectangle WindowSize) {
-        if (WindowSize.Width < canvasSize.X) {
-            Camera.offset.X = Math.Min(0, Camera.offset.X);
-            Camera.offset.X = Math.Max(WindowSize.Width-canvasSize.X, Camera.offset.X);
-        } else {
-            Camera.offset.X = Math.Max(0, Camera.offset.X);
-            Camera.offset.X = Math.Min(WindowSize.Width-canvasSize.X, Camera.offset.X);
-        }
-        if (WindowSize.Height < canvasSize.Y) {
-            Camera.offset.Y = Math.Min(0, Camera.offset.Y);
-            Camera.offset.Y = Math.Max(WindowSize.Height-canvasSize.Y, Camera.offset.Y);
-        } else {
-            Camera.offset.Y = Math.Max(0, Camera.offset.Y);
-            Camera.offset.Y = Math.Min(WindowSize.Height-canvasSize.Y, Camera.offset.Y);
-        }
+    public bool ScrollCanvasToArea(Rectangle target, Rectangle windowRect) 
+    {
+        if ( target.Y > - Camera.offset.Y + windowRect.Height ) {
+            Camera.offset.Y = 
+                - target.Y 
+                - 4 * target.Height/3 
+                + windowRect.Height;
+            return true;
+        } else if ( target.Y < - Camera.offset.Y ) {
+            Camera.offset.Y = 
+                - target.Y 
+                + 2 * target.Height/3;
+            return true;
+        }        
+        return false;
     }
     public void UpdateTexture()
     {
