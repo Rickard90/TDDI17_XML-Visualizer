@@ -95,11 +95,9 @@ class Component
 		{	
 			counter++;
 			//Draws the arrow-body
-			//this.DrawArrowBody(sb, new Point(pos.X + 5*spacing, pos.Y + spacing/2 + (counter*spacing/2)), new Point(pos.X + 5*spacing, pos.Y + spacing/2 + (counter*spacing/2)), spacing/8);
 			sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*spacing, pos.Y + spacing/2 + (counter*spacing/2), spacing/2, spacing/8), Color.Black);
 			//This draws an arrowhead
 			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + 5*spacing + spacing/4, pos.Y + spacing/4 + spacing/16 + (counter*spacing/2), 3*spacing/4, spacing/2), Color.White);
-			//this.DrawArrowHead(sb, new Point(pos.X + 5*spacing + spacing/4, pos.Y + spacing/4 + spacing/16 + (counter*spacing/2)), spacing, 0.0f);
 		}
 	}
 	public void UpdateConnections() {
@@ -162,14 +160,18 @@ class Component
 	}
 	protected void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness)
 	{
-		if(A.X == B.X)
+		Rectangle body = new(A,new Point(thickness,thickness));
+		if(A.X < B.X)
 		{
-			sb.Draw(Window.whitePixelTexture, new Rectangle(A.X, A.Y, thickness,  Math.Abs(A.Y - B.Y)), Color.Black);
+			body.X = B.X;
+			body.Width = B.X - A.X;
 		}
-		if(A.Y == B.Y)
+		else 
 		{
-			sb.Draw(Window.whitePixelTexture, new Rectangle(A.X, A.Y,  Math.Abs(A.X - B.X), thickness), Color.Black);
+			body.Width = A.X - B.X;
 		}
+		sb.Draw(Window.whitePixelTexture, body, Color.Black);
+			
 	}
 	protected void DrawArrowHead(SpriteBatch sb, Point pos, int spacing, float rotation)
 	{

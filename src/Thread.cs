@@ -138,6 +138,8 @@ class Thread : Component
 				}
 				otherPort.Draw(portPos, sb, font, spacing);
 				((Thread)otherPort.Parent).DrawBody(threadPos, sb, font, spacing/2);
+				this.DrawArrowBody(sb, port.position, otherPort.position , spacing/8);
+				
 			}
 		}
 	}
