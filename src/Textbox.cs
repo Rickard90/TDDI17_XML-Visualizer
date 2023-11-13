@@ -15,7 +15,7 @@ class Textbox
     private static readonly char[] invalidFilenameCharacters = Path.GetInvalidPathChars();
 
     //  return the new textStr
-    public delegate bool WhenEntered(string textStr);
+    public delegate string WhenEntered(string textStr);
     public WhenEntered whenEntered = null;      //  this event should be set to a method which may load a new topology
 
     public Rectangle Bounds {get {return this.DrawArea;}}
@@ -37,11 +37,12 @@ class Textbox
     private Texture2D drawTexture;
 
 
-    public Textbox(Point windowSize, SpriteFontBase font, string startFolder = null)
+    public Textbox(Point windowSize, SpriteFontBase font, WhenEntered response, string startString = null)
     {
         this.font = font;
-        if (startFolder != null)
-            this.textStr = startFolder;
+        this.whenEntered = response;
+        if (startString != null)
+            this.textStr = startString;
         else
             this.textStr = "-";
 
@@ -91,6 +92,8 @@ class Textbox
             else if (e.Key == Keys.Enter)
             {
                 Console.WriteLine("Is enter key");
+                if (this.whenEntered != null)
+                    this.textStr = this.whenEntered.Invoke(this.textStr);
 
             }
             else if (e.Key == Keys.Back)

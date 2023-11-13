@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ApplicationResourceRequirements application="NAVIGATION_DATA" initStack="32000" ramSize="128000">
-  <ThreadResourceRequirements thread="NAVIGATION_DATA_64" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_1" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_2" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_3" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_4" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_5" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_6" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_7" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_8" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_9" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_10" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_11" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_12" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_13" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_14" execStack="32000" execTime="5000000"/>
+  <ThreadResourceRequirements thread="N_DATA_15" execStack="32000" execTime="5000000"/>
 </ApplicationResourceRequirements>
 
