@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 class Component
 {
 	protected static readonly int lineThickness = 3;
-
+	private enum Direction{Up, Right, Down, Left};
 	//Constructors:
 	public Component()
 	{
@@ -159,19 +159,70 @@ class Component
 		this.frequency += child.frequency;
 	}
 	protected void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness)
-	{
-		Rectangle body = new(A,new Point(thickness,thickness));
-		if(A.X < B.X)
+	{	
+		
+		Rectangle body = new(A,new Point((Math.Abs(A.X - B.X) + thickness)/2, thickness));
+		Direction direction = Direction.Right;
+
+		if((A.Y < B.Y) && (Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
 		{
-			body.X = B.X;
-			body.Width = B.X - A.X;
-		}
-		else 
+			direction = Direction.Down;
+		}		
+		else if (A.X > B.X) 
 		{
-			body.Width = A.X - B.X;
+			direction = Direction.Left;
 		}
-		sb.Draw(Window.whitePixelTexture, body, Color.Black);
+
+		switch(direction)
+		{
+			case Direction.Right:
+				body.Y -= thickness/2;
+				sb.Draw(Window.whitePixelTexture, body, Color.Black);
 			
+				body.X += (B.X - A.X)/2;
+				body.Y += (B.Y - A.Y);
+				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+			
+				body.Width = thickness;
+				body.Height = Math.Abs(A.Y - B.Y) + thickness/2;
+				if(A.Y > B.Y)
+				{
+					body.Y = B.Y - thickness/2;
+				}
+				else
+				{		
+					body.Y = A.Y;
+				}
+				body.X -= thickness/2;
+				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				break;
+			case Direction.Left:
+				DrawArrowBody(sb, B, A, thickness);
+				break;
+			case Direction.Down:
+				body.X -= thickness/2;
+				body.Width = thickness;
+				body.Height = (Math.Abs(A.Y - B.Y) + thickness)/2;
+				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				body.Y += (B.Y - A.Y)/2;
+				body.X = B.X - thickness/2;
+				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				if(B.X > A.X)
+				{
+					body.X = A.X - thickness/2;
+				}
+				body.Height = thickness;
+				body.Width = Math.Abs(A.X - B.X) + thickness/2; 
+				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				break;
+			default:
+				/*if (A.X > B.X)
+				{
+					body.X = B.X;
+					body.Y = B.Y;
+				}*/
+				break;
+		}
 	}
 	protected void DrawArrowHead(SpriteBatch sb, Point pos, int spacing, float rotation)
 	{

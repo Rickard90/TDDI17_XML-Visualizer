@@ -59,9 +59,10 @@ class Thread : Component
 		this.position.X = pos.X - this.width/2;
 		this.position.Y = pos.Y - this.height/2;
 		
-		DrawPorts(sb, font, spacing);
+		DrawPorts(sb, font, spacing); //Needed to update all the port positions
 		DrawBody(pos, sb, font, spacing);
 		DrawConnections(sb, font, spacing);
+		DrawPorts(sb, font, spacing);
 	}
 	
 	public void DrawBody(Point pos, SpriteBatch sb, SpriteFontBase font, int spacing)
@@ -136,10 +137,9 @@ class Thread : Component
 						threadPos.Y = portPos.Y + this.height/4 + spacing/4 - 2*border;
 						break;
 				}
+				this.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8);
 				otherPort.Draw(portPos, sb, font, spacing);
 				((Thread)otherPort.Parent).DrawBody(threadPos, sb, font, spacing/2);
-				this.DrawArrowBody(sb, port.position, otherPort.position , spacing/8);
-				
 			}
 		}
 	}
