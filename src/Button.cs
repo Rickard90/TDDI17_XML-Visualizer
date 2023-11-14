@@ -41,6 +41,9 @@ public class LinkButton : Button
         //sb.Draw(Window.whitePixelTexture, new Rectangle(this.rectangle.X, this.rectangle.Y, width/4, height/2), Color.Black);
         //This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
         //sb.Draw(TopologyHead.arrowhead, new Rectangle(this.rectangle.X, this.rectangle.Y, width/3, height), Color.White);
+        //Draws the arrow-body
+		sb.Draw(Window.whitePixelTexture, new Rectangle(this.rectangle.Left, this.rectangle.Center.Y - (int)Math.Round((float)this.rectangle.Height/6f), this.rectangle.Width/2, this.rectangle.Height/3), Color.Black);
+		
         sb.Draw(TopologyHead.arrowhead, this.rectangle, Color.White);
 
         Vector2 size = font.MeasureString(this.Component.Name);
