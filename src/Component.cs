@@ -290,7 +290,7 @@ public class Component
 	protected 		 	string				name		         = "";
 	protected 		   	int 				width		         = 125;
 	protected 		   	int 				height		         = 100;
-	public				Point				position	         = new(0,0);
+	protected			Point				position	         = new(0,0);
     protected 			Component 			parent 	        	 = null;
 	protected 		 	List<Component> 	children	         = new();
 	public	 			Dictionary<Component, int> 	connections	 = new();

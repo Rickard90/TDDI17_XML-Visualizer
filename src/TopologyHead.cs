@@ -16,7 +16,7 @@ class TopologyHead
 
 	public TopologyHead(string folderName)
 	{
-		this.head = new Component("...", XmlReader.ReadComponents(folderName));
+		this.head = new Component("", XmlReader.ReadComponents(folderName));
 		this.path = new List<Component>{this.head};
 	}
 
@@ -47,8 +47,7 @@ class TopologyHead
             pathString += C.Name;
             pathString += " > ";
         }
-        pathString = pathString.Remove(pathString.Length - 3);
-        sb.DrawString(font, pathString.Substring(3), new Vector2(105, 37), Color.Black);
+        sb.DrawString(font, pathString, new Vector2(105, 37), Color.Black);
     }
     public bool IsHead()
     {
@@ -142,7 +141,7 @@ class TopologyHead
     {
 		try{
 			Thread thread = (Thread)this.GetCurrent();
-			Point pos = new(width/2, width/4);
+			Point pos = new(width/2, width/4 + 50);
 			thread.Draw(pos, sb, font, width);
 		}
 		catch{};
