@@ -96,6 +96,7 @@ class Thread : Component
 		int border = Component.lineThickness;
 		Point portPos = new();
 		Point threadPos = new();
+		Point arrowPos = new();
 		Component port = new();
 		Component otherPort = new();
 		int numberOfConnections = 0;
@@ -109,7 +110,7 @@ class Thread : Component
 		for(int x = 0; x < this.Children.Count; x++)
 		{
 			port = this.Children.ElementAt(x);
-			//Console.WriteLine("    Port {0} and its connections:", port.Name);
+			//Console.WriteLine("    Port {0} and its connections ( {1} st):", port.Name, port.connections.Keys.Count);
 			for(int y = 0; y < port.connections.Keys.Count; y++)
 			{
 				counter++;
@@ -118,32 +119,38 @@ class Thread : Component
 				switch (counter%3)
 				{
 					case 1:		//Draws on the right of the thread
-						portPos.X = port.Position.X + 4*spacing + spacing/4;
-						portPos.Y = (int)Math.Ceiling(counter/3.0) * (3*this.height)/((int)Math.Ceiling(numberOfConnections/3.0)+1);
+						portPos.X = port.Position.X + 7*spacing + spacing/4;
+						portPos.Y = (this.Rectangle.Top - 2*this.height) + (int)Math.Ceiling(counter/3.0) * (5*this.height)/((int)Math.Ceiling(numberOfConnections/3.0)+1);
 						threadPos.X = portPos.X + this.width/4 + spacing/4 - 2*border;
 						threadPos.Y = portPos.Y;
+						arrowPos = portPos;
+						//arrowPos.X -= spacing/4 * (int)Math.Ceiling(counter/3.0);
 						break;
 					case 2:		//Draws on the left of the thread
-						portPos.X = port.Position.X - 4*spacing + spacing/4;
+						portPos.X = port.Position.X - 7*spacing + spacing/4;
 						if(numberOfConnections%3 == 2)
             			{
-							portPos.Y = (int)Math.Ceiling(counter/3.0) * (3*this.height)/((int)Math.Ceiling(numberOfConnections/3.0)+1);
+							portPos.Y =   (this.Rectangle.Top - 2*this.height) + (int)Math.Ceiling(counter/3.0) * (5*this.height)/((int)Math.Ceiling(numberOfConnections/3.0)+1);
 						}		
 						else
 						{
-							portPos.Y = (int)Math.Ceiling(counter/3.0) * (3*this.height)/((int)Math.Floor(numberOfConnections/3.0)+1);
+							portPos.Y =  (this.Rectangle.Top - 72*this.height) + (int)Math.Ceiling(counter/3.0) * (5*this.height)/((int)Math.Floor(numberOfConnections/3.0)+1);
 						}
 						threadPos.X = portPos.X - (this.width/4 + spacing/4 - 2*border);
 						threadPos.Y = portPos.Y;
+						arrowPos = portPos;
+						//arrowPos.X += spacing/4 * (int)Math.Ceiling(counter/3.0);
 						break;
 					default:	//Draws on the bottom of the thread
-						portPos.X = (int)Math.Floor(counter/3.0) * (4*this.width)/((int)Math.Floor(numberOfConnections/3.0)+1);
-						portPos.Y = port.Position.Y + 4*spacing + spacing/4;
+						portPos.X = (this.Rectangle.Left - this.width - this.width/2) + (int)Math.Floor(counter/3.0) * (4*this.width)/((int)Math.Floor(numberOfConnections/3.0)+1);
+						portPos.Y = port.Position.Y + 9*spacing + spacing/4;
 						threadPos.X = portPos.X;
 						threadPos.Y = portPos.Y + this.height/4 + spacing/4 - 2*border;
+						arrowPos = portPos;
+						//arrowPos.Y -= spacing/4 * (int)Math.Floor(counter/3.0);
 						break;
 				}
-				this.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8);
+				this.DrawArrowBody(sb, port.Rectangle.Center, arrowPos, spacing/8);
 				otherPort.Draw(portPos, sb, fontSystem, spacing);
 				((Thread)otherPort.Parent).DrawBody(threadPos, sb, fontSystem, spacing/2);
 			}

@@ -141,7 +141,7 @@ class TopologyHead
     {
 		try{
 			Thread thread = (Thread)this.GetCurrent();
-			Point pos = new(width/2, width/4 + 50);
+			Point pos = new(width/2, 2*width/5 + 100);
 			thread.Draw(pos, sb, font, width);
 		}
 		catch{};

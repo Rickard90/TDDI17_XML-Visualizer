@@ -98,8 +98,10 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {   
-        if (updateCanvas) {
-            this.canvas.ReSize(new Point(67*canvas.zoomLevel , (((this.top.NumberOfChildren()-1) / 2 + 1) * 17*canvas.zoomLevel) + 95));
+        if (updateCanvas) {//The resize here has to take Threadview into account
+			int canvasSize = (((this.top.NumberOfChildren()-1) / 2 + 1) * 17*canvas.zoomLevel) + 95;
+			if(this.top.GetCurrent().type == Component.Type.Thread){canvasSize = 50 * 17*canvas.zoomLevel + 95;};
+            this.canvas.ReSize(new Point(67*canvas.zoomLevel , canvasSize));
             this.canvas.UpdateTexture();
         }
         base.GraphicsDevice.Clear(Color.White);

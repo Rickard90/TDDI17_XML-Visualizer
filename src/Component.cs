@@ -161,9 +161,13 @@ public class Component
 		Rectangle body = new(A,new Point((Math.Abs(A.X - B.X) + thickness)/2, thickness));
 		Direction direction = Direction.Right;
 
-		if((A.Y < B.Y) && (Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
+		if((A.Y < B.Y) && (2*Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
 		{
 			direction = Direction.Down;
+		}		
+		else if ((A.Y > B.Y) && (2*Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
+		{
+			direction = Direction.Up;
 		}		
 		else if (A.X > B.X) 
 		{
@@ -196,6 +200,9 @@ public class Component
 			case Direction.Left:
 				DrawArrowBody(sb, B, A, thickness);
 				break;
+			case Direction.Up:
+				DrawArrowBody(sb, B, A, thickness);
+				break;
 			case Direction.Down:
 				body.X -= thickness/2;
 				body.Width = thickness;
@@ -211,8 +218,6 @@ public class Component
 				body.Height = thickness;
 				body.Width = Math.Abs(A.X - B.X) + thickness/2; 
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
-				break;
-			default:
 				break;
 		}
 	}
