@@ -101,11 +101,11 @@ public class Component
         if (this.connections.Count > numberOfLinks)
         {
             if (this.linkDrawIndex > 0) {
-                sb.DrawString(fontSystem.GetFont(linkButtonHeight*2), "...", new Vector2(smallPoint.X + linkButtonWidth/3, position.Y + this.height/8 - linkButtonHeight - 2*LineThickness), Color.Black);
+                sb.DrawString(fontSystem.GetFont(linkButtonHeight*2), "...", new Vector2(smallPoint.X + linkButtonWidth/3, position.Y - linkButtonHeight), Color.Black);
             }
             if (this.connections.Count - this.linkDrawIndex > numberOfLinks) {
                 // Draw a downwards arrow or something
-                sb.DrawString(fontSystem.GetFont(linkButtonHeight*2), "...", new Vector2(smallPoint.X + linkButtonWidth/3, position.Y + this.height/8 + smallOuter.Height), Color.Black);
+                sb.DrawString(fontSystem.GetFont(linkButtonHeight*2), "...", new Vector2(smallPoint.X + linkButtonWidth/3, position.Y + smallInner.Height), Color.Black);
             }
             int counter = 0;
             int i = linkDrawIndex;
