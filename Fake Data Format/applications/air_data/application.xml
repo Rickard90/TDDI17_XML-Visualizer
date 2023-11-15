@@ -3,7 +3,7 @@
 <Application name="AIR_DATA">
  
   <Thread name="AIR_DATA_64" frequency="64HZ">
-    <Port name="Air_Speed" interface="Air_Data_Interface.Speed" role="Sender"/>
+    <Port name="Air_Speed" interface="Air_Data_Interface.Air_Speed" role="Sender"/>
     <Port name="Altitude" interface="Air_Data_Interface.Altitude" role="Sender"/>
   </Thread>
 
