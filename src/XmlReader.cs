@@ -33,8 +33,6 @@ static class XmlReader {
                     }else if (line.Split('\"')[0] == "<Application name=" ) {
                         threads.Clear();
                         applicationName = (line.Split('\"')[1]);
-                        // Raden nedan är viktig för att file-path ska bli korrekt på Windows och Linux. /Mattias
-                        //applicationName = applicationName.ToLower();
                         ReadResourses(applicationName, threads, ref ramSize, ref initStack, path);
                         ReadApplication(applicationName, threads, path, connections);
                         applications.Add(new Application(applicationName, ramSize, initStack));
