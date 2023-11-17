@@ -106,7 +106,7 @@ partial class Canvas
         if (!path.EndsWith(".png"))
             throw new ArgumentException("Path should end with \".png\" since the output file is .png !");
 
-        MemoryStream data = new MemoryStream();
+        using MemoryStream data = new MemoryStream();
         texture.SaveAsPng(data, this.texture.Width, this.texture.Height);
         File.WriteAllBytes(path, data.ToArray());
 
