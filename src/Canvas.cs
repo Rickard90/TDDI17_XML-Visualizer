@@ -97,7 +97,7 @@ partial class Canvas
             graphicsDevice.SetRenderTarget(null);
         }
 
-        this.SaveAsPng("test.png");
+        //this.SaveAsPng("test.png");
         
     }
 
