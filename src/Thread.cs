@@ -104,9 +104,9 @@ class Thread : Component
 		{
 			numberOfConnections += this.Children.ElementAt(x).connections.Keys.Count;
 		}
-		//Console.WriteLine("This is written in Thread.DrawConnections for diagnostics:");
-		//Console.WriteLine("  Thread's # of children: {0}, Number of connections: {1}", this.Children.Count, numberOfConnections);
-		//Console.WriteLine("  Exact list of all connections and their ports:");
+		Console.WriteLine("This is written in Thread.DrawConnections for diagnostics:");
+		Console.WriteLine("  Thread's # of children: {0}, Number of connections: {1}", this.Children.Count, numberOfConnections);
+		Console.WriteLine("  Exact list of all connections and their ports:");
 		for(int x = 0; x < this.Children.Count; x++)
 		{
 			port = this.Children.ElementAt(x);
