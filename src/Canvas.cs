@@ -96,7 +96,20 @@ partial class Canvas
 
             graphicsDevice.SetRenderTarget(null);
         }
+
+        this.SaveAsPng("test.png");
         
+    }
+
+    public void SaveAsPng(string path)
+    {
+        if (!path.EndsWith(".png"))
+            throw new ArgumentException("Path should end with \".png\" since the output file is .png !");
+
+        MemoryStream data = new MemoryStream();
+        texture.SaveAsPng(data, this.texture.Width, this.texture.Height);
+        File.WriteAllBytes(path, data.ToArray());
+
     }
 
 }
