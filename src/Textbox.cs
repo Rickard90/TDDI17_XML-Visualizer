@@ -16,7 +16,10 @@ class Textbox
 
     //  return the new textStr
     public delegate string WhenEntered(string textStr);
+    public delegate Tuple<string, bool> WhenChanged(string text);
+
     public WhenEntered whenEntered = null;      //  this event should be set to a method which may load a new topology
+    protected WhenChanged whenChanged = null;
 
     public Rectangle Bounds {get {return this.DrawArea;}}
     public Rectangle DrawArea{get { return new Rectangle(Position, size);}}
@@ -25,6 +28,7 @@ class Textbox
     private readonly SpriteFontBase font;
 
     private string textStr;
+    private string ghostStr = "";
     private Point windowSize;
     private Point Position {
         get {return new Point((windowSize.X - size.X) / 2, windowToOutlineBuffer);}}
@@ -37,10 +41,11 @@ class Textbox
     private Texture2D drawTexture;
 
 
-    public Textbox(Point windowSize, SpriteFontBase font, WhenEntered response = null, string startString = null)
+    public Textbox(Point windowSize, SpriteFontBase font, WhenEntered enteredResponse = null, WhenChanged changedResponse = null, string startString = null)
     {
         this.font = font;
-        this.whenEntered = response;
+        this.whenEntered = enteredResponse;
+        this.whenChanged = changedResponse;
         if (startString != null)
             this.textStr = startString;
         else
@@ -87,6 +92,15 @@ class Textbox
                 else
                     this.textStr += input;
 
+                if (this.whenChanged != null)
+                {
+                    Tuple<string, bool> result = this.whenChanged.Invoke(this.textStr);
+                    this.ghostStr = result.Item1;
+                    if (result.Item2)
+                        if (this.whenEntered != null)
+                            this.textStr = this.whenEntered.Invoke(this.textStr);
+                }
+                 
                 this.needToUpdateTexture = true;
             }
             else if (e.Key == Keys.Enter)
@@ -183,7 +197,7 @@ class Textbox
         return result;      
     }
     //  should only be called in the RenderTexture function
-    private void Render()
+    protected virtual void Render()
     {
         Rectangle renderArea = new Rectangle(Point.Zero, size);
 
@@ -198,6 +212,7 @@ class Textbox
         Window.spriteBatch.Draw(Window.whitePixelTexture, copy, fillColor);
 
         // Draw text
+        Window.spriteBatch.DrawString(this.font, this.ghostStr, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black * 0.75f);
         Window.spriteBatch.DrawString(this.font, this.textStr, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black);
     }
 
