@@ -16,7 +16,7 @@ class Textbox
 
     //  return the new textStr
     public delegate string WhenEntered(string textStr);
-    public delegate Tuple<string, bool> WhenChanged(string text);
+    public delegate string WhenChanged(string text);
 
     public WhenEntered whenEntered = null;      //  this event should be set to a method which may load a new topology
     protected WhenChanged whenChanged = null;
@@ -40,6 +40,8 @@ class Textbox
 
     private Texture2D drawTexture;
 
+    private int frameCounter = 0;
+
 
     public Textbox(Point windowSize, SpriteFontBase font, WhenEntered enteredResponse = null, WhenChanged changedResponse = null, string startString = null)
     {
@@ -49,7 +51,7 @@ class Textbox
         if (startString != null)
             this.textStr = startString;
         else
-            this.textStr = "-";
+            this.textStr = "";
 
         this.windowSize = windowSize;
         this.size = this.CalculateSize();
@@ -87,21 +89,21 @@ class Textbox
             if (validInput)
             {
                 //Console.WriteLine($"Input char : {input}");
-                if (this.textStr == "-")
+                if (this.textStr == "")
                     this.textStr = $"{input}";
                 else
                     this.textStr += input;
 
                 if (this.whenChanged != null)
                 {
-                    Tuple<string, bool> result = this.whenChanged.Invoke(this.textStr);
-                    this.ghostStr = result.Item1;
-                    if (result.Item2)
-                        if (this.whenEntered != null)
-                            this.textStr = this.whenEntered.Invoke(this.textStr);
+                    string result = this.whenChanged.Invoke(this.textStr);
+                    this.ghostStr = result;
                 }
-                 
                 this.needToUpdateTexture = true;
+            }
+            else if (e.Key == Keys.Tab)
+            {
+                this.textStr = this.ghostStr;           
             }
             else if (e.Key == Keys.Enter)
             {
@@ -214,6 +216,7 @@ class Textbox
         // Draw text
         Window.spriteBatch.DrawString(this.font, this.ghostStr, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black * 0.75f);
         Window.spriteBatch.DrawString(this.font, this.textStr, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black);
+
     }
 
     public void Draw()
@@ -223,7 +226,10 @@ class Textbox
 
     private Point CalculateSize()
     {
-        Vector2 textSize = this.font.MeasureString(this.textStr);
+        string effectiveStr = this.textStr;
+        if (effectiveStr == "")
+            effectiveStr = "-";
+        Vector2 textSize = this.font.MeasureString(effectiveStr);
         int width = ((int)textSize.X) + 2 * (outlinePxSize + outlineTextBufferPxSize);
         int height = ((int)textSize.Y) + 2 * (outlinePxSize + outlineTextBufferPxSize);
 
