@@ -32,7 +32,7 @@ public class Component
     public static readonly int              numberOfVisibleLinks = 5;
     public static readonly int              lineThickness        = 3;
 	private enum Direction{Up, Right, Down, Left};
-	
+
 	//Info:
 	public int ramSize 	 = 0;
 	public int initStack = 0;
@@ -182,10 +182,9 @@ public class Component
 		this.initStack += child.initStack;
 		this.frequency += child.frequency;
 	}
-	protected void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness)
+	protected void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness, float offset = 0.5f)
 	{	
-		
-		Rectangle body = new(A,new Point((Math.Abs(A.X - B.X) + thickness)/2, thickness));
+		Rectangle body = new(A, new Point((int)(offset*Math.Abs(A.X - B.X)) + thickness/2, thickness));
 		Direction direction = Direction.Right;
 
 		if((A.Y < B.Y) && (2*Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
@@ -207,8 +206,9 @@ public class Component
 				body.Y -= thickness/2;
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
 			
-				body.X += (B.X - A.X)/2;
-				body.Y += (B.Y - A.Y);
+				body.X += body.Width - thickness/2;
+				body.Width = (int)((1f - offset) * Math.Abs(A.X - B.X)) + thickness/2;
+				body.Y += B.Y - A.Y;
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
 			
 				body.Width = thickness;
@@ -225,18 +225,19 @@ public class Component
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
 				break;
 			case Direction.Left:
-				DrawArrowBody(sb, B, A, thickness);
+				DrawArrowBody(sb, B, A, thickness, 1f - offset);
 				break;
 			case Direction.Up:
-				DrawArrowBody(sb, B, A, thickness);
+				DrawArrowBody(sb, B, A, thickness, 1f - offset);
 				break;
 			case Direction.Down:
 				body.X -= thickness/2;
 				body.Width = thickness;
-				body.Height = (Math.Abs(A.Y - B.Y) + thickness)/2;
+				body.Height = (int)(Math.Abs(A.Y - B.Y)* offset) + thickness/2;
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
-				body.Y += (B.Y - A.Y)/2;
+				body.Y += body.Height - thickness;
 				body.X = B.X - thickness/2;
+				body.Height = (int)(Math.Abs(A.Y - B.Y)* (1f-offset)) + thickness/2;
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
 				if(B.X > A.X)
 				{
@@ -310,7 +311,7 @@ public class Component
         }
     }
 
-
+	
 }
 
 //Sub-Components:
