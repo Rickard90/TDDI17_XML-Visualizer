@@ -11,7 +11,6 @@ public class Window : Game
     public static SpriteBatch spriteBatch;
     public static GraphicsDevice graphicsDevice;
 
-    private GraphicsDeviceManager graphics;
     private FontSystem fontSystem;
 
     private TopologyHead top; 
@@ -21,19 +20,18 @@ public class Window : Game
     private HighlightButton highlightButton;
     private Textbox enterFolderTextbox;
 
-    private string path;
-    private bool updateCanvas = true;
+    private string folderPath;
+    private bool updateCanvas;
 
-    public Point WindowSize {get; private set;} = new Point(800,480);
+    public Point WindowSize {get {return this.Window.ClientBounds.Size;}} 
     
-    public Window(string path)
+    public Window(string folderPath)
     {
-        this.path = path;
-		Console.WriteLine("Window constructing");
-        this.graphics = new GraphicsDeviceManager(this);
+        this.folderPath = folderPath;
+        _ = new GraphicsDeviceManager(this);
         base.Content.RootDirectory = "Content";
         base.IsMouseVisible = true;
-        
+        this.updateCanvas = true;
         Window.AllowUserResizing = true;
         Window.ClientSizeChanged += this.OnResize;
         Window.AllowAltF4 = true;
@@ -41,16 +39,8 @@ public class Window : Game
 
     public void OnResize(Object sender, EventArgs e)
     {
-        Console.WriteLine($"Window bounds = {base.Window.ClientBounds}");
-        this.WindowSize = base.Window.ClientBounds.Size;
         Canvas.Camera.offset.X = (Window.ClientBounds.Size.X - canvas.CanvasSize.X) / 2;
         this.enterFolderTextbox.OnResize(WindowSize);
-    }
-    protected override void Initialize()
-    {
-		Console.WriteLine("Initializing");
-        base.Initialize();
-        Window.AllowUserResizing = true;
     }
 
     protected override void LoadContent()
@@ -71,7 +61,7 @@ public class Window : Game
         {
             renderFunction = this.RenderTopology
         };
-        this.top = new TopologyHead(path);
+        this.top = new TopologyHead(folderPath);
 		ComponentFinder.top = this.top;
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
@@ -86,13 +76,7 @@ public class Window : Game
 
     protected override void Update(GameTime gameTime)
     {
-
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) {
-            Exit();
-        }
-
         this.HandleSelection();
-        
         base.Update(gameTime);
     }
 
@@ -115,10 +99,7 @@ public class Window : Game
         this.top.DrawPath(spriteBatch, this.fontSystem.GetFont(22));
         
         this.enterFolderTextbox.Draw();
-        
-
         Tooltip.DrawCurrent();
-
         spriteBatch.End();
 
         base.Draw(gameTime);
@@ -184,7 +165,8 @@ public class Window : Game
         {
             this.highlightButton.GoRight(this.top.GetCurrent().Children);
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
-        } else if (Selection.ComponentGoLeft)
+        } 
+        else if (Selection.ComponentGoLeft)
         {
             this.highlightButton.GoLeft(this.top.GetCurrent().Children);
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Data;
+using System.Globalization;
 using System.IO;
 
 static class XmlReader {
@@ -18,7 +19,7 @@ static class XmlReader {
 
         try
         {
-            StreamReader topologyReader = new(path + "/topology/topology.xml");
+            using StreamReader topologyReader = new(path + "/topology/topology.xml");
             line = topologyReader.ReadLine();
             while (line != null)
             {
@@ -76,7 +77,7 @@ static class XmlReader {
         int frequency = 0;
         try
         {
-            StreamReader applicationReader = new(path + "/applications/"+applicationName.ToLower()+"/application.xml");
+            using StreamReader applicationReader = new(path + "/applications/"+applicationName.ToLower()+"/application.xml");
             line = applicationReader.ReadLine();
             
             while (line != null)
@@ -114,7 +115,7 @@ static class XmlReader {
     private static void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
         string line;
         try {
-            StreamReader ResourcesReader = new(path + "/applications/"+applicationName.ToLower()+"/resources.xml");
+            using StreamReader ResourcesReader = new(path + "/applications/"+applicationName.ToLower()+"/resources.xml");
             line = ResourcesReader.ReadLine();
             while (line != null)
             {

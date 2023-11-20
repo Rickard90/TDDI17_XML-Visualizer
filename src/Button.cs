@@ -117,7 +117,7 @@ class HighlightButton
 
         Color color = Color.Red;
         Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.Component.Rectangle);
-        int lineThickness = Component.LineThickness;
+        int lineThickness = Component.lineThickness;
 
         // Draw top side
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, lineThickness), color);
