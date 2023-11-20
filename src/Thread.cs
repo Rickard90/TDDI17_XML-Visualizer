@@ -94,44 +94,57 @@ class Thread : Component
 	{
 		int counter = 0;
 		int border = Component.lineThickness;
+		float offset = 0.5f;
 		Point portPos = new();
 		Point threadPos = new();
 		Component port = new();
 		Component otherPort = new();
 		int numberOfConnections = 0;
+		int connectionsOnCurrentSide = 0;
+		int sideCounter = 0;
 		for(int x = 0; x < this.Children.Count; x++)
 		{
 			numberOfConnections += this.Children.ElementAt(x).connections.Keys.Count;
 		}
-		Console.WriteLine("This is written in Thread.DrawConnections for diagnostics:");
-		Console.WriteLine("  Thread's # of children: {0}, Number of connections: {1}", this.Children.Count, numberOfConnections);
-		Console.WriteLine("  Exact list of all connections and their ports:");
+		//Console.WriteLine("This is written in Thread.DrawConnections for diagnostics:");
+		//Console.WriteLine("  Thread's # of children: {0}, Number of connections: {1}", this.Children.Count, numberOfConnections);
+		//Console.WriteLine("  Exact list of all connections and their ports:");
 		for(int x = 0; x < this.Children.Count; x++)
 		{
 			port = this.Children.ElementAt(x);
-			Console.WriteLine("    Port {0} and its connections ( {1} st):", port.Name, port.connections.Keys.Count);
+			//Console.WriteLine("    Port {0} and its connections ( {1} st):", port.Name, port.connections.Keys.Count);
 			for(int y = 0; y < port.connections.Keys.Count; y++)
 			{
 				counter++;
+				offset = 0.5f;
 				otherPort = port.connections.Keys.ElementAt(y);
-				Console.WriteLine("      Connection {0}", otherPort.Name);
+				//Console.WriteLine("      Connection {0}", otherPort.Name);
 				switch (counter%3)
 				{
 					case 1:		//Draws on the right of the thread
+						sideCounter = (int)Math.Ceiling(counter/3.0);
+						connectionsOnCurrentSide = (int)Math.Ceiling(numberOfConnections/3.0);
 						portPos.X = port.Position.X + 7*spacing + spacing/4;
-						portPos.Y = (this.Rectangle.Top - 2*this.height) + (int)Math.Ceiling(counter/3.0) * (5*this.height)/((int)Math.Ceiling(numberOfConnections/3.0)+1);
+						portPos.Y = (this.Rectangle.Top - 2*this.height) + sideCounter * (5*this.height)/(connectionsOnCurrentSide + 1);
 						threadPos.X = portPos.X + this.width/4 + spacing/4 - 2*border;
 						threadPos.Y = portPos.Y;
+
+						//The offset is currently way too big
+						offset = x*((float)Math.Abs(otherPort.Rectangle.X - port.Position.X)/((float)Math.Abs(portPos.X - port.Rectangle.X)));
+						Console.WriteLine("offset = {0}", offset);
 						break;
 					case 2:		//Draws on the left of the thread
+						sideCounter =  (int)Math.Ceiling(counter/3.0);
 						portPos.X = port.Position.X - 7*spacing + spacing/4;
 						if(numberOfConnections%3 == 2)
             			{
-							portPos.Y =   (this.Rectangle.Top - 2*this.height) + (int)Math.Ceiling(counter/3.0) * (5*this.height)/((int)Math.Ceiling(numberOfConnections/3.0)+1);
+							connectionsOnCurrentSide = (int)Math.Ceiling(numberOfConnections/3.0);
+							portPos.Y =   (this.Rectangle.Top - 2*this.height) + sideCounter * (5*this.height)/(connectionsOnCurrentSide + 1);
 						}		
 						else
 						{
-							portPos.Y =  (this.Rectangle.Top - 2*this.height) + (int)Math.Ceiling(counter/3.0) * (5*this.height)/((int)Math.Floor(numberOfConnections/3.0)+1);
+							connectionsOnCurrentSide = (int)Math.Floor(numberOfConnections/3.0);
+							portPos.Y =  (this.Rectangle.Top - 2*this.height) + sideCounter * (5*this.height)/(connectionsOnCurrentSide+1);
 						}
 						threadPos.X = portPos.X - (this.width/4 + spacing/4 - 2*border);
 						threadPos.Y = portPos.Y;
@@ -143,8 +156,7 @@ class Thread : Component
 						threadPos.Y = portPos.Y + this.height/4 + spacing/4 - 2*border;
 						break;
 				}
-				Console.WriteLine("Connection drawn to position: ({0}, {1})", portPos.X, portPos.Y);
-				this.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8, 0.5f);
+				this.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8, offset);
 				otherPort.Draw(portPos, sb, fontSystem, spacing);
 				((Thread)otherPort.Parent).DrawBody(threadPos, sb, fontSystem, spacing/2);
 			}
