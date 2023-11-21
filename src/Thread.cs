@@ -1,3 +1,4 @@
+using System.Globalization;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -106,7 +107,7 @@ class Thread : Component
 		{
 			numberOfConnections += this.Children.ElementAt(x).connections.Keys.Count;
 		}
-		//Console.WriteLine("This is written in Thread.DrawConnections for diagnostics:");
+		Console.WriteLine("This is written in Thread.DrawConnections for diagnostics:");
 		//Console.WriteLine("  Thread's # of children: {0}, Number of connections: {1}", this.Children.Count, numberOfConnections);
 		//Console.WriteLine("  Exact list of all connections and their ports:");
 		for(int x = 0; x < this.Children.Count; x++)
@@ -130,7 +131,10 @@ class Thread : Component
 						threadPos.Y = portPos.Y;
 
 						//The offset is currently way too big
-						offset = x*((float)Math.Abs(otherPort.Rectangle.X - port.Position.X)/((float)Math.Abs(portPos.X - port.Rectangle.X)));
+						Console.WriteLine("Distance from rightside center: {0}", (float)(Math.Abs(Math.Round(connectionsOnCurrentSide/2f) - sideCounter)));
+						Console.WriteLine("Distance between port and otherPort: {0}", Math.Abs(port.Rectangle.Right - otherPort.Rectangle.Left));
+						Console.WriteLine("Total number or ports on this side: {0}", connectionsOnCurrentSide);
+						offset = 1f - ((float)(Math.Abs(connectionsOnCurrentSide/2 - sideCounter))*(0.5f/connectionsOnCurrentSide));
 						Console.WriteLine("offset = {0}", offset);
 						break;
 					case 2:		//Draws on the left of the thread
@@ -150,7 +154,9 @@ class Thread : Component
 						threadPos.Y = portPos.Y;
 						break;
 					default:	//Draws on the bottom of the thread
-						portPos.X = (this.Rectangle.Left - this.width - this.width/2) + (int)Math.Floor(counter/3.0) * (4*this.width)/((int)Math.Floor(numberOfConnections/3.0)+1);
+						sideCounter = (int)Math.Floor(counter/3.0);
+						connectionsOnCurrentSide = (int)Math.Floor(numberOfConnections/3.0);
+						portPos.X = (this.Rectangle.Left - this.width - this.width/2) + sideCounter * (4*this.width)/(connectionsOnCurrentSide + 1);
 						portPos.Y = port.Position.Y + 9*spacing + spacing/4;
 						threadPos.X = portPos.X;
 						threadPos.Y = portPos.Y + this.height/4 + spacing/4 - 2*border;

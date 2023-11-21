@@ -190,8 +190,6 @@ public class Component
 		{
 			offset = 0.5f;
 		}
-		Console.WriteLine("Inside DrawArrowBodY() offset = {0}", offset);
-
 		if((A.Y < B.Y) && (2*Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
 		{
 			direction = Direction.Down;
