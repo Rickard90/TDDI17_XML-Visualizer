@@ -10,8 +10,8 @@ class Textbox
     private const int windowToOutlineBuffer = 8;
     private const double widthMinimalPropotionPercentage = 0.20;
 
-    private static readonly Color outlineColor = Color.Red;
-    private static readonly Color fillColor = Color.DarkGray;
+    private static readonly Color outlineColor = ColorConfiguration.color_3;
+    private static readonly Color fillColor = ColorConfiguration.color_0;
     private static readonly char[] invalidFilenameCharacters = Path.GetInvalidPathChars();
 
     //  return the new textStr
