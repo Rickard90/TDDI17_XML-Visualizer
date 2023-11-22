@@ -62,15 +62,15 @@ class Thread : Component
 		this.position.Y = pos.Y - this.height/2;
 		
 		DrawPorts(sb, fontSystem, spacing); //Needed to update all the port positions
-		DrawBody(pos, sb, fontSystem, spacing);
+		DrawBody(pos, sb, fontSystem, spacing, spacing);
 		DrawConnections(sb, fontSystem, spacing);
 		DrawPorts(sb, fontSystem, spacing);
 	}
 	
-	public void DrawBody(Point pos, SpriteBatch sb, FontSystem fontSystem, int spacing)
+	public void DrawBody(Point pos, SpriteBatch sb, FontSystem fontSystem, int spacing, int textsize)
 	{
 		int border = Component.lineThickness; //Just for reading clarity's sake
-		SpriteFontBase font = fontSystem.GetFont(24*spacing/67);
+		SpriteFontBase font = fontSystem.GetFont(24*textsize/67);
 		this.width  = 4*spacing;
 		this.height = 5*spacing;
 
@@ -131,11 +131,10 @@ class Thread : Component
 						threadPos.Y = portPos.Y;
 
 						//The offset is currently way too big
-						Console.WriteLine("Distance from rightside center: {0}", (float)(Math.Abs(Math.Round(connectionsOnCurrentSide/2f) - sideCounter)));
-						Console.WriteLine("Distance between port and otherPort: {0}", Math.Abs(port.Rectangle.Right - otherPort.Rectangle.Left));
+						Console.WriteLine("Distance from rightside center: {0}", (float)(Math.Abs(Math.Round((float)((connectionsOnCurrentSide))/2f) - (float)sideCounter)));
+						Console.WriteLine("This is connection number: {0}", sideCounter);
 						Console.WriteLine("Total number or ports on this side: {0}", connectionsOnCurrentSide);
-						offset = 1f - ((float)(Math.Abs(connectionsOnCurrentSide/2 - sideCounter))*(0.5f/connectionsOnCurrentSide));
-						Console.WriteLine("offset = {0}", offset);
+						//Console.WriteLine("offset = {0}", offset);
 						break;
 					case 2:		//Draws on the left of the thread
 						sideCounter =  (int)Math.Ceiling(counter/3.0);
@@ -162,9 +161,10 @@ class Thread : Component
 						threadPos.Y = portPos.Y + this.height/4 + spacing/4 - 2*border;
 						break;
 				}
+				offset = 1f - (float)Math.Ceiling(Math.Abs((float)(connectionsOnCurrentSide+1f)/2f - sideCounter)) * (0.5f/connectionsOnCurrentSide);
 				this.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8, offset);
 				otherPort.Draw(portPos, sb, fontSystem, spacing);
-				((Thread)otherPort.Parent).DrawBody(threadPos, sb, fontSystem, spacing/2);
+				((Thread)otherPort.Parent).DrawBody(threadPos, sb, fontSystem, spacing/2, spacing);
 			}
 		}
 	}
