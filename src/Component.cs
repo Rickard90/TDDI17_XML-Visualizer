@@ -186,7 +186,10 @@ public class Component
 	{	
 		Rectangle body = new(A, new Point((int)(offset*Math.Abs(A.X - B.X)) + thickness/2, thickness));
 		Direction direction = Direction.Right;
-
+		if (offset < 0f || offset > 1f)
+		{
+			offset = 0.5f;
+		}
 		if((A.Y < B.Y) && (2*Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
 		{
 			direction = Direction.Down;
