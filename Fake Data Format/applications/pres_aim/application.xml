@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Application name="PRES_AIM">
+ 
+  <Thread name="PRES_AIM_3" frequency="16HZ">
+    <Port name="Fatigue" interface="PRES_AIM_Interface.Fatigue" role="Sender"/>
+    <Port name="Flight_control_surfaces" interface="PRES_AIM_Interface.Flight_control_surfaces" role="Sender"/>
+    <Port name="Flight_dynamics" interface="PRES_AIM_Interface.Flight_dynamics" role="Sender"/>
+  </Thread>
+
+  <Thread name="PRES_AIM_5" frequency="16HZ">
+    <Port name="FMS" interface="PRES_AIM_Interface.FMS" role="Sender"/>
+    <Port name="Fluid" interface="PRES_AIM_Interface.Fluid" role="Sender"/>
+    <Port name="Force" interface="PRES_AIM_Interface.Force" role="Sender"/>
+    <Port name="Fuselage" interface="PRES_AIM_Interface.Fuselage" role="Sender"/>
+    <Port name="FANS" interface="PRES_AIM_Interface.FANS" role="Sender"/>
+  </Thread>
+
+  <Thread name="PRES_AIM_6" frequency="16HZ">
+    <Port name="Galaxy" interface="PRES_AIM_Interface.Galaxy" role="Sender"/>
+    <Port name="Glider" interface="PRES_AIM_Interface.Glider" role="Sender"/>
+    <Port name="Goddard" interface="PRES_AIM_Interface.Goddard" role="Sender"/>
+    <Port name="Heat_shield" interface="PRES_AIM_Interface.Heat_shield" role="Sender"/>
+    <Port name="Hypersonic" interface="PRES_AIM_Interface.Hypersonic" role="Sender"/>
+    <Port name="Indicated_airspeed" interface="PRES_AIM_Interface.Indicated_airspeed" role="Sender"/>
+  </Thread>
+
+</Application>

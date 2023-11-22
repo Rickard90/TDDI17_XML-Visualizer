@@ -94,6 +94,13 @@
 	
   </Computer>
 
+  <Computer name="Central_Computer">
+    <Partition name="CC_0">
+      <Application name="CENTRAL_DATA"/>
+    </Partition>
+
+  </Computer>
+
   <Computer name="TestComputer1">
 
   </Computer>
