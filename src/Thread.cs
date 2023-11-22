@@ -107,19 +107,17 @@ class Thread : Component
 		{
 			numberOfConnections += this.Children.ElementAt(x).connections.Keys.Count;
 		}
-		//Console.WriteLine("This is written in Thread.DrawConnections for diagnostics:");
-		//Console.WriteLine("  Thread's # of children: {0}, Number of connections: {1}", this.Children.Count, numberOfConnections);
-		//Console.WriteLine("  Exact list of all connections and their ports:");
+
+		//OBS: Possible to create a solution that draws all the righthandside ports first, then all the left ones then all the bottom ones
+		//Instead of swapping between them constantly
 		for(int x = 0; x < this.Children.Count; x++)
 		{
 			port = this.Children.ElementAt(x);
-			//Console.WriteLine("    Port {0} and its connections ( {1} st):", port.Name, port.connections.Keys.Count);
 			for(int y = 0; y < port.connections.Keys.Count; y++)
 			{
 				counter++;
 				offset = 0.5f;
 				otherPort = port.connections.Keys.ElementAt(y);
-				//Console.WriteLine("      Connection {0}", otherPort.Name);
 				switch (counter%3)
 				{
 					case 1:		//Draws on the right of the thread
@@ -129,12 +127,6 @@ class Thread : Component
 						portPos.Y = (this.Rectangle.Top - 2*this.height) + sideCounter * (5*this.height)/(connectionsOnCurrentSide + 1);
 						threadPos.X = portPos.X + this.width/4 + spacing/4 - 2*border;
 						threadPos.Y = portPos.Y;
-
-						//The offset is currently way too big
-						//Console.WriteLine("Distance from rightside center: {0}", (float)(Math.Abs(Math.Round((float)((connectionsOnCurrentSide))/2f) - (float)sideCounter)));
-						//Console.WriteLine("This is connection number: {0}", sideCounter);
-						//Console.WriteLine("Total number or ports on this side: {0}", connectionsOnCurrentSide);
-						//Console.WriteLine("offset = {0}", offset);
 						break;
 					case 2:		//Draws on the left of the thread
 						sideCounter =  (int)Math.Ceiling(counter/3.0);
@@ -162,7 +154,8 @@ class Thread : Component
 						break;
 				}
 				offset = 1f - (float)Math.Ceiling(Math.Abs((float)(connectionsOnCurrentSide+1f)/2f - sideCounter)) * (0.5f/connectionsOnCurrentSide);
-				this.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8, offset);
+				((Port)port).ConnectionOffset = offset;
+				Component.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8, offset);
 				otherPort.Draw(portPos, sb, fontSystem, spacing);
 				((Thread)otherPort.Parent).DrawBody(threadPos, sb, fontSystem, spacing/2, spacing);
 			}

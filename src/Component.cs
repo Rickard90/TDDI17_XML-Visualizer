@@ -182,8 +182,12 @@ public class Component
 		this.initStack += child.initStack;
 		this.frequency += child.frequency;
 	}
-	protected void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness, float offset = 0.5f)
+	public static void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness, float offset = 0.5f, Color color = new())
 	{	
+		if (color == new Color())
+		{
+			color = Color.Black;
+		}
 		Rectangle body = new(A, new Point((int)(offset*Math.Abs(A.X - B.X)) + thickness/2, thickness));
 		Direction direction = Direction.Right;
 		if (offset < 0f || offset > 1f)
@@ -207,12 +211,12 @@ public class Component
 		{
 			case Direction.Right:
 				body.Y -= thickness/2;
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 			
 				body.X += body.Width - thickness/2;
 				body.Width = (int)((1f - offset) * Math.Abs(A.X - B.X)) + thickness/2;
 				body.Y += B.Y - A.Y;
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 			
 				body.Width = thickness;
 				body.Height = Math.Abs(A.Y - B.Y) + thickness/2;
@@ -225,34 +229,34 @@ public class Component
 					body.Y = A.Y;
 				}
 				body.X -= thickness/2;
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 				break;
 			case Direction.Left:
-				DrawArrowBody(sb, B, A, thickness, 1f - offset);
+				DrawArrowBody(sb, B, A, thickness, 1f - offset, color);
 				break;
 			case Direction.Up:
-				DrawArrowBody(sb, B, A, thickness, 1f - offset);
+				DrawArrowBody(sb, B, A, thickness, 1f - offset, color);
 				break;
 			case Direction.Down:
 				body.X -= thickness/2;
 				body.Width = thickness;
 				body.Height = (int)(Math.Abs(A.Y - B.Y)* offset) + thickness/2;
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 				body.Y += body.Height - thickness;
 				body.X = B.X - thickness/2;
 				body.Height = (int)(Math.Abs(A.Y - B.Y)* (1f-offset)) + thickness/2;
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 				if(B.X > A.X)
 				{
 					body.X = A.X - thickness/2;
 				}
 				body.Height = thickness;
 				body.Width = Math.Abs(A.X - B.X) + thickness/2; 
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 				break;
 		}
 	}
-	protected void DrawArrowHead(SpriteBatch sb, Point pos, int spacing, float rotation)
+	public void DrawArrowHead(SpriteBatch sb, Point pos, int spacing, float rotation)
 	{
 		int width = 3/4 * spacing;
 		int height = spacing/2;

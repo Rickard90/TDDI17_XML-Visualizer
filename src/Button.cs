@@ -119,6 +119,20 @@ class HighlightButton
         Rectangle rectangle = Canvas.Camera.ModifiedDrawArea(this.Component.Rectangle);
         int lineThickness = Component.lineThickness;
 
+        //Special case if highlighting a port:
+        if(this.Component.type == Component.Type.Port)
+        {
+            Rectangle otherRectangle = new();
+            foreach(var otherPort in this.Component.connections.Keys)
+            {
+                otherRectangle = Canvas.Camera.ModifiedDrawArea(otherPort.Rectangle);
+                Component.DrawArrowBody(sb, rectangle.Center, otherRectangle.Center, 2*lineThickness, ((Port)this.Component).ConnectionOffset, color);
+                sb.Draw(Window.whitePixelTexture, otherRectangle, color);
+                sb.Draw(Window.whitePixelTexture, new Rectangle(otherRectangle.X + lineThickness, otherRectangle.Y + lineThickness,  otherRectangle.Width- 2*lineThickness, otherRectangle.Height - 2*lineThickness), Color.White);
+            }     
+            sb.Draw(Window.whitePixelTexture, rectangle, Color.White);
+        }
+
         // Draw top side
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, lineThickness), color);
         // Draw left side
@@ -127,6 +141,8 @@ class HighlightButton
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X + rectangle.Width - lineThickness, rectangle.Y, lineThickness, rectangle.Height), color);
         // Draw bottom side
         sb.Draw(Window.whitePixelTexture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - lineThickness, rectangle.Width, lineThickness), color);
+
+
     }
 
     public void GoRight(List<Component> components)
