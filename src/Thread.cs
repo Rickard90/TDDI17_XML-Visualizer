@@ -107,7 +107,7 @@ class Thread : Component
 		{
 			numberOfConnections += this.Children.ElementAt(x).connections.Keys.Count;
 		}
-		Console.WriteLine("This is written in Thread.DrawConnections for diagnostics:");
+		//Console.WriteLine("This is written in Thread.DrawConnections for diagnostics:");
 		//Console.WriteLine("  Thread's # of children: {0}, Number of connections: {1}", this.Children.Count, numberOfConnections);
 		//Console.WriteLine("  Exact list of all connections and their ports:");
 		for(int x = 0; x < this.Children.Count; x++)
@@ -131,9 +131,9 @@ class Thread : Component
 						threadPos.Y = portPos.Y;
 
 						//The offset is currently way too big
-						Console.WriteLine("Distance from rightside center: {0}", (float)(Math.Abs(Math.Round((float)((connectionsOnCurrentSide))/2f) - (float)sideCounter)));
-						Console.WriteLine("This is connection number: {0}", sideCounter);
-						Console.WriteLine("Total number or ports on this side: {0}", connectionsOnCurrentSide);
+						//Console.WriteLine("Distance from rightside center: {0}", (float)(Math.Abs(Math.Round((float)((connectionsOnCurrentSide))/2f) - (float)sideCounter)));
+						//Console.WriteLine("This is connection number: {0}", sideCounter);
+						//Console.WriteLine("Total number or ports on this side: {0}", connectionsOnCurrentSide);
 						//Console.WriteLine("offset = {0}", offset);
 						break;
 					case 2:		//Draws on the left of the thread
