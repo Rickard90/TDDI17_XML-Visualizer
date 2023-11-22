@@ -54,13 +54,13 @@ public class Component
 	{
 		return "RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency;
 	}
-	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int size)
+	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)//FontSystem fontSystem, int size)
 	{
-		SpriteFontBase font = fontSystem.GetFont(size/67);
-		int spacing = size/24;
-		this.width  = size/6;
-		this.height = size/6;
-		int border = Component.lineThickness; //Just for reading clarity's sake
+		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
+		this.width  = Constants.ComponentSize*zoomLevel/12;
+		this.height = this.width;
+		int spacing = this.width/4;
+		int border  = Component.lineThickness; //Just for reading clarity's sake
 		int innerHeight = this.height - 2*border;
 		int innerWidth  = this.width  - 2*border;
 
@@ -68,10 +68,10 @@ public class Component
 		this.position = pos;
 
 		//Draws small square to the right:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width, pos.Y + this.height/8, 3* this.width/4, 3* this.height/4), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width, pos.Y + spacing/2 + border, 3 * this.width/4 - border, 3 * this.width/4 - 2*border), Color.White);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + height/8, 3* width/4, 3* height/4), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + spacing/2 + border, 3 * width/4 - border, 3 * width/4 - 2*border), Color.White);
 		//Draws big square:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, this.width, this.height), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, width, height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + border, pos.Y + border, innerWidth, innerHeight), Color.White);
 		
 		//Draws out the name
@@ -89,8 +89,8 @@ public class Component
         int smallInnerWidth  = smallWidth  - 2*LineThickness;
         int smallInnerHeight = smallHeight - 2*LineThickness;
         // Draw linkbuttons
-		Rectangle inner = new Rectangle(this.position.X + LineThickness, this.position.Y + LineThickness, smallWidth, smallHeight);
-        Point smallPoint = new Point(this.position.X + this.width - LineThickness, this.position.Y + lineThickness);
+		Rectangle inner = new Rectangle(position.X + LineThickness, position.Y + LineThickness, smallWidth, smallHeight);
+        Point smallPoint = new Point(position.X + width - LineThickness, position.Y + lineThickness);
         Rectangle smallOuter = new Rectangle(smallPoint.X, smallPoint.Y, smallWidth, smallHeight);
         Rectangle smallInner = new Rectangle(smallPoint.X + LineThickness, smallPoint.Y + LineThickness, smallInnerWidth, smallInnerHeight);
         int numberOfLinks = Component.numberOfVisibleLinks;

@@ -51,25 +51,22 @@ partial class Canvas
         if (zoomChange == Selection.CanvasZoomChange.In) {
             zoomLevel = Math.Min(maxZoom, zoomLevel+1);
         } else if (zoomChange == Selection.CanvasZoomChange.Out) {
-            zoomLevel = Math.Min(maxZoom, zoomLevel-1);
+            zoomLevel = Math.Max(minZoom, zoomLevel-1);
         }
     }
 
-    public bool ScrollCanvasToArea(Rectangle target, Rectangle windowRect) 
+    public void ScrollCanvasToArea(Rectangle target, Rectangle windowRect) 
     {
         if ( target.Y > - Camera.offset.Y + windowRect.Height ) {
-            Camera.offset.Y = 
-                - target.Y 
-                - 4 * target.Height/3 
-                + windowRect.Height;
-            return true;
+            Camera.offset.Y = -target.Y - 4*target.Height/3 + windowRect.Height;
         } else if ( target.Y < - Camera.offset.Y ) {
-            Camera.offset.Y = 
-                - target.Y 
-                + 2 * target.Height/3;
-            return true;
-        }        
-        return false;
+            Camera.offset.Y = -target.Y + 2*target.Height/3;
+        }
+        if ( target.X+target.Width > - Camera.offset.X + windowRect.Width ) {
+            Camera.offset.X = -target.X-target.Width - 4*target.Width/3 + windowRect.Width;
+        } else if ( target.X < - Camera.offset.X ) {
+            Camera.offset.X = -target.X + 2*target.Width/3;
+        }
     }
     public void UpdateTexture()
     {

@@ -19,7 +19,7 @@ static class XmlReader {
         try
         {            
             StreamReader topologyReader = new(path + "/topology/topology.xml");
-            line = topologyReader.ReadLine();
+            line = topologyReader.ReadLine().ToLower();
             while (line != null)
             {
                 line = line.Trim();
@@ -34,7 +34,7 @@ static class XmlReader {
                         threads.Clear();
                         applicationName = (line.Split('\"')[1]);
                         // Raden nedan är viktig för att file-path ska bli korrekt på Windows och Linux. /Mattias
-                        applicationName = applicationName.ToLower();
+                        //applicationName = applicationName.ToLower();
                         ReadResourses(applicationName, threads, ref ramSize, ref initStack, path);
                         ReadApplication(applicationName, threads, path, connections);
                         applications.Add(new Application(applicationName, ramSize, initStack));
@@ -79,7 +79,7 @@ static class XmlReader {
         try
         {
             StreamReader applicationReader = new(path + "/applications/"+applicationName+"/application.xml");
-            line = applicationReader.ReadLine();
+            line = applicationReader.ReadLine().ToLower();
             
             while (line != null)
             {
@@ -117,7 +117,7 @@ static class XmlReader {
         string line;
         try {
             StreamReader ResourcesReader = new(path + "/applications/"+applicationName+"/resources.xml");
-            line = ResourcesReader.ReadLine();
+            line = ResourcesReader.ReadLine().ToLower();
             while (line != null)
             {
                 line = line.Trim();

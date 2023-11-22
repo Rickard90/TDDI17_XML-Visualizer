@@ -1,3 +1,4 @@
+using System.Data;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -50,7 +51,7 @@ class Thread : Component
 
 	//OBS: Does not overload Component.Draw(), Used if you explicitly cast a component into a thread
 	public new void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int size)
-	{	
+	{
 		SpriteFontBase font = fontSystem.GetFont(size/67);
 		int spacing = size/24; //Each component is measured in a number of blocks of this size
 		this.width  = 4*spacing;
@@ -164,7 +165,7 @@ class Thread : Component
 		int numberOfPorts = this.children.Count;
         Point portPos = new();
         foreach (Component port in this.children)
-		{	
+		{
 			counter++;
 			//Calculates positions of the ports
 			switch (counter%3)
