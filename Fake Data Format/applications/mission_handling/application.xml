@@ -20,7 +20,6 @@
     <Port name="Fatigue" interface="NAVIGATION_DATA_Interface.Fatigue" role="Reciever"/>
     <Port name="Floatstick" interface="NAVIGATION_DATA_Interface.Floatstick" role="Reciever"/>
     <Port name="Fuselage" interface="NAVIGATION_DATA_Interface.Fuselage" role="Reciever"/>
-
   </Thread>
 
 </Application>

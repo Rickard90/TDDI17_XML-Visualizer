@@ -87,7 +87,7 @@ class TopologyHead
         if(child.GetInfo() != "") {
             Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
         }
-        Console.WriteLine("Component children: {0}", child.Children.Count);
+        //Console.WriteLine("Component children: {0}", child.Children.Count);
         if(child.type != Component.Type.Port && child.Children.Count > 0) {
             this.path.Add(child);
             if (child.Children.Count == 0) {

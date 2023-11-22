@@ -1,4 +1,4 @@
-using System.Data;
+using System.Globalization;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -62,15 +62,15 @@ class Thread : Component
 		this.position.Y = pos.Y - this.height/2;
 		
 		DrawPorts(sb, fontSystem, spacing); //Needed to update all the port positions
-		DrawBody(pos, sb, fontSystem, spacing);
+		DrawBody(pos, sb, fontSystem, spacing, spacing);
 		DrawConnections(sb, fontSystem, spacing);
 		DrawPorts(sb, fontSystem, spacing);
 	}
 	
-	public void DrawBody(Point pos, SpriteBatch sb, FontSystem fontSystem, int spacing)
+	public void DrawBody(Point pos, SpriteBatch sb, FontSystem fontSystem, int spacing, int textsize)
 	{
 		int border = Component.lineThickness; //Just for reading clarity's sake
-		SpriteFontBase font = fontSystem.GetFont(24*spacing/67);
+		SpriteFontBase font = fontSystem.GetFont(24*textsize/67);
 		this.width  = 4*spacing;
 		this.height = 5*spacing;
 
@@ -95,12 +95,14 @@ class Thread : Component
 	{
 		int counter = 0;
 		int border = Component.lineThickness;
+		float offset = 0.5f;
 		Point portPos = new();
 		Point threadPos = new();
-		Point arrowPos = new();
 		Component port = new();
 		Component otherPort = new();
 		int numberOfConnections = 0;
+		int connectionsOnCurrentSide = 0;
+		int sideCounter = 0;
 		for(int x = 0; x < this.Children.Count; x++)
 		{
 			numberOfConnections += this.Children.ElementAt(x).connections.Keys.Count;
@@ -115,45 +117,54 @@ class Thread : Component
 			for(int y = 0; y < port.connections.Keys.Count; y++)
 			{
 				counter++;
+				offset = 0.5f;
 				otherPort = port.connections.Keys.ElementAt(y);
 				//Console.WriteLine("      Connection {0}", otherPort.Name);
 				switch (counter%3)
 				{
 					case 1:		//Draws on the right of the thread
+						sideCounter = (int)Math.Ceiling(counter/3.0);
+						connectionsOnCurrentSide = (int)Math.Ceiling(numberOfConnections/3.0);
 						portPos.X = port.Position.X + 7*spacing + spacing/4;
-						portPos.Y = (this.Rectangle.Top - 2*this.height) + (int)Math.Ceiling(counter/3.0) * (5*this.height)/((int)Math.Ceiling(numberOfConnections/3.0)+1);
+						portPos.Y = (this.Rectangle.Top - 2*this.height) + sideCounter * (5*this.height)/(connectionsOnCurrentSide + 1);
 						threadPos.X = portPos.X + this.width/4 + spacing/4 - 2*border;
 						threadPos.Y = portPos.Y;
-						arrowPos = portPos;
-						//arrowPos.X -= spacing/4 * (int)Math.Ceiling(counter/3.0);
+
+						//The offset is currently way too big
+						//Console.WriteLine("Distance from rightside center: {0}", (float)(Math.Abs(Math.Round((float)((connectionsOnCurrentSide))/2f) - (float)sideCounter)));
+						//Console.WriteLine("This is connection number: {0}", sideCounter);
+						//Console.WriteLine("Total number or ports on this side: {0}", connectionsOnCurrentSide);
+						//Console.WriteLine("offset = {0}", offset);
 						break;
 					case 2:		//Draws on the left of the thread
+						sideCounter =  (int)Math.Ceiling(counter/3.0);
 						portPos.X = port.Position.X - 7*spacing + spacing/4;
 						if(numberOfConnections%3 == 2)
             			{
-							portPos.Y =   (this.Rectangle.Top - 2*this.height) + (int)Math.Ceiling(counter/3.0) * (5*this.height)/((int)Math.Ceiling(numberOfConnections/3.0)+1);
+							connectionsOnCurrentSide = (int)Math.Ceiling(numberOfConnections/3.0);
+							portPos.Y =   (this.Rectangle.Top - 2*this.height) + sideCounter * (5*this.height)/(connectionsOnCurrentSide + 1);
 						}		
 						else
 						{
-							portPos.Y =  (this.Rectangle.Top - 72*this.height) + (int)Math.Ceiling(counter/3.0) * (5*this.height)/((int)Math.Floor(numberOfConnections/3.0)+1);
+							connectionsOnCurrentSide = (int)Math.Floor(numberOfConnections/3.0);
+							portPos.Y =  (this.Rectangle.Top - 2*this.height) + sideCounter * (5*this.height)/(connectionsOnCurrentSide+1);
 						}
 						threadPos.X = portPos.X - (this.width/4 + spacing/4 - 2*border);
 						threadPos.Y = portPos.Y;
-						arrowPos = portPos;
-						//arrowPos.X += spacing/4 * (int)Math.Ceiling(counter/3.0);
 						break;
 					default:	//Draws on the bottom of the thread
-						portPos.X = (this.Rectangle.Left - this.width - this.width/2) + (int)Math.Floor(counter/3.0) * (4*this.width)/((int)Math.Floor(numberOfConnections/3.0)+1);
+						sideCounter = (int)Math.Floor(counter/3.0);
+						connectionsOnCurrentSide = (int)Math.Floor(numberOfConnections/3.0);
+						portPos.X = (this.Rectangle.Left - this.width - this.width/2) + sideCounter * (4*this.width)/(connectionsOnCurrentSide + 1);
 						portPos.Y = port.Position.Y + 9*spacing + spacing/4;
 						threadPos.X = portPos.X;
 						threadPos.Y = portPos.Y + this.height/4 + spacing/4 - 2*border;
-						arrowPos = portPos;
-						//arrowPos.Y -= spacing/4 * (int)Math.Floor(counter/3.0);
 						break;
 				}
-				this.DrawArrowBody(sb, port.Rectangle.Center, arrowPos, spacing/8);
+				offset = 1f - (float)Math.Ceiling(Math.Abs((float)(connectionsOnCurrentSide+1f)/2f - sideCounter)) * (0.5f/connectionsOnCurrentSide);
+				this.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8, offset);
 				otherPort.Draw(portPos, sb, fontSystem, spacing);
-				((Thread)otherPort.Parent).DrawBody(threadPos, sb, fontSystem, spacing/2);
+				((Thread)otherPort.Parent).DrawBody(threadPos, sb, fontSystem, spacing/2, spacing);
 			}
 		}
 	}

@@ -10,13 +10,16 @@ class Textbox
     private const int windowToOutlineBuffer = 8;
     private const double widthMinimalPropotionPercentage = 0.20;
 
-    private static readonly Color outlineColor = Color.Red;
-    private static readonly Color fillColor = Color.DarkGray;
+    private static readonly Color outlineColor = ColorConfiguration.color_3;
+    private static readonly Color fillColor = ColorConfiguration.color_0;
     private static readonly char[] invalidFilenameCharacters = Path.GetInvalidPathChars();
 
     //  return the new textStr
     public delegate string WhenEntered(string textStr);
+    public delegate string WhenChanged(string text);
+
     public WhenEntered whenEntered = null;      //  this event should be set to a method which may load a new topology
+    protected WhenChanged whenChanged = null;
 
     public Rectangle Bounds {get {return this.DrawArea;}}
     public Rectangle DrawArea{get { return new Rectangle(Position, size);}}
@@ -25,6 +28,7 @@ class Textbox
     private readonly SpriteFontBase font;
 
     private string textStr;
+    private string ghostStr = "";
     private Point windowSize;
     private Point Position {
         get {return new Point((windowSize.X - size.X) / 2, windowToOutlineBuffer);}}
@@ -36,15 +40,18 @@ class Textbox
 
     private Texture2D drawTexture;
 
+    private int frameCounter = 0;
 
-    public Textbox(Point windowSize, SpriteFontBase font, WhenEntered response = null, string startString = null)
+
+    public Textbox(Point windowSize, SpriteFontBase font, WhenEntered enteredResponse = null, WhenChanged changedResponse = null, string startString = null)
     {
         this.font = font;
-        this.whenEntered = response;
+        this.whenEntered = enteredResponse;
+        this.whenChanged = changedResponse;
         if (startString != null)
             this.textStr = startString;
         else
-            this.textStr = "-";
+            this.textStr = "";
 
         this.windowSize = windowSize;
         this.size = this.CalculateSize();
@@ -82,12 +89,21 @@ class Textbox
             if (validInput)
             {
                 //Console.WriteLine($"Input char : {input}");
-                if (this.textStr == "-")
+                if (this.textStr == "")
                     this.textStr = $"{input}";
                 else
                     this.textStr += input;
 
+                if (this.whenChanged != null)
+                {
+                    string result = this.whenChanged.Invoke(this.textStr);
+                    this.ghostStr = result;
+                }
                 this.needToUpdateTexture = true;
+            }
+            else if (e.Key == Keys.Tab)
+            {
+                this.textStr = this.ghostStr;           
             }
             else if (e.Key == Keys.Enter)
             {
@@ -183,7 +199,7 @@ class Textbox
         return result;      
     }
     //  should only be called in the RenderTexture function
-    private void Render()
+    protected virtual void Render()
     {
         Rectangle renderArea = new Rectangle(Point.Zero, size);
 
@@ -198,7 +214,9 @@ class Textbox
         Window.spriteBatch.Draw(Window.whitePixelTexture, copy, fillColor);
 
         // Draw text
+        Window.spriteBatch.DrawString(this.font, this.ghostStr, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black * 0.75f);
         Window.spriteBatch.DrawString(this.font, this.textStr, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black);
+
     }
 
     public void Draw()
@@ -208,7 +226,10 @@ class Textbox
 
     private Point CalculateSize()
     {
-        Vector2 textSize = this.font.MeasureString(this.textStr);
+        string effectiveStr = this.textStr;
+        if (effectiveStr == "")
+            effectiveStr = "-";
+        Vector2 textSize = this.font.MeasureString(effectiveStr);
         int width = ((int)textSize.X) + 2 * (outlinePxSize + outlineTextBufferPxSize);
         int height = ((int)textSize.Y) + 2 * (outlinePxSize + outlineTextBufferPxSize);
 

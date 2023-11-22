@@ -11,8 +11,35 @@ using Microsoft.Xna.Framework.Input;
 //All types of components inherit constructor and fields from the component-type
 public class Component
 {
-	protected static readonly int lineThickness = 3;
+	//Fields:	
+	public string Name		{get => this.name; set => this.name = value;}
+    public Point Position	{get => this.position; set => this.position = value;}
+    public Component Parent	{get => this.parent; set => this.parent = value;}
+    public Rectangle Rectangle => new(this.position.X, this.position.Y, this.width, this.height);
+	public List<Component> Children => this.children;
+    private int TextMaxWidth => (this.width - (4 * Component.lineThickness));	
+	public 				enum 				Type{Component, Computer, Partition, Application, Thread, Port};
+	public	  readonly 	Type 				type 		         = Type.Component;
+	protected 		 	string				name		         = "";
+	protected 		   	int 				width		         = 125;
+	protected 		   	int 				height		         = 100;
+	protected			Point				position	         = new(0,0);
+    protected 			Component 			parent 	        	 = null;
+	protected 		 	List<Component> 	children	         = new();
+	public	 			Dictionary<Component, int> 	connections	 = new();
+	public              List<LinkButton>    linkButtons          = new();
+    public              int                 linkDrawIndex        = 0;
+    public static readonly int              numberOfVisibleLinks = 5;
+    public static readonly int              lineThickness        = 3;
 	private enum Direction{Up, Right, Down, Left};
+
+	//Info:
+	public int ramSize 	 = 0;
+	public int initStack = 0;
+	public int execTime  = 0;
+	public int execStack = 0;
+	public int frequency = 0;
+
 	//Constructors:
 	public Component()
 	{
@@ -86,18 +113,18 @@ public class Component
 
 		int smallWidth  = this.width*3/4;
 		int smallHeight = this.height*3/4; 
-        int smallInnerWidth  = smallWidth  - 2*LineThickness;
-        int smallInnerHeight = smallHeight - 2*LineThickness;
+        int smallInnerWidth  = smallWidth  - 2*lineThickness;
+        int smallInnerHeight = smallHeight - 2*lineThickness;
         // Draw linkbuttons
-		Rectangle inner = new Rectangle(position.X + LineThickness, position.Y + LineThickness, smallWidth, smallHeight);
-        Point smallPoint = new Point(position.X + width - LineThickness, position.Y + lineThickness);
+		Rectangle inner = new Rectangle(this.position.X + lineThickness, this.position.Y + lineThickness, smallWidth, smallHeight);
+        Point smallPoint = new Point(this.position.X + this.width - lineThickness, this.position.Y + lineThickness);
         Rectangle smallOuter = new Rectangle(smallPoint.X, smallPoint.Y, smallWidth, smallHeight);
-        Rectangle smallInner = new Rectangle(smallPoint.X + LineThickness, smallPoint.Y + LineThickness, smallInnerWidth, smallInnerHeight);
+        Rectangle smallInner = new Rectangle(smallPoint.X + lineThickness, smallPoint.Y + lineThickness, smallInnerWidth, smallInnerHeight);
         int numberOfLinks = Component.numberOfVisibleLinks;
-		smallPoint.X += LineThickness;
-        smallPoint.Y += LineThickness + this.height/8;
+		smallPoint.X += lineThickness;
+        smallPoint.Y += lineThickness + this.height/8;
         int linkButtonHeight = smallInner.Height / numberOfLinks;
-        int linkButtonWidth  = smallWidth - LineThickness;
+        int linkButtonWidth  = smallWidth - lineThickness;
         if (this.connections.Count > numberOfLinks)
         {
             if (this.linkDrawIndex > 0) {
@@ -155,12 +182,14 @@ public class Component
 		this.initStack += child.initStack;
 		this.frequency += child.frequency;
 	}
-	protected void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness)
+	protected void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness, float offset = 0.5f)
 	{	
-		
-		Rectangle body = new(A,new Point((Math.Abs(A.X - B.X) + thickness)/2, thickness));
+		Rectangle body = new(A, new Point((int)(offset*Math.Abs(A.X - B.X)) + thickness/2, thickness));
 		Direction direction = Direction.Right;
-
+		if (offset < 0f || offset > 1f)
+		{
+			offset = 0.5f;
+		}
 		if((A.Y < B.Y) && (2*Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
 		{
 			direction = Direction.Down;
@@ -180,8 +209,9 @@ public class Component
 				body.Y -= thickness/2;
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
 			
-				body.X += (B.X - A.X)/2;
-				body.Y += (B.Y - A.Y);
+				body.X += body.Width - thickness/2;
+				body.Width = (int)((1f - offset) * Math.Abs(A.X - B.X)) + thickness/2;
+				body.Y += B.Y - A.Y;
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
 			
 				body.Width = thickness;
@@ -198,18 +228,19 @@ public class Component
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
 				break;
 			case Direction.Left:
-				DrawArrowBody(sb, B, A, thickness);
+				DrawArrowBody(sb, B, A, thickness, 1f - offset);
 				break;
 			case Direction.Up:
-				DrawArrowBody(sb, B, A, thickness);
+				DrawArrowBody(sb, B, A, thickness, 1f - offset);
 				break;
 			case Direction.Down:
 				body.X -= thickness/2;
 				body.Width = thickness;
-				body.Height = (Math.Abs(A.Y - B.Y) + thickness)/2;
+				body.Height = (int)(Math.Abs(A.Y - B.Y)* offset) + thickness/2;
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
-				body.Y += (B.Y - A.Y)/2;
+				body.Y += body.Height - thickness;
 				body.X = B.X - thickness/2;
+				body.Height = (int)(Math.Abs(A.Y - B.Y)* (1f-offset)) + thickness/2;
 				sb.Draw(Window.whitePixelTexture, body, Color.Black);
 				if(B.X > A.X)
 				{
@@ -283,33 +314,7 @@ public class Component
         }
     }
 
-	//Fields:	
-	public string Name		{get => this.name; set => this.name = value;}
-    public Point Position	{get => this.position; set => this.position = value;}
-    public Component Parent	{get => this.parent; set => this.parent = value;}
-    public Rectangle Rectangle => new(this.position.X, this.position.Y, this.width, this.height);
-	public List<Component> Children => this.children;
-    private int TextMaxWidth => (this.width - (4 * Component.lineThickness));	
-	public 				enum 				Type{Component, Computer, Partition, Application, Thread, Port};
-	public	  readonly 	Type 				type 		         = Type.Component;
-	protected 		 	string				name		         = "";
-	protected 		   	int 				width		         = 125;
-	protected 		   	int 				height		         = 100;
-	protected			Point				position	         = new(0,0);
-    protected 			Component 			parent 	        	 = null;
-	protected 		 	List<Component> 	children	         = new();
-	public	 			Dictionary<Component, int> 	connections	 = new();
-	public              List<LinkButton>    linkButtons          = new();
-    public              int                 linkDrawIndex        = 0;
-    public static readonly int              numberOfVisibleLinks = 5;
-    public static readonly int              LineThickness        = 3;
 	
-	//Info:
-	public int ramSize 	 = 0;
-	public int initStack = 0;
-	public int execTime  = 0;
-	public int execStack = 0;
-	public int frequency = 0;
 }
 
 //Sub-Components:

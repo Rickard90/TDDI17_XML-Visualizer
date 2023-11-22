@@ -19,6 +19,10 @@ class Port : Component
 			}
 		}
 	}
+	public override string GetInfo()
+	{
+		return "";
+	}
 	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int spacing)
 	{
 		int border = Component.lineThickness; //Just for reading clarity's sake
