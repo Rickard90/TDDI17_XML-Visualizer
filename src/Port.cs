@@ -5,6 +5,12 @@ using Microsoft.Xna.Framework.Graphics;
 /*__________P_O_R_T___________*/
 class Port : Component
 {
+	public 	float ConnectionOffset{get => this.connectionOffset; set => this.connectionOffset = value;}
+	private float connectionOffset = 0.5f;
+	public string interf 	= ""; 
+	public string role		= "";
+
+
 	public Port(string name, 
 				string interf, string role) : base(name, Type.Port)
 	{
@@ -37,6 +43,4 @@ class Port : Component
 		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X, this.position.Y, this.width, this.height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X + border, this.position.Y + border, this.width - 2*border, this.height - 2*border), Color.White);
 	}
-	public string interf 	= ""; 
-	public string role		= "";
 }
