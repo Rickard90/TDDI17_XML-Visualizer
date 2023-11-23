@@ -42,9 +42,12 @@ class TopologyHead
         foreach(Component C in path)
         {
             pathString += C.Name;
-            pathString += " > ";
+			if (C.Name != "" && this.GetCurrent().GetType() != C.GetType())
+            	pathString += " > ";
         }
-        sb.DrawString(font, pathString, new Vector2(105, 37), Color.Black);
+        sb.DrawString(font, pathString, new Vector2(115, 10), Color.Black);
+		if (GetCurrent().type != Component.Type.Component ) //kanske ändra för "Ports" till något i still med "threadview"?
+			sb.DrawString(font, GetCurrent().Children[0].type + "s:", new Vector2(115, 37), Color.Black);
     }
     public bool IsHead()
     {

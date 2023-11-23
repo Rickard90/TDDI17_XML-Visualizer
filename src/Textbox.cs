@@ -7,7 +7,7 @@ class Textbox
 {
     private const int outlinePxSize = 4;
     private const int outlineTextBufferPxSize = 2; 
-    private const int windowToOutlineBuffer = 8;
+    private const int windowToOutlineBuffer = 37;
     private const double widthMinimalPropotionPercentage = 0.20;
 
     private static readonly Color outlineColor = ColorConfiguration.color_3;

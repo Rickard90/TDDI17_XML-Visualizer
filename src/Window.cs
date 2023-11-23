@@ -112,7 +112,7 @@ public class Window : Game
         this.canvas.Draw();
 
         this.highlightButton.Draw(spriteBatch);
-        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 0, Window.ClientBounds.Size.X, Constants.ToolbarHeight), new Color(190, 190, 190, 215));
+        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 0, Window.ClientBounds.Size.X, Constants.ToolbarHeight), new Color(230, 230, 230, 255));
         spriteBatch.Draw(whitePixelTexture, new Rectangle(0, Constants.ToolbarHeight-3, Window.ClientBounds.Size.X, 3), Color.Gray);
         this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
         this.top.DrawPath(spriteBatch, this.fontSystem.GetFont(22));
