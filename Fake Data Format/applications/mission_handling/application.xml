@@ -20,6 +20,8 @@
     <Port name="Fatigue" interface="NAVIGATION_DATA_Interface.Fatigue" role="Reciever"/>
     <Port name="Floatstick" interface="NAVIGATION_DATA_Interface.Floatstick" role="Reciever"/>
     <Port name="Fuselage" interface="NAVIGATION_DATA_Interface.Fuselage" role="Reciever"/>
+    <Port name="Indicated_airspeed" interface="PRES_AIM_Interface.Indicated_airspeed" role="Reciever"/>
+
   </Thread>
 
 </Application>

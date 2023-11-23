@@ -81,13 +81,13 @@ public class Component
 	{
 		return "RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency;
 	}
-	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int size)
+	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)//FontSystem fontSystem, int size)
 	{
-		SpriteFontBase font = fontSystem.GetFont(size/67);
-		int spacing = size/24;
-		this.width  = size/6;
-		this.height = size/6;
-		int border = Component.lineThickness; //Just for reading clarity's sake
+		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
+		this.width  = Constants.ComponentSize*zoomLevel/12;
+		this.height = this.width;
+		int spacing = this.width/4;
+		int border  = Component.lineThickness; //Just for reading clarity's sake
 		int innerHeight = this.height - 2*border;
 		int innerWidth  = this.width  - 2*border;
 
@@ -95,10 +95,10 @@ public class Component
 		this.position = pos;
 
 		//Draws small square to the right:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width, pos.Y + this.height/8, 3* this.width/4, 3* this.height/4), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width, pos.Y + spacing/2 + border, 3 * this.width/4 - border, 3 * this.width/4 - 2*border), Color.White);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + height/8, 3* width/4, 3* height/4), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + spacing/2 + border, 3 * width/4 - border, 3 * width/4 - 2*border), Color.White);
 		//Draws big square:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, this.width, this.height), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, width, height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + border, pos.Y + border, innerWidth, innerHeight), Color.White);
 		
 		//Draws out the name
@@ -182,8 +182,12 @@ public class Component
 		this.initStack += child.initStack;
 		this.frequency += child.frequency;
 	}
-	protected void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness, float offset = 0.5f)
+	public static void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness, float offset = 0.5f, Color color = new())
 	{	
+		if (color == new Color())
+		{
+			color = Color.Black;
+		}
 		Rectangle body = new(A, new Point((int)(offset*Math.Abs(A.X - B.X)) + thickness/2, thickness));
 		Direction direction = Direction.Right;
 		if (offset < 0f || offset > 1f)
@@ -207,12 +211,12 @@ public class Component
 		{
 			case Direction.Right:
 				body.Y -= thickness/2;
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 			
 				body.X += body.Width - thickness/2;
 				body.Width = (int)((1f - offset) * Math.Abs(A.X - B.X)) + thickness/2;
 				body.Y += B.Y - A.Y;
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 			
 				body.Width = thickness;
 				body.Height = Math.Abs(A.Y - B.Y) + thickness/2;
@@ -225,34 +229,34 @@ public class Component
 					body.Y = A.Y;
 				}
 				body.X -= thickness/2;
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 				break;
 			case Direction.Left:
-				DrawArrowBody(sb, B, A, thickness, 1f - offset);
+				DrawArrowBody(sb, B, A, thickness, 1f - offset, color);
 				break;
 			case Direction.Up:
-				DrawArrowBody(sb, B, A, thickness, 1f - offset);
+				DrawArrowBody(sb, B, A, thickness, 1f - offset, color);
 				break;
 			case Direction.Down:
 				body.X -= thickness/2;
 				body.Width = thickness;
 				body.Height = (int)(Math.Abs(A.Y - B.Y)* offset) + thickness/2;
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 				body.Y += body.Height - thickness;
 				body.X = B.X - thickness/2;
 				body.Height = (int)(Math.Abs(A.Y - B.Y)* (1f-offset)) + thickness/2;
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 				if(B.X > A.X)
 				{
 					body.X = A.X - thickness/2;
 				}
 				body.Height = thickness;
 				body.Width = Math.Abs(A.X - B.X) + thickness/2; 
-				sb.Draw(Window.whitePixelTexture, body, Color.Black);
+				sb.Draw(Window.whitePixelTexture, body, color);
 				break;
 		}
 	}
-	protected void DrawArrowHead(SpriteBatch sb, Point pos, int spacing, float rotation)
+	public void DrawArrowHead(SpriteBatch sb, Point pos, int spacing, float rotation)
 	{
 		int width = 3/4 * spacing;
 		int height = spacing/2;

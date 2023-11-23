@@ -23,7 +23,7 @@ public class Window : Game
     private string folderPath;
     private bool updateCanvas;
 
-    public Point WindowSize {get {return this.Window.ClientBounds.Size;}} 
+    public Point windowSize; 
     
     public Window(string folderPath)
     {
@@ -35,12 +35,16 @@ public class Window : Game
         Window.AllowUserResizing = true;
         Window.ClientSizeChanged += this.OnResize;
         Window.AllowAltF4 = true;
+        windowSize = Window.ClientBounds.Size;
     }
 
     public void OnResize(Object sender, EventArgs e)
     {
+        if (top.NumberOfColums(Window.ClientBounds.Width, canvas.zoomLevel) != top.NumberOfColums(windowSize.X, canvas.zoomLevel))
+            updateCanvas = true;
+        this.windowSize = base.Window.ClientBounds.Size;
         Canvas.Camera.offset.X = (Window.ClientBounds.Size.X - canvas.CanvasSize.X) / 2;
-        this.enterFolderTextbox.OnResize(WindowSize);
+        this.enterFolderTextbox.OnResize(windowSize);
     }
 
     protected override void LoadContent()
@@ -70,7 +74,7 @@ public class Window : Game
         Tooltip.spriteBatch = spriteBatch;
         Tooltip.graphicsDevice = this.GraphicsDevice;    
 
-        this.enterFolderTextbox = new Textbox(this.WindowSize, this.fontSystem.GetFont(18));
+        this.enterFolderTextbox = new Textbox(this.windowSize, this.fontSystem.GetFont(18));
         this.Window.TextInput += enterFolderTextbox.RegisterTextInput;
     }
 
@@ -82,19 +86,34 @@ public class Window : Game
 
     protected override void Draw(GameTime gameTime)
     {   
-        if (updateCanvas) {//The resize here has to take Threadview into account
-			int canvasHeight = (((this.top.NumberOfChildren()-1) / 2 + 1) * 17*canvas.zoomLevel) + 95;
-			if(this.top.GetCurrent().type == Component.Type.Thread){canvasHeight = 5 * 17*canvas.zoomLevel + 95;};
-            this.canvas.ReSize(new Point(67*canvas.zoomLevel , canvasHeight));
+        if (updateCanvas)
+        {
+            int numberOfRows = (top.NumberOfChildren()-1) / top.NumberOfColums(windowSize.X, canvas.zoomLevel) + 1;
+            int numberOfColums = top.NumberOfColums(windowSize.X, canvas.zoomLevel);
+			int canvasHeight;
+            int canvasWidth;
+			if(this.top.GetCurrent().type != Component.Type.Thread)
+            {
+                canvasHeight = (numberOfRows * Constants.ComponentSize*canvas.zoomLevel/8) + 5*Constants.ToolbarHeight/4;
+                canvasWidth = (numberOfColums*(8*Constants.Spacing + Constants.ComponentSize) - 3*Constants.Spacing)*canvas.zoomLevel/12;
+            }
+            else //this.top.GetCurrent().type == Component.Type.Thread need rework
+            {
+                canvasHeight = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
+                canvasWidth = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
+            }
+            this.canvas.ReSize(new Point(canvasWidth, canvasHeight));
             this.canvas.UpdateTexture();
+            Canvas.Camera.ControlOffset(canvas.CanvasSize, Window.ClientBounds);
+            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
         base.GraphicsDevice.Clear(Color.White);
         spriteBatch.Begin();
         this.canvas.Draw();
 
         this.highlightButton.Draw(spriteBatch);
-        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 0, Window.ClientBounds.Size.X, 70), new Color(190, 190, 190, 215));
-        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 67, Window.ClientBounds.Size.X, 3), Color.Gray);
+        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 0, Window.ClientBounds.Size.X, Constants.ToolbarHeight), new Color(230, 230, 230, 255));
+        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, Constants.ToolbarHeight-3, Window.ClientBounds.Size.X, 3), Color.Gray);
         this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
         this.top.DrawPath(spriteBatch, this.fontSystem.GetFont(22));
         
@@ -109,7 +128,7 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        this.top.Draw(spriteBatch, this.fontSystem, canvas.zoomLevel);
+        this.top.Draw(spriteBatch, this.fontSystem, canvas.zoomLevel, windowSize.X);
     }
 
     private void HandleSelection()
@@ -136,7 +155,7 @@ public class Window : Game
             this.highlightButton.Component.UpdateLinkDrawIndex();
         }
         else if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null
-            && Selection.CursorIsInside(new Rectangle (0, 67, Window.ClientBounds.Width, Window.ClientBounds.Height)))
+            && Selection.CursorIsInside(new Rectangle (0, Constants.ToolbarHeight, Window.ClientBounds.Width, Window.ClientBounds.Height)))
         {
             if (Selection.LeftMouseJustReleased()) {
                 this.updateCanvas = true;
@@ -147,7 +166,7 @@ public class Window : Game
             }
         }
         else if (Selection.LeftMouseJustReleased() && (linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null
-            && Selection.CursorIsInside(new Rectangle (0, 67, Window.ClientBounds.Width, Window.ClientBounds.Height)))
+            && Selection.CursorIsInside(new Rectangle (0, Constants.ToolbarHeight, Window.ClientBounds.Width, Window.ClientBounds.Height)))
         {
             this.updateCanvas = true;
             this.top.GoToAny(linkButton.Component, this.highlightButton);
