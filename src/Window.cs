@@ -101,7 +101,7 @@ public class Window : Game
             {
                 canvasHeight = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
                 canvasWidth = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
-            };
+            }
             this.canvas.ReSize(new Point(canvasWidth, canvasHeight));
             this.canvas.UpdateTexture();
             Canvas.Camera.ControlOffset(canvas.CanvasSize, Window.ClientBounds);

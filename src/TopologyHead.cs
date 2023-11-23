@@ -141,12 +141,12 @@ class TopologyHead
 			}
 		}
 	}
-	private void DrawThread(SpriteBatch sb, FontSystem font, int width)
+	private void DrawThread(SpriteBatch sb, FontSystem font, int zoomLevel)
     {
-		width = 800;//for now
+		int width = 800*zoomLevel/12;//for now
 		try{
 			Thread thread = (Thread)this.GetCurrent();
-			Point pos = new(width/2, 2*width/5 + 100);
+			Point pos = new(width/2, 2*width/5 + Constants.ToolbarHeight);
 			thread.Draw(pos, sb, font, width);
 		}
 		catch{};
