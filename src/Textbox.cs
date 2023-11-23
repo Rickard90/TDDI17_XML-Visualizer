@@ -42,6 +42,7 @@ class Textbox
 
     private int frameCounter = 0;
 
+    private List<Component> componentsToChooseFrom = null;
 
     public Textbox(Point windowSize, SpriteFontBase font, WhenEntered enteredResponse = null, WhenChanged changedResponse = null, string startString = null)
     {
@@ -132,6 +133,11 @@ class Textbox
 
         }
 
+    }
+
+    public void InputChangedFunction()
+    {
+        this.componentsToChooseFrom = ComponentList.GetChoices(this.textStr);
     }
 
     public void Update(MouseState mouseState)

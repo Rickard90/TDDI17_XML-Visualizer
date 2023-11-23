@@ -64,7 +64,10 @@ class TopologyHead
 	{
 		return this.path;
 	}
-	
+    public Component GetHead()
+    {
+        return this.head;
+    }
     public Component GetCurrent()
     {
         return this.path.Last();

@@ -76,6 +76,11 @@ public class Window : Game
 
         this.enterFolderTextbox = new Textbox(this.windowSize, this.fontSystem.GetFont(18));
         this.Window.TextInput += enterFolderTextbox.RegisterTextInput;
+
+        // Fill the global component list, must be done only after reading and constructing the topology.
+        ComponentList.Construct(this.top);
+        ComponentList.Sort();
+        //ComponentList.Print();
     }
 
     protected override void Update(GameTime gameTime)
