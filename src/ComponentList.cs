@@ -29,14 +29,14 @@ static class ComponentList
 
     public static List<Component> GetChoices(string input)
     {
-        char firstChar = input.First();
-        int index = ComponentList.BinarySearch(firstChar);
+        int index = ComponentList.BinarySearch(input.First());
         if (index == -1)
             return null;
         List<Component> choices = new();
         List<Component> list = ComponentList.list;  // For readability
-        while (index < list.Count && list[index].Name.StartsWith(input)) {
-            choices.Add(list[index]);
+        while (index < list.Count && list[index].Name.First() == input.First()) {
+            if (list[index].Name.StartsWith(input))
+                choices.Add(list[index]);
             ++index;
         }
         return choices;
