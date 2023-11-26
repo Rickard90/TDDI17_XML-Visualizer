@@ -3,6 +3,8 @@
 
 
 
+using FontStashSharp;
+
 static class ComponentList
 {
     public static List<Component> list = new();
@@ -27,19 +29,19 @@ static class ComponentList
         ComponentList.list.Sort((c1, c2) => c1.Name.CompareTo(c2.Name));
     }
 
-    public static List<Component> GetChoices(string input)
+    public static string[] GetSuggestions(string input)
     {
         int index = ComponentList.BinarySearch(input.First());
         if (index == -1)
             return null;
-        List<Component> choices = new();
+        List<string> suggestions = new();
         List<Component> list = ComponentList.list;  // For readability
         while (index < list.Count && list[index].Name.First() == input.First()) {
             if (list[index].Name.StartsWith(input))
-                choices.Add(list[index]);
+                suggestions.Add(ComponentList.FullPathName(list[index]));
             ++index;
         }
-        return choices;
+        return suggestions.ToArray();
     }
 
     public static int BinarySearch(char c)
@@ -65,12 +67,25 @@ static class ComponentList
         return mid;
     }
 
+    public static string FullPathName(Component c)
+    {
+        List<string> strings = new();
+        Component curr = c;
+        do {
+            strings.Add(curr.Name);
+            curr = curr.Parent;
+        } while (curr.Parent != null);
+        strings.Reverse();
+        string result = "/" + string.Join("/", strings);
+        return result;
+    }
+
     // For debugging purposes
     public static void Print()
     {
         Console.WriteLine("ALL COMPONENTS (EXCEPT PORTS)");
         foreach (Component c in ComponentList.list)
-            Console.WriteLine("Name: {0} Type: {1}", c.Name, c.type);
+            Console.WriteLine("Name: {0} Type: {1}, FullPathName: {2}", c.Name, c.type, ComponentList.FullPathName(c));
         Console.WriteLine("END");
     }
 }

@@ -152,7 +152,7 @@ class Textbox
 
     public void InputChangedFunction()
     {
-        this.componentsToChooseFrom = ComponentList.GetChoices(this.textStr);
+        this.suggestions = ComponentList.GetSuggestions(this.textStr);
     }
 
     public void Update(MouseState mouseState)
