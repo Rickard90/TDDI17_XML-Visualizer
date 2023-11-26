@@ -16,7 +16,7 @@ class Textbox
 
     //  return the new textStr
     public delegate string WhenEntered(string textStr);
-    public delegate string WhenChanged(string text);
+    public delegate string[] WhenChanged(string text);
 
     public WhenEntered whenEntered = null;      //  this event should be set to a method which may load a new topology
     protected WhenChanged whenChanged = null;
@@ -29,6 +29,9 @@ class Textbox
 
     private string textStr;
     private string ghostStr = "";
+    private string[] suggestions = new string[0];
+    private int suggestion_index = 0;
+
     private Point windowSize;
     private Point Position {
         get {return new Point((windowSize.X - size.X) / 2, windowToOutlineBuffer);}}
@@ -40,7 +43,6 @@ class Textbox
 
     private Texture2D drawTexture;
 
-    private int frameCounter = 0;
 
     private List<Component> componentsToChooseFrom = null;
 
@@ -95,11 +97,6 @@ class Textbox
                 else
                     this.textStr += input;
 
-                if (this.whenChanged != null)
-                {
-                    string result = this.whenChanged.Invoke(this.textStr);
-                    this.ghostStr = result;
-                }
                 this.needToUpdateTexture = true;
             }
             else if (e.Key == Keys.Tab)
@@ -129,6 +126,24 @@ class Textbox
             else
             {
                 //Console.WriteLine("Ignored input");
+            }
+
+            if (this.needToUpdateTexture)
+            {
+                if (this.whenChanged != null)
+                {
+                    this.suggestions = this.whenChanged.Invoke(this.textStr);
+                    this.suggestion_index = 0;
+                    if (this.suggestions.Length == 0)
+                        this.ghostStr = "";
+                    else
+                    {
+                        for (int i = 0; i < suggestions.Length; i++)
+                            if (this.suggestions[i] == this.ghostStr)
+                                this.suggestion_index = i;                   
+                        this.ghostStr = suggestions[suggestion_index];
+                    }
+                }
             }
 
         }
