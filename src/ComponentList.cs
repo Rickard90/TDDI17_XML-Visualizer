@@ -69,8 +69,7 @@ static class ComponentList
 
     public static string WhenEnteredFunction(string fullPathName)
     {
-        string[] components = fullPathName.Split('/');
-
+        
         return "";
     }
     // For debugging purposes

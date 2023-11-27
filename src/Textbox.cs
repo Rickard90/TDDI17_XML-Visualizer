@@ -86,9 +86,22 @@ class Textbox
 
             }
 
-            if (validInput)
+            if (e.Key == Keys.Back)
             {
-                //Console.WriteLine($"Input char : {input}");
+                //Console.WriteLine("Is backspace");
+                if (this.textStr != "-")
+                {
+                    this.textStr = this.textStr.Remove(this.textStr.Length - 1);
+                    if (this.textStr == "")
+                        this.textStr = "-";
+                    this.needToUpdateTexture = true;
+                    
+                }
+
+            } 
+            else if (validInput)
+            {
+                Console.WriteLine($"Input char : {input}");
                 if (this.textStr == "")
                     this.textStr = $"{input}";
                 else
@@ -103,19 +116,6 @@ class Textbox
                     this.textStr = this.whenEntered.Invoke(this.ghostStr);
 
             }
-            else if (e.Key == Keys.Back)
-            {
-                //Console.WriteLine("Is backspace");
-                if (this.textStr != "-")
-                {
-                    this.textStr = this.textStr.Remove(this.textStr.Length - 1);
-                    if (this.textStr == "")
-                        this.textStr = "-";
-                    this.needToUpdateTexture = true;
-                    
-                }
-
-            }            
             else
             {
                 //Console.WriteLine("Ignored input");
