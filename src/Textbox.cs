@@ -70,10 +70,8 @@ class Textbox
 
     public void RegisterTextInput(object sender, TextInputEventArgs e)
     {
-
         if (this.isSelected)
         {
-
             bool validInput = true;
             char input = e.Character;
             foreach (char invalidChar in invalidFilenameCharacters)
@@ -83,25 +81,19 @@ class Textbox
                     validInput = false;
                     break;
                 }
-
             }
 
             if (e.Key == Keys.Back)
             {
-                //Console.WriteLine("Is backspace");
-                if (this.textStr != "-")
+                if (this.textStr != "")
                 {
                     this.textStr = this.textStr.Remove(this.textStr.Length - 1);
-                    if (this.textStr == "")
-                        this.textStr = "-";
                     this.needToUpdateTexture = true;
-                    
                 }
-
-            } 
+            }
             else if (validInput)
             {
-                Console.WriteLine($"Input char : {input}");
+                //Console.WriteLine($"Input char : {input}");
                 if (this.textStr == "")
                     this.textStr = $"{input}";
                 else
@@ -114,7 +106,6 @@ class Textbox
                 //Console.WriteLine("Is enter key");
                 if (this.whenEntered != null)
                     this.textStr = this.whenEntered.Invoke(this.ghostStr);
-
             }
             else
             {
@@ -135,12 +126,17 @@ class Textbox
                             if (this.suggestions[i] == this.ghostStr)
                                 this.suggestion_index = i;                   
                         this.ghostStr = suggestions[suggestion_index];
+                        //Console.WriteLine("GhostString is: {0}", this.ghostStr);
+                        //Console.WriteLine("suggestion_index is: {0}", this.suggestion_index);
+                        //Console.WriteLine("All suggestions are");
+                        //foreach (string s in this.suggestions)
+                        //{
+                        //    Console.WriteLine(s);
+                        //}
                     }
                 }
             }
-
         }
-
     }
 
     public void InputChangedFunction()
@@ -157,18 +153,18 @@ class Textbox
             {
                 this.suggestion_index++;
                 this.suggestion_index %= this.suggestions.Length;
-                Console.WriteLine(suggestion_index);
+                this.needToUpdateTexture = true;
+                //Console.WriteLine(suggestion_index);
             }
             else if (keyboardState.IsKeyDown(Keys.Down))
             {
-                this.suggestion_index--;
-                this.suggestion_index %= this.suggestions.Length;
-                Console.WriteLine(suggestion_index);
+                this.suggestion_index = this.suggestion_index <= 0 ? this.suggestions.Length - 1 : this.suggestion_index - 1;
+                //this.suggestion_index--;
+                //this.suggestion_index %= this.suggestions.Length;
+                this.needToUpdateTexture = true;
+                //Console.WriteLine(suggestion_index);
             }
         }
-
-
-
     }
 
     public void Update(MouseState mouseState)

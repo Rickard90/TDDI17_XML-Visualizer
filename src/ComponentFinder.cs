@@ -1,12 +1,11 @@
 //using System.Globalization;
 
+using System.Collections.ObjectModel;
+
 static class ComponentFinder
 {
-
     private static Dictionary<string, Component> componentDict = new();
-
-    // In order to access "top" within Window, we need a reference to it, this is set within Window.LoadContent
-    public static TopologyHead top = null;
+    public static Component componentToGoTo = null;
 
     public static void Construct(TopologyHead top)
     {
@@ -36,8 +35,7 @@ static class ComponentFinder
         }
         else
         {
-            Console.WriteLine($"Component with key '{name}' not found.");
-            return top.GetCurrent();
+            return null;
         }
     }
 
@@ -54,6 +52,13 @@ static class ComponentFinder
         return result;
     }
 
+    public static string GoToComponentWithName(string name)
+    {
+        componentToGoTo = Get(name);
+        return "";
+    }
+
+    /* Don't delete this function yet
     public static string[] GetAllWhoseNameStartsWith(string s)
     {
         List<string> result = new();
@@ -64,6 +69,7 @@ static class ComponentFinder
         }
         return result.ToArray();
     }
+    */
 
     // For debugging purposes
     public static void Print()

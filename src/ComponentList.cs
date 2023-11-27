@@ -31,13 +31,16 @@ static class ComponentList
 
     public static string[] GetSuggestions(string input)
     {
+        if (input.Length == 0)
+            return Array.Empty<string>();
+        input = input.ToLower();
         int index = ComponentList.BinarySearch(input.First());
         if (index == -1)
-            return null;
+            return Array.Empty<string>();
         List<string> suggestions = new();
         List<Component> list = ComponentList.list;  // For readability
-        while (index < list.Count && list[index].Name.First() == input.First()) {
-            if (list[index].Name.StartsWith(input))
+        while (index < list.Count && char.ToLower(list[index].Name.First()) == input.First()) {
+            if (list[index].Name.ToLower().StartsWith(input))
                 suggestions.Add(ComponentFinder.FullPathName(list[index]));
             ++index;
         }
@@ -53,16 +56,16 @@ static class ComponentList
         while (begin <= end)
         {
             mid = (begin + end) / 2;
-            if (c < list[mid].Name.First())
+            if (c < char.ToLower(list[mid].Name.First()))
                 end = mid-1;
-            else if (c > list[mid].Name.First())
+            else if (c > char.ToLower(list[mid].Name.First()))
                 begin = mid+1;
             else
                 break;
         }
-        if (c != list[mid].Name.First())
+        if (c != char.ToLower(list[mid].Name.First()))
             return -1;
-        while (mid > 0 && list[mid-1].Name.First() == c)
+        while (mid > 0 && char.ToLower(list[mid-1].Name.First()) == c)
             --mid;
         return mid;
     }
@@ -72,6 +75,7 @@ static class ComponentList
         
         return "";
     }
+
     // For debugging purposes
     public static void Print()
     {
