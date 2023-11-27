@@ -15,14 +15,14 @@ class Textbox
     private static readonly char[] invalidFilenameCharacters = Path.GetInvalidPathChars();
 
     //  return the new textStr
-    public delegate string WhenEntered(string textStr);
-    public delegate string[] WhenChanged(string text);
+    public delegate string WhenEntered(string ghostStr);
+    public delegate string[] WhenChanged(string textStr);
 
     public WhenEntered whenEntered = null;      //  this event should be set to a method which may load a new topology
     protected WhenChanged whenChanged = null;
 
-    public Rectangle Bounds {get {return this.DrawArea;}}
-    public Rectangle DrawArea{get { return new Rectangle(Position, size);}}
+    public Rectangle Bounds     {   get { return this.DrawArea;}}
+    public Rectangle DrawArea   {   get { return new Rectangle(Position, size);}}
     
 
     private readonly SpriteFontBase font;
@@ -42,9 +42,6 @@ class Textbox
     private bool needToUpdateTexture = false;
 
     private Texture2D drawTexture;
-
-
-    private List<Component> componentsToChooseFrom = null;
 
     public Textbox(Point windowSize, SpriteFontBase font, WhenEntered enteredResponse = null, WhenChanged changedResponse = null, string startString = null)
     {
@@ -99,15 +96,11 @@ class Textbox
 
                 this.needToUpdateTexture = true;
             }
-            else if (e.Key == Keys.Tab)
-            {
-                this.textStr = this.ghostStr;           
-            }
             else if (e.Key == Keys.Enter)
             {
                 //Console.WriteLine("Is enter key");
                 if (this.whenEntered != null)
-                    this.textStr = this.whenEntered.Invoke(this.textStr);
+                    this.textStr = this.whenEntered.Invoke(this.ghostStr);
 
             }
             else if (e.Key == Keys.Back)
@@ -235,8 +228,10 @@ class Textbox
         Window.spriteBatch.Draw(Window.whitePixelTexture, copy, fillColor);
 
         // Draw text
-        Window.spriteBatch.DrawString(this.font, this.ghostStr, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black * 0.75f);
-        Window.spriteBatch.DrawString(this.font, this.textStr, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black);
+        Vector2 drawPosition = new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize);
+        string bgString = $"{this.textStr} --> {this.ghostStr}";
+        Window.spriteBatch.DrawString(this.font, bgString, drawPosition, Color.Black * 0.75f);
+        Window.spriteBatch.DrawString(this.font, this.textStr, drawPosition, Color.Black);
 
     }
 
@@ -250,6 +245,8 @@ class Textbox
         string effectiveStr = this.textStr;
         if (effectiveStr == "")
             effectiveStr = "-";
+        else
+            effectiveStr = $"{this.textStr} --> {this.ghostStr}";
         Vector2 textSize = this.font.MeasureString(effectiveStr);
         int width = ((int)textSize.X) + 2 * (outlinePxSize + outlineTextBufferPxSize);
         int height = ((int)textSize.Y) + 2 * (outlinePxSize + outlineTextBufferPxSize);
