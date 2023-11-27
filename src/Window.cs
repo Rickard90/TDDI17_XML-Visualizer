@@ -207,5 +207,6 @@ public class Window : Game
         }
 
         this.enterFolderTextbox.Update(Mouse.GetState());
+        this.enterFolderTextbox.Update(Keyboard.GetState());
     }
 }

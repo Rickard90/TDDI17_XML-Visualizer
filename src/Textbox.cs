@@ -115,7 +115,7 @@ class Textbox
                     
                 }
 
-            }
+            }            
             else
             {
                 //Console.WriteLine("Ignored input");
@@ -146,6 +146,29 @@ class Textbox
     public void InputChangedFunction()
     {
         this.suggestions = ComponentList.GetSuggestions(this.textStr);
+    }
+
+    public void Update(KeyboardState keyboardState)
+    {
+
+        if (this.isSelected && this.suggestions.Length > 0)
+        {
+            if (keyboardState.IsKeyDown(Keys.Up))
+            {
+                this.suggestion_index++;
+                this.suggestion_index %= this.suggestions.Length;
+                Console.WriteLine(suggestion_index);
+            }
+            else if (keyboardState.IsKeyDown(Keys.Down))
+            {
+                this.suggestion_index--;
+                this.suggestion_index %= this.suggestions.Length;
+                Console.WriteLine(suggestion_index);
+            }
+        }
+
+
+
     }
 
     public void Update(MouseState mouseState)
