@@ -38,7 +38,7 @@ static class ComponentList
         List<Component> list = ComponentList.list;  // For readability
         while (index < list.Count && list[index].Name.First() == input.First()) {
             if (list[index].Name.StartsWith(input))
-                suggestions.Add(ComponentList.FullPathName(list[index]));
+                suggestions.Add(ComponentFinder.FullPathName(list[index]));
             ++index;
         }
         return suggestions.ToArray();
@@ -67,25 +67,18 @@ static class ComponentList
         return mid;
     }
 
-    public static string FullPathName(Component c)
+    public static string WhenEnteredFunction(string fullPathName)
     {
-        List<string> strings = new();
-        Component curr = c;
-        do {
-            strings.Add(curr.Name);
-            curr = curr.Parent;
-        } while (curr.Parent != null);
-        strings.Reverse();
-        string result = "/" + string.Join("/", strings);
-        return result;
-    }
+        string[] components = fullPathName.Split('/');
 
+        return "";
+    }
     // For debugging purposes
     public static void Print()
     {
         Console.WriteLine("ALL COMPONENTS (EXCEPT PORTS)");
         foreach (Component c in ComponentList.list)
-            Console.WriteLine("Name: {0} Type: {1}, FullPathName: {2}", c.Name, c.type, ComponentList.FullPathName(c));
+            Console.WriteLine("Name: {0} Type: {1}, FullPathName: {2}", c.Name, c.type, ComponentFinder.FullPathName(c));
         Console.WriteLine("END");
     }
 }

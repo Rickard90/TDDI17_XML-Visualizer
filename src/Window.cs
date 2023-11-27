@@ -80,7 +80,9 @@ public class Window : Game
         // Fill the global component list, must be done only after reading and constructing the topology.
         ComponentList.Construct(this.top);
         ComponentList.Sort();
-        //ComponentList.Print();
+        ComponentList.Print();
+        ComponentFinder.Construct(this.top);
+        ComponentFinder.Print();
     }
 
     protected override void Update(GameTime gameTime)
