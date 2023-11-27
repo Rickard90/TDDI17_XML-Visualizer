@@ -216,7 +216,6 @@ public class Window : Game
             Canvas.Camera.Update(Selection.ScrollChange, canvas.CanvasSize, Window.ClientBounds);
         }
 
-        this.enterFolderTextbox.Update(Mouse.GetState());
-        this.enterFolderTextbox.Update(Keyboard.GetState());
+        this.enterFolderTextbox.Update(Mouse.GetState(), Keyboard.GetState());
     }
 }
