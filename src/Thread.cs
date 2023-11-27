@@ -125,7 +125,7 @@ class Thread : Component
 						connectionsOnCurrentSide = (int)Math.Ceiling(numberOfConnections/3.0);
 						portPos.X = port.Position.X + 7*spacing + spacing/4;
 						portPos.Y = (this.Rectangle.Top - 2*this.height) + sideCounter * (5*this.height)/(connectionsOnCurrentSide + 1);
-						threadPos.X = portPos.X + this.width/4 + spacing/4 - 2*border;
+						threadPos.X = portPos.X + this.width/4 + spacing/4 - border;
 						threadPos.Y = portPos.Y;
 						break;
 					case 2:		//Draws on the left of the thread
@@ -141,7 +141,7 @@ class Thread : Component
 							connectionsOnCurrentSide = (int)Math.Floor(numberOfConnections/3.0);
 							portPos.Y =  (this.Rectangle.Top - 2*this.height) + sideCounter * (5*this.height)/(connectionsOnCurrentSide+1);
 						}
-						threadPos.X = portPos.X - (this.width/4 + spacing/4 - 2*border);
+						threadPos.X = portPos.X - (this.width/4 + spacing/4 - border);
 						threadPos.Y = portPos.Y;
 						break;
 					default:	//Draws on the bottom of the thread
@@ -150,7 +150,7 @@ class Thread : Component
 						portPos.X = (this.Rectangle.Left - this.width - this.width/2) + sideCounter * (4*this.width)/(connectionsOnCurrentSide + 1);
 						portPos.Y = port.Position.Y + 9*spacing + spacing/4;
 						threadPos.X = portPos.X;
-						threadPos.Y = portPos.Y + this.height/4 + spacing/4 - 2*border;
+						threadPos.Y = portPos.Y + this.height/4 + spacing/4 - border;
 						break;
 				}
 				offset = 1f - (float)Math.Ceiling(Math.Abs((float)(connectionsOnCurrentSide+1f)/2f - sideCounter)) * (0.5f/connectionsOnCurrentSide);
