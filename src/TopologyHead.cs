@@ -1,100 +1,53 @@
 using System;
+using System.Reflection.Metadata;
 using FontStashSharp;
+using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-//Top is an object that keeps track of a full loaded topography
-//A topography is stored as a tree with a top component
-//namespace XML_Visualizer;
+//TopologyHead is an object that keeps track of a full loaded topography
+//A topography is stored as a tree with a topologyHead-component
+
 class TopologyHead
 {
 	
 	//This is the texture that draws the head of arrows
-	public static Texture2D arrowhead; 
-    
+    private          List<Component> path;
+	private readonly Component       head;
+    public  static   Texture2D       arrowhead;
+	
 	public TopologyHead(string folderName)
 	{
-        //Filereader:
-		//XmlReader fileRead = new();
-		//XmlReader.ComponentsAndConnections cAC = fileRead.ReadComponents(folderName);
-		
-		/*The following bit is only for diagnostic purposes:*/
-		//int counter = 0;
-		//Console.WriteLine("TopologyHead Constructing\nNumber of connections: {0}", cAC.connections.Count);
-		//foreach(var connection in cAC.connections)
-		//{
-		//	Console.WriteLine("Connection:");
-		//	Console.WriteLine("Component: {0}", connection.Key);
-			
-		//	foreach(var port in connection.Value)
-		//	{
-		//		counter++;
-		//		Console.WriteLine("Port {0}: {1}", counter, port.GetName());
-		//	}
-        //}
-		//Diagnostic parapgraph done, regular code resumes:
-		
-		this.head = new Component("Top", XmlReader.ReadComponents(folderName), Component.Type.Top);
+		this.head = new Component("", XmlReader.ReadComponents(folderName));
 		this.path = new List<Component>{this.head};
 	}
 
-    public void Draw(SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
+    public void Draw(SpriteBatch sb, FontSystem font, int zoomLevel, int width)
     {
-        int width = 67*zoomLevel;
-        int count = 0;
-        if(width < 480)
+		
+		switch(this.GetCurrent().type)
         {
-            width = 480;
-        }
-        //The following three variables serve to decide edge and spacing layout:
-        int startX  = width/24;
-        int startY  = 100;
-        int spacing = width/24;
-
-        Point pos = new(startX, startY);
-
+			case Component.Type.Thread:
+				DrawThread(sb, font, zoomLevel);
+				break;
+			default:
+				DrawDefault(sb, font, zoomLevel, width);
+				break;
+		}
+    }
+    public void DrawPath(SpriteBatch sb, SpriteFontBase font)
+    {
         // For printing the path as text
         String pathString = "";
         foreach(Component C in path)
         {
             pathString += C.Name;
-            pathString += " > ";
+			if (C.Name != "" && this.GetCurrent().GetType() != C.GetType())
+            	pathString += " > ";
         }
-        pathString = pathString.Remove(pathString.Length - 3);
-
-        //sb.DrawString(font, path.Last().GetName(), new Vector2(startX/2, 0), Color.Black);
-        //sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
-        sb.DrawString(fontSystem.GetFont(zoomLevel), pathString, new Vector2(startX/2, 0), Color.Black);
-        foreach(Component C in path.Last().Children)
-        {
-            C.Draw(pos, sb, fontSystem, zoomLevel);
-            count++;
-            if(count < 2)
-            {
-                pos.X += C.Rectangle.Width + 7*spacing;
-            }
-            else
-            {
-                count = 0;
-                pos.X = startX;
-                pos.Y += C.Rectangle.Height + 2*spacing;
-            }
-        }
-    }
-    public void DrawPath(SpriteBatch sb, SpriteFontBase font)
-    {
-        // For printing the path as text
-            String pathString = "";
-            foreach(Component C in path)
-            {
-                pathString += C.Name;
-                pathString += " > ";
-            }
-            pathString = pathString.Remove(pathString.Length - 3);
-
-            //sb.DrawString(font, path.Last().GetName(), new Vector2(startX/2, 0), Color.Black);
-            //sb.DrawString(font, pathString, new Vector2(startX/2, 0), Color.Black);
-            sb.DrawString(font, pathString, new Vector2(120, 20), Color.Black);
+        sb.DrawString(font, pathString, new Vector2(115, 10), Color.Black);
+		if (GetCurrent().type != Component.Type.Component ) //kanske ändra för "Ports" till något i still med "threadview"?
+			sb.DrawString(font, GetCurrent().Children[0].type + "s:", new Vector2(115, 37), Color.Black);
     }
     public bool IsHead()
     {
@@ -122,17 +75,83 @@ class TopologyHead
         this.path = new List<Component>{head};
     }
 
-	public void Goto(Component newComponent)
-	{
-		this.path.Add(newComponent);
-	}
     public int NumberOfChildren()
     {
         return this.path.Last().Children.Count;
     }
 
+	public int NumberOfColums(int width, int zoomLevel)
+	{
+		return Math.Max(1, (width+2*Constants.Spacing*zoomLevel/12) / ((Constants.ComponentSize + 7*Constants.Spacing)*zoomLevel/12));
+	}
 
-	private List<Component> path;
-	private readonly Component head;
+	public void GoToChild(Component child, HighlightButton highlightButton)
+	{
+        if(child.GetInfo() != "") {
+            Console.WriteLine("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
+        }
+        //Console.WriteLine("Component children: {0}", child.Children.Count);
+        if(child.type != Component.Type.Port && child.Children.Count > 0) {
+            this.path.Add(child);
+            if (child.Children.Count == 0) {
+                highlightButton.Component = null;
+            }
+            else {
+                highlightButton.Component = child.Children.First();
+            }
+        }
+	}
+
+    public void GoToAny(Component component, HighlightButton highlightButton)
+    {
+        this.path.Clear();
+        this.path.Add(component.Parent);
+        while (this.path.Last().Parent != null) {
+            this.path.Add(this.path.Last().Parent);
+        }
+        this.path.Reverse();
+        highlightButton.Component = component;
+    }
+
+
+
+	//Private functions and fields:
+	private void DrawDefault(SpriteBatch sb, FontSystem font, int zoomLevel, int width)
+    {		
+		//The following three variables serve to decide edge and spacing layout:
+		int spacing = Constants.Spacing*zoomLevel/12;
+		int startX  = -2*spacing;//change to some negative value so that it is equal deadspace left and right
+		int startY  = Constants.ToolbarHeight + spacing*zoomLevel/12;
+		int adjComponentSize = Constants.ComponentSize*zoomLevel/12;//zoom adjusted
+
+		Point pos = new(startX, startY);
+		
+		int count = 0;
+		foreach(Component C in path.Last().Children)
+		{
+			pos.X += 3*spacing;
+			C.Draw(pos, sb, font, zoomLevel);
+			count++;
+			if(count < NumberOfColums(width, zoomLevel))
+			{
+				pos.X += adjComponentSize + 5*spacing;
+			}
+			else
+			{
+				count = 0;
+				pos.X = startX;
+				pos.Y += adjComponentSize + 2*spacing;
+			}
+		}
+	}
+	private void DrawThread(SpriteBatch sb, FontSystem font, int zoomLevel)
+    {
+		int width = 800*zoomLevel/12;//for now
+		try{
+			Thread thread = (Thread)this.GetCurrent();
+			Point pos = new(width/2, 2*width/5 + Constants.ToolbarHeight);
+			thread.Draw(pos, sb, font, width);
+		}
+		catch{};
+	}
 }
-

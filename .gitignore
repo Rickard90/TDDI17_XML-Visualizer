@@ -4,3 +4,6 @@
 /Content/obj/*
 *.sln
 .vscode
+.vs/*
+vs
+XML-Visualizer.csproj.user

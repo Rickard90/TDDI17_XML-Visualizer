@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ApplicationResourceRequirements application="PRES_AIM" initStack="64000" ramSize="256000">
+  <ThreadResourceRequirements thread="PRES_AIM_3" execStack="16000" execTime="1500000"/>
+  <ThreadResourceRequirements thread="PRES_AIM_5" execStack="32000" execTime="3000000"/>
+  <ThreadResourceRequirements thread="PRES_AIM_6" execStack="32000" execTime="3000000"/>
+</ApplicationResourceRequirements>

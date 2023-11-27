@@ -14,8 +14,19 @@ public static class Selection
     private static KeyboardState currentKeyboardState;
 
     private static Point mouseCursorPosition;
-    private static bool leftMouseJustReleased = false;
-    public  static bool ComponentGoRight = false;
+    private static bool leftMouseJustReleased   = false;
+    public  static bool ComponentGoRight        = false;
+    public  static bool ComponentGoLeft         = false;
+
+    public  static int  GoToLink                = -1;
+    
+    public         enum LinkScroll { Nothing, Up, Down }
+    public static       LinkScroll linkScroll = LinkScroll.Nothing;
+    public        enum CanvasZoomChange  { Nothing, In, Out }
+    public static       CanvasZoomChange ZoomChange = CanvasZoomChange.Nothing;
+    public        enum CanvasScroll  { Nothing, Up, Down, Left, Right }
+    public static       CanvasScroll ScrollChange = CanvasScroll.Nothing;
+    
 
     public static void Update()
     {
@@ -46,17 +57,73 @@ public static class Selection
         previousKeyboardState = currentKeyboardState;
         currentKeyboardState = Keyboard.GetState();
 
-        if (previousKeyboardState.IsKeyDown(Keys.D) &&
-            currentKeyboardState.IsKeyUp(Keys.D))
-        {
+        if (previousKeyboardState.IsKeyDown(Keys.D) && currentKeyboardState.IsKeyUp(Keys.D)) {
             ComponentGoRight = true;
         }
-        else
-        {
+        else {
             ComponentGoRight = false;
         }
-    }
+        if (previousKeyboardState.IsKeyDown(Keys.A) && currentKeyboardState.IsKeyUp(Keys.A)) {
+            ComponentGoLeft = true;
+        }
+        else {
+            ComponentGoLeft = false;
+        }
 
+        if (currentKeyboardState.IsKeyDown(Keys.LeftControl) || currentKeyboardState.IsKeyDown(Keys.RightControl)) {
+            if (previousKeyboardState.IsKeyDown(Keys.Add) && currentKeyboardState.IsKeyUp(Keys.Add) 
+                 || GetMouseScrollDelta() > 0) {
+                ZoomChange = CanvasZoomChange.In;
+            } else if (previousKeyboardState.IsKeyDown(Keys.OemMinus) && currentKeyboardState.IsKeyUp(Keys.OemMinus) 
+                 || Selection.GetMouseScrollDelta() < 0) {
+                ZoomChange = CanvasZoomChange.Out;
+            } else {
+                ZoomChange = CanvasZoomChange.Nothing;
+            }
+        } else {
+            ZoomChange = CanvasZoomChange.Nothing;
+            ScrollChange = CanvasScroll.Nothing;
+            if (currentKeyboardState.IsKeyDown(Keys.Right))
+            {
+                ScrollChange = CanvasScroll.Right;
+            }
+            if (currentKeyboardState.IsKeyDown(Keys.Left))
+            {
+                ScrollChange = CanvasScroll.Left;
+            }
+            if (currentKeyboardState.IsKeyDown(Keys.Down) || Selection.GetMouseScrollDelta() < 0)
+            {
+                ScrollChange = CanvasScroll.Down;
+            }
+            if (currentKeyboardState.IsKeyDown(Keys.Up) || Selection.GetMouseScrollDelta() > 0)
+            {
+                ScrollChange = CanvasScroll.Up;
+            }
+        }
+
+        GoToLink = -1;
+        linkScroll = LinkScroll.Nothing;
+        if (currentKeyboardState.IsKeyDown(Keys.LeftControl)) {
+            int currKey = (int)Keys.D1;
+            for (int i = 1; i <= Component.numberOfVisibleLinks; ++i) {
+                if (previousKeyboardState.IsKeyDown((Keys)currKey) && currentKeyboardState.IsKeyUp((Keys)currKey)) {
+                    GoToLink = i;
+                    return;
+                }
+                currKey += 1;
+            }
+            if (previousKeyboardState.IsKeyDown(Keys.Up) && currentKeyboardState.IsKeyUp(Keys.Up)) {
+                linkScroll = LinkScroll.Up;
+            }
+            else if (previousKeyboardState.IsKeyDown(Keys.Down) && currentKeyboardState.IsKeyUp(Keys.Down)) {
+                linkScroll = LinkScroll.Down;
+            }
+        }
+    }
+    public static int GetMouseScrollDelta()
+    {
+        return currentMouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue;
+    }
     public static bool LeftMouseJustReleased()
     {
         return leftMouseJustReleased;

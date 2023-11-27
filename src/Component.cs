@@ -1,9 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-
-
-//using System.Drawing;
 using System.Linq.Expressions;
 using System.Net.Mime;
 using System.Reflection.Metadata.Ecma335;
@@ -15,8 +11,46 @@ using Microsoft.Xna.Framework.Input;
 //All types of components inherit constructor and fields from the component-type
 public class Component
 {
+	//Fields:	
+	public string Name		{get => this.name; set => this.name = value;}
+    public Point Position	{get => this.position; set => this.position = value;}
+    public Component Parent	{get => this.parent; set => this.parent = value;}
+    public Rectangle Rectangle => new(this.position.X, this.position.Y, this.width, this.height);
+	public List<Component> Children => this.children;
+    private int TextMaxWidth => (this.width - (4 * Component.lineThickness));	
+	public 				enum 				Type{Component, Computer, Partition, Application, Thread, Port};
+	public	  readonly 	Type 				type 		         = Type.Component;
+	protected 		 	string				name		         = "";
+	protected 		   	int 				width		         = 125;
+	protected 		   	int 				height		         = 100;
+	protected			Point				position	         = new(0,0);
+    protected 			Component 			parent 	        	 = null;
+	protected 		 	List<Component> 	children	         = new();
+	public	 			Dictionary<Component, int> 	connections	 = new();
+	public              List<LinkButton>    linkButtons          = new();
+    public              int                 linkDrawIndex        = 0;
+    public static readonly int              numberOfVisibleLinks = 5;
+    public static readonly int              lineThickness        = 3;
+	private enum Direction{Up, Right, Down, Left};
+
+	//Info:
+	public int ramSize 	 = 0;
+	public int initStack = 0;
+	public int execTime  = 0;
+	public int execStack = 0;
+	public int frequency = 0;
+
 	//Constructors:
-	public Component(Type type)
+	public Component()
+	{
+		
+	}
+	public Component(string name, List<Component> children)
+		: this(name, Type.Component)
+	{
+		this.SetChildren(children);
+	}
+	protected Component(Type type)
 	{
 		this.type = type;
 	}
@@ -30,15 +64,6 @@ public class Component
 	{
 		this.SetChildren(children);
 	}
-    //Public Functions/Properties:
-	public string Name 			{get => this.name; set => this.name = value;}
-    public Point Position		{get => this.position; set => this.position = value;}
-    public Rectangle Rectangle => new(this.position.X, this.position.Y, this.width, this.height);
-    public Component Parent		{get => this.parent; set => this.parent = value;}
-    public List<Component> Children => this.children;
-    private int TextMaxWidth {get{
-		return (this.width - (4*Component.LineThickness));
-	}}
 
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
 	
@@ -46,7 +71,7 @@ public class Component
 	public virtual void SetChildren(List<Component> newChildren)
 	{
 		connections.Clear();
- 		foreach(Component child in newChildren) {
+ 		foreach(Component child in newChildren) { 
 			this.AddChild(child);
 			child.Parent = this;
 			UpdateStats(child);
@@ -54,95 +79,82 @@ public class Component
 	}
 	public virtual string GetInfo()
 	{
-		return ("RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency);
+		return "RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency;
 	}
-	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
+	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)//FontSystem fontSystem, int size)
 	{
-        int LT = Component.LineThickness;
-		this.width  = 4 * 67*zoomLevel/24;
-		this.height = 4 * 67*zoomLevel/24;
-		int innerWidth  = this.width  - 2*LT;
-		int innerHeight = this.height - 2*LT;
-		int smallWidth  = this.width*3/4;
-		int smallHeight = this.height*3/4; 
-        int smallInnerWidth  = smallWidth  - 2*LT;
-        int smallInnerHeight = smallHeight - 2*LT;
-		string name = this.name; 
+		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
+		this.width  = Constants.ComponentSize*zoomLevel/12;
+		this.height = this.width;
+		int spacing = this.width/4;
+		int border  = Component.lineThickness; //Just for reading clarity's sake
+		int innerHeight = this.height - 2*border;
+		int innerWidth  = this.width  - 2*border;
 
 		//Updates component's position
 		this.position = pos;
 
-        Rectangle inner = new Rectangle(pos.X + LT, pos.Y + LT, innerWidth, innerHeight);
-        Point smallPoint = new Point(pos.X + this.width - LT, pos.Y + (this.height - smallHeight)/2);
-        Rectangle smallOuter = new Rectangle(smallPoint.X, smallPoint.Y, smallWidth, smallHeight);
-        Rectangle smallInner = new Rectangle(smallPoint.X + LT, smallPoint.Y + LT, smallInnerWidth, smallInnerHeight);
-
-		//Draws big square:
-		sb.Draw(Window.whitePixelTexture, this.Rectangle, Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, inner, Color.White);
 		//Draws small square to the right:
-		sb.Draw(Window.whitePixelTexture, smallOuter, Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, smallInner, Color.White);
-
-		string displayName = this.CalculateDisplayName(fontSystem.GetFont(zoomLevel));
-		sb.DrawString(fontSystem.GetFont(zoomLevel), displayName, new Vector2(pos.X + 2*LT , pos.Y + 2*LT), Color.Black);
-
-        
-		// Draw linkbuttons
-		if (this.linkButtons.Count > 0)
-		{
-            smallPoint.X += LT;
-            smallPoint.Y += LT;
-            int linkButtonHeight = smallHeight / 5; // <--- There are 5 buttons per component
-            int linkButtonWidth  = smallWidth - LT;
-			foreach(LinkButton B in this.linkButtons)
-			{
-				//B.Draw(sb, fontSystem.GetFont(linkButtonHeight - 4), pos, linkButtonHeight, linkButtonWidth);
-				B.Draw(sb, fontSystem.GetFont(linkButtonHeight), smallPoint, linkButtonHeight, linkButtonWidth);
-				pos.Y += linkButtonHeight;
-			}
-		}
-        
-
-		//this.width = this.height;		
-        /*
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight, smallWidth, 8 * smallHeight), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + 5*smallWidth, pos.Y + smallHeight + lineThickness, smallWidth - lineThickness, 8 * smallHeight - 2 * lineThickness), Color.White);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + height/8, 3* width/4, 3* height/4), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + spacing/2 + border, 3 * width/4 - border, 3 * width/4 - 2*border), Color.White);
 		//Draws big square:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, 5 * smallWidth, this.height), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + lineThickness, pos.Y + lineThickness, innerWidth, innerHeight), Color.White);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, width, height), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + border, pos.Y + border, innerWidth, innerHeight), Color.White);
 		
 		//Draws out the name
-		sb.DrawString(font, name, new Vector2(pos.X + lineThickness*2 , pos.Y + lineThickness*2), Color.Black);
-        */
-		
-		//Draws connection-arrows
-        /*
-		int counter = 0;
-		foreach(var connection in connections)
-		{	
-			counter++;
-			//Draws the arrow-body
-			sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + this.width - 2*lineThickness, pos.Y + counter*smallHeight + smallWidth/6 + lineThickness , 2*smallWidth/3, lineThickness), Color.Black); //black outline
-			//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
-			sb.Draw(TopologyHead.arrowhead, new Rectangle(pos.X + this.width + smallWidth/6, pos.Y + counter*smallHeight, 2*smallWidth/3+ lineThickness, smallHeight + lineThickness ), Color.White);
-		}
-		*/
-	}
-	//Protected functions:
-	protected virtual void UpdateStats(Component child)
-	{
-		this.execStack += child.execStack;
-		this.execTime  += child.execTime;
-		this.ramSize   += child.ramSize;
-		this.initStack += child.initStack;
-		this.frequency += child.frequency;
-	}
+		string displayName = this.CalculateDisplayName(font);
+		sb.DrawString(font, displayName, new Vector2(pos.X + 2*border , pos.Y + 2*border), Color.Black);
 
-	public void UpdateConnections()
-    {
-		foreach (Component child in children)
+		this.DrawLinkbuttons(sb, fontSystem);
+	}
+	private void DrawLinkbuttons(SpriteBatch sb, FontSystem fontSystem)
+	{
+		 if (this.connections.Count == 0) return;
+
+		int smallWidth  = this.width*3/4;
+		int smallHeight = this.height*3/4; 
+        int smallInnerWidth  = smallWidth  - 2*lineThickness;
+        int smallInnerHeight = smallHeight - 2*lineThickness;
+        // Draw linkbuttons
+		Rectangle inner = new Rectangle(this.position.X + lineThickness, this.position.Y + lineThickness, smallWidth, smallHeight);
+        Point smallPoint = new Point(this.position.X + this.width - lineThickness, this.position.Y + lineThickness);
+        Rectangle smallOuter = new Rectangle(smallPoint.X, smallPoint.Y, smallWidth, smallHeight);
+        Rectangle smallInner = new Rectangle(smallPoint.X + lineThickness, smallPoint.Y + lineThickness, smallInnerWidth, smallInnerHeight);
+        int numberOfLinks = Component.numberOfVisibleLinks;
+		smallPoint.X += lineThickness;
+        smallPoint.Y += lineThickness + this.height/8;
+        int linkButtonHeight = smallInner.Height / numberOfLinks;
+        int linkButtonWidth  = smallWidth - lineThickness;
+        if (this.connections.Count > numberOfLinks)
         {
+            if (this.linkDrawIndex > 0) {
+                sb.DrawString(fontSystem.GetFont(linkButtonHeight*2), "...", new Vector2(smallPoint.X + linkButtonWidth/3, position.Y - linkButtonHeight), Color.Black);
+            }
+            if (this.connections.Count - this.linkDrawIndex > numberOfLinks) {
+                // Draw a downwards arrow or something
+                sb.DrawString(fontSystem.GetFont(linkButtonHeight*2), "...", new Vector2(smallPoint.X + linkButtonWidth/3, position.Y + smallInner.Height), Color.Black);
+            }
+            int counter = 0;
+            int i = linkDrawIndex;
+            while (counter < numberOfLinks && i < connections.Count) {
+                this.linkButtons[i].Draw(sb, fontSystem.GetFont(linkButtonHeight), smallPoint, linkButtonHeight, linkButtonWidth);
+				smallPoint.Y += linkButtonHeight;
+                counter += 1;
+                i += 1;
+            }
+            
+        }
+		else
+		{
+			foreach(LinkButton B in this.linkButtons)
+			{
+				B.Draw(sb, fontSystem.GetFont(linkButtonHeight), smallPoint, linkButtonHeight, linkButtonWidth);
+				smallPoint.Y += linkButtonHeight;
+			}
+		}
+	}
+	public void UpdateConnections() {
+		foreach (Component child in children) {
 			if (this.type != Type.Port)
 				child.UpdateConnections();
 			foreach (var childConnection in child.connections)
@@ -161,33 +173,105 @@ public class Component
             this.linkButtons.Add(new LinkButton(KV.Key));
         }
 	}
+	//Protected functions:
+	protected virtual void UpdateStats(Component child)
+	{
+		this.execStack += child.execStack;
+		this.execTime  += child.execTime;
+		this.ramSize   += child.ramSize;
+		this.initStack += child.initStack;
+		this.frequency += child.frequency;
+	}
+	public static void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness, float offset = 0.5f, Color color = new())
+	{	
+		if (color == new Color())
+		{
+			color = Color.Black;
+		}
+		Rectangle body = new(A, new Point((int)(offset*Math.Abs(A.X - B.X)) + thickness/2, thickness));
+		Direction direction = Direction.Right;
+		if (offset < 0f || offset > 1f)
+		{
+			offset = 0.5f;
+		}
+		if((A.Y < B.Y) && (2*Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
+		{
+			direction = Direction.Down;
+		}		
+		else if ((A.Y > B.Y) && (2*Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
+		{
+			direction = Direction.Up;
+		}		
+		else if (A.X > B.X) 
+		{
+			direction = Direction.Left;
+		}
+
+		switch(direction)
+		{
+			case Direction.Right:
+				body.Y -= thickness/2;
+				sb.Draw(Window.whitePixelTexture, body, color);
+			
+				body.X += body.Width - thickness/2;
+				body.Width = (int)((1f - offset) * Math.Abs(A.X - B.X)) + thickness/2;
+				body.Y += B.Y - A.Y;
+				sb.Draw(Window.whitePixelTexture, body, color);
+			
+				body.Width = thickness;
+				body.Height = Math.Abs(A.Y - B.Y) + thickness/2;
+				if(A.Y > B.Y)
+				{
+					body.Y = B.Y - thickness/2;
+				}
+				else
+				{		
+					body.Y = A.Y;
+				}
+				body.X -= thickness/2;
+				sb.Draw(Window.whitePixelTexture, body, color);
+				break;
+			case Direction.Left:
+				DrawArrowBody(sb, B, A, thickness, 1f - offset, color);
+				break;
+			case Direction.Up:
+				DrawArrowBody(sb, B, A, thickness, 1f - offset, color);
+				break;
+			case Direction.Down:
+				body.X -= thickness/2;
+				body.Width = thickness;
+				body.Height = (int)(Math.Abs(A.Y - B.Y)* offset) + thickness/2;
+				sb.Draw(Window.whitePixelTexture, body, color);
+				body.Y += body.Height - thickness;
+				body.X = B.X - thickness/2;
+				body.Height = (int)(Math.Abs(A.Y - B.Y)* (1f-offset)) + thickness/2;
+				sb.Draw(Window.whitePixelTexture, body, color);
+				if(B.X > A.X)
+				{
+					body.X = A.X - thickness/2;
+				}
+				body.Height = thickness;
+				body.Width = Math.Abs(A.X - B.X) + thickness/2; 
+				sb.Draw(Window.whitePixelTexture, body, color);
+				break;
+		}
+	}
+	public void DrawArrowHead(SpriteBatch sb, Point pos, int spacing, float rotation)
+	{
+		int width = 3/4 * spacing;
+		int height = spacing/2;
+		Rectangle destination = new(pos.X - width/2, pos.Y - height/2, width, height);
+		Rectangle source = new(0,0, TopologyHead.arrowhead.Width, TopologyHead.arrowhead.Height);
+		Vector2 center = new(width/2, height/2);
+		//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
+		sb.Draw(TopologyHead.arrowhead, destination, null, Color.White, rotation, center, SpriteEffects.None, 1f);
+	}
 
     public override string ToString()
     {
         return $"({this.Name}:{this.type})";
     }
-
-	//Fields:		
-	public 				enum 				Type{Top, Computer, Partition, Application, Thread, Port} //Should probably be named component rather than Top?
-	public	  readonly 	Type 				type 		        = Type.Top;
-	protected 		 	string				name		        = "";
-	protected 		   	int 				width		        = 125;
-	protected 		   	int 				height		        = 100;
-	protected			Point				position	        = new(0,0);
-    protected 			Component 			parent 	        	= null;
-	protected 		 	List<Component> 	children	        = new();
-	public	 			Dictionary<Component, int> 	connections	= new();
-	public              List<LinkButton>    linkButtons         = new();
-    public static readonly int              LineThickness       = 3;
-	
-	//Info:
-	public int ramSize 	 = 0;
-	public int initStack = 0;
-	public int execTime  = 0;
-	public int execStack = 0;
-	public int frequency = 0;
-
-	public string CalculateDisplayName(SpriteFontBase font)
+		public string CalculateDisplayName(SpriteFontBase font)
 	{
 		return this.CalculateDisplayName(font, TextMaxWidth);
 	}
@@ -221,11 +305,23 @@ public class Component
 			return displayName;
 
 		}
-
 	}
-}
-//Sub-Components:
 
+    public void UpdateLinkDrawIndex()
+    {
+        if (Selection.linkScroll == Selection.LinkScroll.Up &&
+            this.linkDrawIndex > 0) {
+            this.linkDrawIndex -= 1;
+        } else if (Selection.linkScroll == Selection.LinkScroll.Down &&
+                   this.connections.Count - this.linkDrawIndex > Component.numberOfVisibleLinks) {
+            this.linkDrawIndex += 1;
+        }
+    }
+
+	
+}
+
+//Sub-Components:
 /*_______C_O_M_P_U_T_E_R________*/
 class Computer : Component
 {
@@ -263,68 +359,4 @@ class Application : Component
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
-}
-
-/*_________T_H_R_E_A_D__________*/
-class Thread : Component
-{
-	//Constructors:
-	public Thread(string name, List<Component> children,
-				  int frequency, int execTime, int execStack) : base(name, children, Type.Thread)
-	{
-		this.frequency = frequency;
-		this.execTime   = execTime;
-		this.execStack  = execStack;
-	}
-	public Thread(string name,
-				  int frequency, int execTime, int execStack) : base(name, Type.Thread)
-	{
-		this.frequency = frequency;
-		this.execTime  = execTime;
-		this.execStack = execStack;
-	}
-	public Thread(string name,
-				  int execTime, int execStack) : base(name, Type.Thread)
-	{
-		this.execTime   = execTime;
-		this.execStack  = execStack;
-	}
-
-	//Functions:
-	public override void SetChildren(List<Component> newChildren)
-	{
- 		foreach(Port c in newChildren) {
-			this.AddChild(c);
-			c.Parent = this;
-			Console.WriteLine(c.Name);
-
-		}
-	}
-    public void SetFrequency(int frequency) => this.frequency = frequency;
-	
-    public override string GetInfo()
-	{
-		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
-	}
-}
-
-/*__________P_O_R_T___________*/
-class Port : Component
-{
-	public Port(string name, 
-				string interf, string role) : base(name, Type.Thread)
-	{
-			this.interf = interf;
-			this.role = role;
-	}
-	public void AddConnections(List<Port> connections)
-	{
-		foreach (Component connectedTo in connections) {
-			if (this != connectedTo && !this.connections.ContainsKey(connectedTo)) {
-				this.connections.Add(connectedTo, 1);
-			}
-		}
-	}
-	public string interf 	= ""; 
-	public string role		= "";
 }
