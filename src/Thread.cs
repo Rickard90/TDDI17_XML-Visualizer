@@ -159,7 +159,7 @@ class Thread : Component
 						threadPos.Y = portPos.Y + this.height/4 + spacing/4 - border;
 				}
 				offset = 1f - (float)Math.Ceiling(Math.Abs((float)(connectionsOnCurrentSide+1f)/2f - sideCounter)) * (0.5f/connectionsOnCurrentSide);
-				((Port)port).ConnectionOffset = offset;
+				((Port)otherPort).ConnectionOffset = offset;
 				Component.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8, offset);
 				otherPort.Draw(portPos, sb, fontSystem, spacing);
 				((Thread)otherPort.Parent).DrawBody(threadPos, sb, fontSystem, spacing/2, spacing);
