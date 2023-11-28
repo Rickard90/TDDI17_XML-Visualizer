@@ -98,16 +98,6 @@ class Textbox
                     editedTextStr = true;
                 }
             }
-            else if (validInput)
-            {
-                //Console.WriteLine($"Input char : {input}");
-                if (this.textStr == "")
-                    this.textStr = $"{input}";
-                else
-                    this.textStr += input;
-
-                editedTextStr = true;
-            }
             else if (e.Key == Keys.Enter)
             {
                 //Console.WriteLine("Is enter key");
@@ -118,6 +108,16 @@ class Textbox
                     this.isSelected = false;
                     selectedTextboxes--;
                 }
+            }            
+            else if (validInput)
+            {
+                //Console.WriteLine($"Input char : {input}");
+                if (this.textStr == "")
+                    this.textStr = $"{input}";
+                else
+                    this.textStr += input;
+
+                editedTextStr = true;
             }
             else
             {
