@@ -24,6 +24,17 @@ class Port : Component
 				this.connections.Add(connectedTo, 1);
 			}
 		}
+		foreach (Port connectedTo in this.connections.Keys) {
+			if (connectedTo.Parent.Parent.Parent.Parent != this.Parent.Parent.Parent.Parent) {
+				if (role == "Sender") {
+					((Computer)connectedTo.Parent.Parent.Parent.Parent).connectionsExternalSend++;
+				} else { //Reciever
+					((Computer)connectedTo.Parent.Parent.Parent.Parent).connectionsExternalRecieve++;
+				}
+			} else { //Internal
+				((Computer)connectedTo.Parent.Parent.Parent.Parent).connectionsInternal++;
+			}
+		}
 	}
 	public override string GetInfo()
 	{
