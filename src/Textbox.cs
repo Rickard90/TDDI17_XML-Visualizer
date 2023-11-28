@@ -1,3 +1,4 @@
+using System.Globalization;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -5,6 +6,9 @@ using Microsoft.Xna.Framework.Input;
 
 class Textbox
 {
+    private static int selectedTextboxes = 0;
+    public static bool AnySelected {get {return selectedTextboxes > 0;}}
+
     private const int outlinePxSize = 4;
     private const int outlineTextBufferPxSize = 2; 
     private const int windowToOutlineBuffer = 37;
@@ -178,7 +182,10 @@ class Textbox
             if (mouseState.LeftButton == ButtonState.Released)
             {
                 if (this.Bounds.Contains(mouseState.Position))
+                {
                     this.isSelected = true;
+                    selectedTextboxes++;
+                }
                 this.potentialSelection = false;
             }
         }
@@ -189,7 +196,10 @@ class Textbox
                 if (this.Bounds.Contains(mouseState.Position))
                     this.potentialSelection = true;
                 else
+                {
                     this.isSelected = false;
+                    selectedTextboxes--;
+                }
             }
         }
 
