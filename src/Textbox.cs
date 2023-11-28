@@ -41,6 +41,10 @@ class Textbox
         get {return new Point((windowSize.X - size.X) / 2, windowToOutlineBuffer);}}
     private Point size;
 
+    public bool IsSelected { 
+        get {return this.isSelected;} 
+        set {if (value) selectedTextboxes++; else selectedTextboxes--; this.isSelected = value;} 
+    }
     private bool isSelected = false;
     private bool potentialSelection = false;
     private bool needToUpdateTexture = false;
