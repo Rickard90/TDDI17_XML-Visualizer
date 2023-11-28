@@ -54,69 +54,72 @@ public static class Selection
 
     private static void UpdateKeyInfo()
     {
-        previousKeyboardState = currentKeyboardState;
-        currentKeyboardState = Keyboard.GetState();
+        if (!Textbox.AnySelected)
+        {
+            previousKeyboardState = currentKeyboardState;
+            currentKeyboardState = Keyboard.GetState();
 
-        if (previousKeyboardState.IsKeyDown(Keys.D) && currentKeyboardState.IsKeyUp(Keys.D)) {
-            ComponentGoRight = true;
-        }
-        else {
-            ComponentGoRight = false;
-        }
-        if (previousKeyboardState.IsKeyDown(Keys.A) && currentKeyboardState.IsKeyUp(Keys.A)) {
-            ComponentGoLeft = true;
-        }
-        else {
-            ComponentGoLeft = false;
-        }
+            if (previousKeyboardState.IsKeyDown(Keys.D) && currentKeyboardState.IsKeyUp(Keys.D)) {
+                ComponentGoRight = true;
+            }
+            else {
+                ComponentGoRight = false;
+            }
+            if (previousKeyboardState.IsKeyDown(Keys.A) && currentKeyboardState.IsKeyUp(Keys.A)) {
+                ComponentGoLeft = true;
+            }
+            else {
+                ComponentGoLeft = false;
+            }
 
-        if (currentKeyboardState.IsKeyDown(Keys.LeftControl) || currentKeyboardState.IsKeyDown(Keys.RightControl)) {
-            if (previousKeyboardState.IsKeyDown(Keys.Add) && currentKeyboardState.IsKeyUp(Keys.Add) 
-                 || GetMouseScrollDelta() > 0) {
-                ZoomChange = CanvasZoomChange.In;
-            } else if (previousKeyboardState.IsKeyDown(Keys.OemMinus) && currentKeyboardState.IsKeyUp(Keys.OemMinus) 
-                 || Selection.GetMouseScrollDelta() < 0) {
-                ZoomChange = CanvasZoomChange.Out;
+            if (currentKeyboardState.IsKeyDown(Keys.LeftControl) || currentKeyboardState.IsKeyDown(Keys.RightControl)) {
+                if (previousKeyboardState.IsKeyDown(Keys.Add) && currentKeyboardState.IsKeyUp(Keys.Add) 
+                    || GetMouseScrollDelta() > 0) {
+                    ZoomChange = CanvasZoomChange.In;
+                } else if (previousKeyboardState.IsKeyDown(Keys.OemMinus) && currentKeyboardState.IsKeyUp(Keys.OemMinus) 
+                    || Selection.GetMouseScrollDelta() < 0) {
+                    ZoomChange = CanvasZoomChange.Out;
+                } else {
+                    ZoomChange = CanvasZoomChange.Nothing;
+                }
             } else {
                 ZoomChange = CanvasZoomChange.Nothing;
-            }
-        } else {
-            ZoomChange = CanvasZoomChange.Nothing;
-            ScrollChange = CanvasScroll.Nothing;
-            if (currentKeyboardState.IsKeyDown(Keys.Right))
-            {
-                ScrollChange = CanvasScroll.Right;
-            }
-            if (currentKeyboardState.IsKeyDown(Keys.Left))
-            {
-                ScrollChange = CanvasScroll.Left;
-            }
-            if (currentKeyboardState.IsKeyDown(Keys.Down) || Selection.GetMouseScrollDelta() < 0)
-            {
-                ScrollChange = CanvasScroll.Down;
-            }
-            if (currentKeyboardState.IsKeyDown(Keys.Up) || Selection.GetMouseScrollDelta() > 0)
-            {
-                ScrollChange = CanvasScroll.Up;
-            }
-        }
-
-        GoToLink = -1;
-        linkScroll = LinkScroll.Nothing;
-        if (currentKeyboardState.IsKeyDown(Keys.LeftControl)) {
-            int currKey = (int)Keys.D1;
-            for (int i = 1; i <= Component.numberOfVisibleLinks; ++i) {
-                if (previousKeyboardState.IsKeyDown((Keys)currKey) && currentKeyboardState.IsKeyUp((Keys)currKey)) {
-                    GoToLink = i;
-                    return;
+                ScrollChange = CanvasScroll.Nothing;
+                if (currentKeyboardState.IsKeyDown(Keys.Right))
+                {
+                    ScrollChange = CanvasScroll.Right;
                 }
-                currKey += 1;
+                if (currentKeyboardState.IsKeyDown(Keys.Left))
+                {
+                    ScrollChange = CanvasScroll.Left;
+                }
+                if (currentKeyboardState.IsKeyDown(Keys.Down) || Selection.GetMouseScrollDelta() < 0)
+                {
+                    ScrollChange = CanvasScroll.Down;
+                }
+                if (currentKeyboardState.IsKeyDown(Keys.Up) || Selection.GetMouseScrollDelta() > 0)
+                {
+                    ScrollChange = CanvasScroll.Up;
+                }
             }
-            if (previousKeyboardState.IsKeyDown(Keys.Up) && currentKeyboardState.IsKeyUp(Keys.Up)) {
-                linkScroll = LinkScroll.Up;
-            }
-            else if (previousKeyboardState.IsKeyDown(Keys.Down) && currentKeyboardState.IsKeyUp(Keys.Down)) {
-                linkScroll = LinkScroll.Down;
+
+            GoToLink = -1;
+            linkScroll = LinkScroll.Nothing;
+            if (currentKeyboardState.IsKeyDown(Keys.LeftControl)) {
+                int currKey = (int)Keys.D1;
+                for (int i = 1; i <= Component.numberOfVisibleLinks; ++i) {
+                    if (previousKeyboardState.IsKeyDown((Keys)currKey) && currentKeyboardState.IsKeyUp((Keys)currKey)) {
+                        GoToLink = i;
+                        return;
+                    }
+                    currKey += 1;
+                }
+                if (previousKeyboardState.IsKeyDown(Keys.Up) && currentKeyboardState.IsKeyUp(Keys.Up)) {
+                    linkScroll = LinkScroll.Up;
+                }
+                else if (previousKeyboardState.IsKeyDown(Keys.Down) && currentKeyboardState.IsKeyUp(Keys.Down)) {
+                    linkScroll = LinkScroll.Down;
+                }
             }
         }
     }

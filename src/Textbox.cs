@@ -1,3 +1,4 @@
+using System.Globalization;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -5,6 +6,9 @@ using Microsoft.Xna.Framework.Input;
 
 class Textbox
 {
+    private static int selectedTextboxes = 0;
+    public static bool AnySelected {get {return selectedTextboxes > 0;}}
+
     private const int outlinePxSize = 4;
     private const int outlineTextBufferPxSize = 2; 
     private const int windowToOutlineBuffer = 37;
@@ -15,19 +19,19 @@ class Textbox
     private static readonly char[] invalidFilenameCharacters = Path.GetInvalidPathChars();
 
     //  return the new textStr
-    public delegate string WhenEntered(string textStr);
-    public delegate string[] WhenChanged(string text);
+    public delegate string WhenEntered(string ghostStr);
+    public delegate string[] WhenChanged(string textStr);
 
     public WhenEntered whenEntered = null;      //  this event should be set to a method which may load a new topology
     protected WhenChanged whenChanged = null;
 
-    public Rectangle Bounds {get {return this.DrawArea;}}
-    public Rectangle DrawArea{get { return new Rectangle(Position, size);}}
+    public Rectangle Bounds     {   get { return this.DrawArea;}}
+    public Rectangle DrawArea   {   get { return new Rectangle(Position, size);}}
     
 
     private readonly SpriteFontBase font;
 
-    private string textStr;
+    private string textStr = "";
     private string ghostStr = "";
     private string[] suggestions = new string[0];
     private int suggestion_index = 0;
@@ -37,13 +41,15 @@ class Textbox
         get {return new Point((windowSize.X - size.X) / 2, windowToOutlineBuffer);}}
     private Point size;
 
+    public bool IsSelected { 
+        get {return this.isSelected;} 
+        set {if (value) selectedTextboxes++; else selectedTextboxes--; this.isSelected = value;} 
+    }
     private bool isSelected = false;
     private bool potentialSelection = false;
     private bool needToUpdateTexture = false;
 
     private Texture2D drawTexture;
-
-
 
     public Textbox(Point windowSize, SpriteFontBase font, WhenEntered enteredResponse = null, WhenChanged changedResponse = null, string startString = null)
     {
@@ -52,8 +58,6 @@ class Textbox
         this.whenChanged = changedResponse;
         if (startString != null)
             this.textStr = startString;
-        else
-            this.textStr = "";
 
         this.windowSize = windowSize;
         this.size = this.CalculateSize();
@@ -72,10 +76,9 @@ class Textbox
 
     public void RegisterTextInput(object sender, TextInputEventArgs e)
     {
-
         if (this.isSelected)
         {
-
+            bool editedTextStr = false;
             bool validInput = true;
             char input = e.Character;
             foreach (char invalidChar in invalidFilenameCharacters)
@@ -85,10 +88,28 @@ class Textbox
                     validInput = false;
                     break;
                 }
-
             }
 
-            if (validInput)
+            if (e.Key == Keys.Back)
+            {
+                if (this.textStr != "")
+                {
+                    this.textStr = this.textStr.Remove(this.textStr.Length - 1);
+                    editedTextStr = true;
+                }
+            }
+            else if (e.Key == Keys.Enter)
+            {
+                //Console.WriteLine("Is enter key");
+                if (this.whenEntered != null)
+                {
+                    this.textStr = this.whenEntered.Invoke(this.ghostStr);
+                    editedTextStr = true;
+                    this.isSelected = false;
+                    selectedTextboxes--;
+                }
+            }            
+            else if (validInput)
             {
                 //Console.WriteLine($"Input char : {input}");
                 if (this.textStr == "")
@@ -96,67 +117,96 @@ class Textbox
                 else
                     this.textStr += input;
 
-                this.needToUpdateTexture = true;
-            }
-            else if (e.Key == Keys.Tab)
-            {
-                this.textStr = this.ghostStr;           
-            }
-            else if (e.Key == Keys.Enter)
-            {
-                //Console.WriteLine("Is enter key");
-                if (this.whenEntered != null)
-                    this.textStr = this.whenEntered.Invoke(this.textStr);
-
-            }
-            else if (e.Key == Keys.Back)
-            {
-                //Console.WriteLine("Is backspace");
-                if (this.textStr != "-")
-                {
-                    this.textStr = this.textStr.Remove(this.textStr.Length - 1);
-                    if (this.textStr == "")
-                        this.textStr = "-";
-                    this.needToUpdateTexture = true;
-                    
-                }
-
+                editedTextStr = true;
             }
             else
             {
                 //Console.WriteLine("Ignored input");
             }
 
-            if (this.needToUpdateTexture)
+
+            UpdateGhostStr(editedTextStr);
+            
+        }
+    }
+
+    private void UpdateGhostStr(bool updateSuggestions)
+    {
+
+        if (this.whenChanged != null)
+        {
+            if (updateSuggestions)
+            {   //  we need to reset
+                this.suggestions = this.whenChanged.Invoke(this.textStr);
+                this.suggestion_index = 0;
+            }
+
+            if (this.suggestions.Length == 0)
             {
-                if (this.whenChanged != null)
+                this.ghostStr = "";
+            }
+            else
+            {
+                if (updateSuggestions)
                 {
-                    this.suggestions = this.whenChanged.Invoke(this.textStr);
-                    this.suggestion_index = 0;
-                    if (this.suggestions.Length == 0)
-                        this.ghostStr = "";
-                    else
-                    {
-                        for (int i = 0; i < suggestions.Length; i++)
-                            if (this.suggestions[i] == this.ghostStr)
-                                this.suggestion_index = i;                   
-                        this.ghostStr = suggestions[suggestion_index];
-                    }
-                }
+                    for (int i = 0; i < suggestions.Length; i++)
+                        if (this.suggestions[i] == this.ghostStr)
+                            this.suggestion_index = i;  
+                }                 
+                this.ghostStr = suggestions[suggestion_index];
             }
 
         }
 
+        this.needToUpdateTexture = true;
+     
     }
 
-    public void Update(MouseState mouseState)
+    public void InputChangedFunction()
     {
+        this.suggestions = ComponentList.GetSuggestions(this.textStr);
+    }
+
+    bool pressed_keyup = false, pressed_keydown = false;
+    private void Update(KeyboardState keyboardState)
+    {
+
+        if (this.isSelected && this.suggestions.Length > 0)
+        {
+            if (keyboardState.IsKeyDown(Keys.Up) && (pressed_keyup == false))
+            {
+                this.suggestion_index++;
+                this.suggestion_index %= this.suggestions.Length;
+                UpdateGhostStr(false);
+            }
+            else if (keyboardState.IsKeyDown(Keys.Down) && (pressed_keydown == false))
+            {
+                this.suggestion_index = this.suggestion_index <= 0 ? this.suggestions.Length - 1 : this.suggestion_index - 1;
+                // this.suggestion_index--;
+                // this.suggestion_index %= this.suggestions.Length;
+                UpdateGhostStr(false);                
+            }
+        }
+
+        pressed_keyup = keyboardState.IsKeyDown(Keys.Up);
+        pressed_keydown = keyboardState.IsKeyDown(Keys.Down);
+
+
+    }
+
+    public void Update(MouseState mouseState, KeyboardState keyboardState)
+    {
+        this.Update(keyboardState);
+
         if (this.potentialSelection)
         {
             if (mouseState.LeftButton == ButtonState.Released)
             {
                 if (this.Bounds.Contains(mouseState.Position))
+                {
                     this.isSelected = true;
+                    selectedTextboxes++;
+                }
                 this.potentialSelection = false;
             }
         }
@@ -167,7 +217,10 @@ class Textbox
                 if (this.Bounds.Contains(mouseState.Position))
                     this.potentialSelection = true;
                 else
+                {
                     this.isSelected = false;
+                    selectedTextboxes--;
+                }
             }
         }
 
@@ -175,7 +228,8 @@ class Textbox
         {
             this.size = this.CalculateSize();
             this.drawTexture.Dispose();
-            this.drawTexture = this.RenderTexture();   
+            this.drawTexture = this.RenderTexture(); 
+            this.needToUpdateTexture = false;  
         }        
 
     }
@@ -229,8 +283,10 @@ class Textbox
         Window.spriteBatch.Draw(Window.whitePixelTexture, copy, fillColor);
 
         // Draw text
-        Window.spriteBatch.DrawString(this.font, this.ghostStr, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black * 0.75f);
-        Window.spriteBatch.DrawString(this.font, this.textStr, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black);
+        Vector2 drawPosition = new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize);
+        string bgString = $"{this.textStr} --> {this.ghostStr}";
+        Window.spriteBatch.DrawString(this.font, bgString, drawPosition, Color.Black * 0.75f);
+        Window.spriteBatch.DrawString(this.font, this.textStr, drawPosition, Color.Black);
 
     }
 
@@ -244,6 +300,8 @@ class Textbox
         string effectiveStr = this.textStr;
         if (effectiveStr == "")
             effectiveStr = "-";
+        else
+            effectiveStr = $"{this.textStr} --> {this.ghostStr}";
         Vector2 textSize = this.font.MeasureString(effectiveStr);
         int width = ((int)textSize.X) + 2 * (outlinePxSize + outlineTextBufferPxSize);
         int height = ((int)textSize.Y) + 2 * (outlinePxSize + outlineTextBufferPxSize);
