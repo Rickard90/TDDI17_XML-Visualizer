@@ -17,6 +17,7 @@ public static class Selection
     private static bool leftMouseJustReleased   = false;
     public  static bool ComponentGoRight        = false;
     public  static bool ComponentGoLeft         = false;
+    public static bool PrtSc                   = false;
 
     public  static int  GoToLink                = -1;
     
@@ -73,6 +74,9 @@ public static class Selection
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.LeftControl) || currentKeyboardState.IsKeyDown(Keys.RightControl)) {
+                if (previousKeyboardState.IsKeyDown(Keys.P) && currentKeyboardState.IsKeyUp(Keys.P)) {
+                    PrtSc = true;
+                }
                 if (previousKeyboardState.IsKeyDown(Keys.Add) && currentKeyboardState.IsKeyUp(Keys.Add) 
                     || GetMouseScrollDelta() > 0) {
                     ZoomChange = CanvasZoomChange.In;
