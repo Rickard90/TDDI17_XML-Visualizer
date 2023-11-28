@@ -106,6 +106,13 @@ public class Component
 		sb.DrawString(font, displayName, new Vector2(pos.X + 2*border , pos.Y + 2*border), Color.Black);
 
 		this.DrawLinkbuttons(sb, fontSystem);
+
+		if (this.type == Type.Computer) {
+			Console.WriteLine(this.name);
+			Console.WriteLine("External Send    " + ((Computer)this).connectionsExternalSend);
+			Console.WriteLine("External Recieve " + ((Computer)this).connectionsExternalRecieve);
+			Console.WriteLine("Internal         " + ((Computer)this).connectionsInternal);
+		}
 	}
 	private void DrawLinkbuttons(SpriteBatch sb, FontSystem fontSystem)
 	{
