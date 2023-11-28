@@ -18,6 +18,7 @@ public class Window : Game
 
     private BackButton backButton;
     private HighlightButton highlightButton;
+    private HelpButton helpButton;
     private Textbox enterFolderTextbox;
 
     private string folderPath;
@@ -70,6 +71,7 @@ public class Window : Game
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
         this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");
+        this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "Help");
 
         Tooltip.spriteBatch = spriteBatch;
         Tooltip.graphicsDevice = this.GraphicsDevice;    
@@ -115,6 +117,7 @@ public class Window : Game
         spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 0, Window.ClientBounds.Size.X, Constants.ToolbarHeight), new Color(230, 230, 230, 255));
         spriteBatch.Draw(whitePixelTexture, new Rectangle(0, Constants.ToolbarHeight-3, Window.ClientBounds.Size.X, 3), Color.Gray);
         this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
+        this.helpButton.Draw(spriteBatch, this.fontSystem.GetFont(32), windowSize.X);
         this.top.DrawPath(spriteBatch, this.fontSystem.GetFont(22));
         
         this.enterFolderTextbox.Draw();
