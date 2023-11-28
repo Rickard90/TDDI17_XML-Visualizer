@@ -111,6 +111,8 @@ class Textbox
                 {
                     this.textStr = this.whenEntered.Invoke(this.ghostStr);
                     editedTextStr = true;
+                    this.isSelected = false;
+                    selectedTextboxes--;
                 }
             }
             else
