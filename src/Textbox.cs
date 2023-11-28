@@ -31,7 +31,7 @@ class Textbox
 
     private readonly SpriteFontBase font;
 
-    private string textStr;
+    private string textStr = "";
     private string ghostStr = "";
     private string[] suggestions = new string[0];
     private int suggestion_index = 0;
@@ -54,8 +54,6 @@ class Textbox
         this.whenChanged = changedResponse;
         if (startString != null)
             this.textStr = startString;
-        else
-            this.textStr = "";
 
         this.windowSize = windowSize;
         this.size = this.CalculateSize();
@@ -74,10 +72,9 @@ class Textbox
 
     public void RegisterTextInput(object sender, TextInputEventArgs e)
     {
-
         if (this.isSelected)
         {
-
+            bool editedTextStr = false;
             bool validInput = true;
             char input = e.Character;
             foreach (char invalidChar in invalidFilenameCharacters)
@@ -87,64 +84,76 @@ class Textbox
                     validInput = false;
                     break;
                 }
-
             }
 
             if (e.Key == Keys.Back)
             {
-                //Console.WriteLine("Is backspace");
-                if (this.textStr != "-")
+                if (this.textStr != "")
                 {
                     this.textStr = this.textStr.Remove(this.textStr.Length - 1);
-                    if (this.textStr == "")
-                        this.textStr = "-";
-                    this.needToUpdateTexture = true;
-                    
+                    editedTextStr = true;
                 }
-
-            } 
+            }
             else if (validInput)
             {
-                Console.WriteLine($"Input char : {input}");
+                //Console.WriteLine($"Input char : {input}");
                 if (this.textStr == "")
                     this.textStr = $"{input}";
                 else
                     this.textStr += input;
 
-                this.needToUpdateTexture = true;
+                editedTextStr = true;
             }
             else if (e.Key == Keys.Enter)
             {
                 //Console.WriteLine("Is enter key");
                 if (this.whenEntered != null)
+                {
                     this.textStr = this.whenEntered.Invoke(this.ghostStr);
-
+                    editedTextStr = true;
+                }
             }
             else
             {
                 //Console.WriteLine("Ignored input");
             }
 
-            if (this.needToUpdateTexture)
+
+            UpdateGhostStr(editedTextStr);
+            
+        }
+    }
+
+    private void UpdateGhostStr(bool updateSuggestions)
+    {
+
+        if (this.whenChanged != null)
+        {
+            if (updateSuggestions)
+            {   //  we need to reset
+                this.suggestions = this.whenChanged.Invoke(this.textStr);
+                this.suggestion_index = 0;
+            }
+
+            if (this.suggestions.Length == 0)
             {
-                if (this.whenChanged != null)
+                this.ghostStr = "";
+            }
+            else
+            {
+                if (updateSuggestions)
                 {
-                    this.suggestions = this.whenChanged.Invoke(this.textStr);
-                    this.suggestion_index = 0;
-                    if (this.suggestions.Length == 0)
-                        this.ghostStr = "";
-                    else
-                    {
-                        for (int i = 0; i < suggestions.Length; i++)
-                            if (this.suggestions[i] == this.ghostStr)
-                                this.suggestion_index = i;                   
-                        this.ghostStr = suggestions[suggestion_index];
-                    }
-                }
+                    for (int i = 0; i < suggestions.Length; i++)
+                        if (this.suggestions[i] == this.ghostStr)
+                            this.suggestion_index = i;  
+                }                 
+                this.ghostStr = suggestions[suggestion_index];
             }
 
         }
 
+        this.needToUpdateTexture = true;
+     
     }
 
     public void InputChangedFunction()
@@ -152,31 +161,37 @@ class Textbox
         this.suggestions = ComponentList.GetSuggestions(this.textStr);
     }
 
-    public void Update(KeyboardState keyboardState)
+    bool pressed_keyup = false, pressed_keydown = false;
+    private void Update(KeyboardState keyboardState)
     {
 
         if (this.isSelected && this.suggestions.Length > 0)
         {
-            if (keyboardState.IsKeyDown(Keys.Up))
+            if (keyboardState.IsKeyDown(Keys.Up) && (pressed_keyup == false))
             {
                 this.suggestion_index++;
                 this.suggestion_index %= this.suggestions.Length;
-                Console.WriteLine(suggestion_index);
+                UpdateGhostStr(false);
             }
-            else if (keyboardState.IsKeyDown(Keys.Down))
+            else if (keyboardState.IsKeyDown(Keys.Down) && (pressed_keydown == false))
             {
-                this.suggestion_index--;
-                this.suggestion_index %= this.suggestions.Length;
-                Console.WriteLine(suggestion_index);
+                this.suggestion_index = this.suggestion_index <= 0 ? this.suggestions.Length - 1 : this.suggestion_index - 1;
+                // this.suggestion_index--;
+                // this.suggestion_index %= this.suggestions.Length;
+                UpdateGhostStr(false);                
             }
         }
 
+        pressed_keyup = keyboardState.IsKeyDown(Keys.Up);
+        pressed_keydown = keyboardState.IsKeyDown(Keys.Down);
 
 
     }
 
-    public void Update(MouseState mouseState)
+    public void Update(MouseState mouseState, KeyboardState keyboardState)
     {
+        this.Update(keyboardState);
+
         if (this.potentialSelection)
         {
             if (mouseState.LeftButton == ButtonState.Released)
@@ -207,7 +222,8 @@ class Textbox
         {
             this.size = this.CalculateSize();
             this.drawTexture.Dispose();
-            this.drawTexture = this.RenderTexture();   
+            this.drawTexture = this.RenderTexture(); 
+            this.needToUpdateTexture = false;  
         }        
 
     }

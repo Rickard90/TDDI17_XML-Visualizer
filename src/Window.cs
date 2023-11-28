@@ -66,7 +66,7 @@ public class Window : Game
             renderFunction = this.RenderTopology
         };
         this.top = new TopologyHead(folderPath);
-		ComponentFinder.top = this.top;
+
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
         this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");
@@ -74,13 +74,13 @@ public class Window : Game
         Tooltip.spriteBatch = spriteBatch;
         Tooltip.graphicsDevice = this.GraphicsDevice;    
 
-        this.enterFolderTextbox = new Textbox(this.windowSize, this.fontSystem.GetFont(18));
+        this.enterFolderTextbox = new Textbox(this.windowSize, this.fontSystem.GetFont(18), ComponentFinder.GoToComponentWithName, ComponentList.GetSuggestions, null);
         this.Window.TextInput += enterFolderTextbox.RegisterTextInput;
 
         // Fill the global component list, must be done only after reading and constructing the topology.
         ComponentList.Construct(this.top);
         ComponentList.Sort();
-        ComponentList.Print();
+        //ComponentList.Print();
         ComponentFinder.Construct(this.top);
         ComponentFinder.Print();
     }
@@ -179,6 +179,13 @@ public class Window : Game
             this.top.GoToAny(linkButton.Component, this.highlightButton);
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
+        else if (ComponentFinder.componentToGoTo != null)
+        {
+            this.updateCanvas = true;
+            this.top.GoToAny(ComponentFinder.componentToGoTo, this.highlightButton);
+            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+            ComponentFinder.componentToGoTo = null;
+        }
         else if (Selection.CursorIsInside(backButton.rectangle) && Selection.LeftMouseJustReleased())
         {
             this.updateCanvas = true;
@@ -186,6 +193,7 @@ public class Window : Game
             this.highlightButton.Component = this.top.GetCurrent().Children.First();
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
+
 
         if (Selection.ComponentGoRight)
         {
@@ -208,7 +216,6 @@ public class Window : Game
             Canvas.Camera.Update(Selection.ScrollChange, canvas.CanvasSize, Window.ClientBounds);
         }
 
-        this.enterFolderTextbox.Update(Mouse.GetState());
-        this.enterFolderTextbox.Update(Keyboard.GetState());
+        this.enterFolderTextbox.Update(Mouse.GetState(), Keyboard.GetState());
     }
 }
