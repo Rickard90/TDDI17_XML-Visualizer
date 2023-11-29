@@ -97,20 +97,7 @@ public class Window : Game
         {
             int numberOfRows = (top.NumberOfChildren()-1) / top.NumberOfColums(windowSize.X, canvas.zoomLevel) + 1;
             int numberOfColums = top.NumberOfColums(windowSize.X, canvas.zoomLevel);
-			int canvasHeight;
-            int canvasWidth;
-			if(this.top.GetCurrent().type != Component.Type.Thread)
-            {
-                canvasHeight = (numberOfRows * Constants.ComponentSize*canvas.zoomLevel/8) + 5*Constants.ToolbarHeight/4;
-                canvasWidth = (numberOfColums*(8*Constants.Spacing + Constants.ComponentSize) - 3*Constants.Spacing)*canvas.zoomLevel/12;
-            }
-            else //this.top.GetCurrent().type == Component.Type.Thread need rework
-            {
-                canvasHeight = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
-                canvasWidth = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
-            }
-            this.canvas.ReSize(new Point(canvasWidth, canvasHeight));
-            this.canvas.UpdateTexture();
+            UpdateCanvasSize(numberOfRows, numberOfColums);
             Canvas.Camera.ControlOffset(canvas.CanvasSize, Window.ClientBounds);
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
@@ -135,7 +122,24 @@ public class Window : Game
     //  this is the render function
 	private void RenderTopology(Point canvasSize)
     {
-        this.top.Draw(spriteBatch, this.fontSystem, canvas.zoomLevel, windowSize.X);
+        this.top.Draw(spriteBatch, this.fontSystem, canvas.zoomLevel, canvasSize.X);
+    }
+
+    private void UpdateCanvasSize(int numberOfColums, int numberOfRows) {
+        int canvasHeight;
+        int canvasWidth;
+        if(this.top.GetCurrent().type != Component.Type.Thread)
+        {
+            canvasHeight = ((numberOfRows * Constants.ComponentSize + Constants.Spacing)*canvas.zoomLevel/8) + Constants.ToolbarHeight;
+            canvasWidth = (numberOfColums*(8*Constants.Spacing + Constants.ComponentSize) - 3*Constants.Spacing)*canvas.zoomLevel/12;
+        }
+        else //this.top.GetCurrent().type == Component.Type.Thread need rework
+        {
+            canvasHeight = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
+            canvasWidth = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
+        }
+        this.canvas.ReSize(new Point(canvasWidth, canvasHeight));
+        this.canvas.UpdateTexture();
     }
 
     private void HandleSelection()
@@ -219,8 +223,15 @@ public class Window : Game
         if (Selection.PrtSc) {
             int screenshotNumber = 0;
             bool numberTaken = true;
-            //updateCanvas = true;
+            
+            int numberOfColums = top.NumberOfColums(windowSize.X, canvas.zoomLevel);
+            int numberOfRows = (top.NumberOfChildren()-1) / top.NumberOfColums(windowSize.X, canvas.zoomLevel) + 1;
+        
+            int currentZoom = canvas.zoomLevel;
+            canvas.zoomLevel = Constants.screenshotZoom;
 
+            UpdateCanvasSize(numberOfColums, numberOfRows);
+            
             while(numberTaken){
                 try
                 {
@@ -233,9 +244,12 @@ public class Window : Game
                     numberTaken = false;
                 }
             }
-
             canvas.SaveAsPng("screenshots/screenshot" + (screenshotNumber > 0 ? screenshotNumber.ToString() : "") + ".png");
             Selection.PrtSc = false;
+
+            canvas.zoomLevel = currentZoom;
+            UpdateCanvasSize(numberOfColums, numberOfRows);
+
         }
 
         this.enterFolderTextbox.Update(Mouse.GetState(), Keyboard.GetState());
