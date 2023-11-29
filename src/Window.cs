@@ -224,7 +224,7 @@ public class Window : Game
             while(numberTaken){
                 try
                 {
-                    using StreamReader screenshotReader = new("screenshot" + (screenshotNumber > 0 ? screenshotNumber.ToString() : "") + ".png");
+                    using StreamReader screenshotReader = new("screenshots/screenshot" + (screenshotNumber > 0 ? screenshotNumber.ToString() : "") + ".png");
                     screenshotNumber++; 
                     screenshotReader.Close();
                 }
@@ -234,7 +234,7 @@ public class Window : Game
                 }
             }
 
-            canvas.SaveAsPng("screenshot" + (screenshotNumber > 0 ? screenshotNumber.ToString() : "") + ".png");
+            canvas.SaveAsPng("screenshots/screenshot" + (screenshotNumber > 0 ? screenshotNumber.ToString() : "") + ".png");
             Selection.PrtSc = false;
         }
 
