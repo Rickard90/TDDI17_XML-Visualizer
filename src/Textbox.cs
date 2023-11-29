@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
@@ -90,7 +91,12 @@ class Textbox
                 }
             }
 
-            if (e.Key == Keys.Back)
+            if (e.Key == Keys.Escape)
+            {
+                this.isSelected = false;
+                selectedTextboxes = selectedTextboxes > 0 ? selectedTextboxes - 1 : 0;
+            }
+            else if (e.Key == Keys.Back)
             {
                 if (this.textStr != "")
                 {
@@ -106,7 +112,7 @@ class Textbox
                     this.textStr = this.whenEntered.Invoke(this.ghostStr);
                     editedTextStr = true;
                     this.isSelected = false;
-                    selectedTextboxes--;
+                    selectedTextboxes = selectedTextboxes > 0 ? selectedTextboxes - 1 : 0;
                 }
             }            
             else if (validInput)
@@ -219,7 +225,7 @@ class Textbox
                 else
                 {
                     this.isSelected = false;
-                    selectedTextboxes--;
+                    selectedTextboxes = selectedTextboxes > 0 ? selectedTextboxes - 1 : 0;
                 }
             }
         }
