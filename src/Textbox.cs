@@ -290,7 +290,11 @@ class Textbox
 
         // Draw text
         Vector2 drawPosition = new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize);
-        string bgString = $"{this.textStr} --> {this.ghostStr}";
+        //string bgString = $"{this.textStr} --> {this.ghostStr}";
+        string bgString = this.textStr;
+        if (this.suggestions.Length > 0) {
+            bgString += $"  --->  {this.ghostStr}";
+        }
         Window.spriteBatch.DrawString(this.font, bgString, drawPosition, Color.Black * 0.75f);
         Window.spriteBatch.DrawString(this.font, this.textStr, drawPosition, Color.Black);
 
@@ -307,7 +311,7 @@ class Textbox
         if (effectiveStr == "")
             effectiveStr = "-";
         else
-            effectiveStr = $"{this.textStr} --> {this.ghostStr}";
+            effectiveStr = $"{this.textStr}  --->  {this.ghostStr}";
         Vector2 textSize = this.font.MeasureString(effectiveStr);
         int width = ((int)textSize.X) + 2 * (outlinePxSize + outlineTextBufferPxSize);
         int height = ((int)textSize.Y) + 2 * (outlinePxSize + outlineTextBufferPxSize);
