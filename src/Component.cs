@@ -329,6 +329,10 @@ class Computer : Component
 	{}
 	public Computer(string name, List<Component> children) : base(name, children, Type.Computer)
 	{}
+
+	public int connectionsExternalSend = 0;
+	public int connectionsExternalRecieve = 0;
+	public int connectionsInternal = 0;
 }
 
 /*______P_A_R_T_I_T_I_O_N________*/

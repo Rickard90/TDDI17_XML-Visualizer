@@ -216,6 +216,28 @@ public class Window : Game
             Canvas.Camera.Update(Selection.ScrollChange, canvas.CanvasSize, Window.ClientBounds);
         }
 
+        if (Selection.PrtSc) {
+            int screenshotNumber = 0;
+            bool numberTaken = true;
+            //updateCanvas = true;
+
+            while(numberTaken){
+                try
+                {
+                    using StreamReader screenshotReader = new("screenshots/screenshot" + (screenshotNumber > 0 ? screenshotNumber.ToString() : "") + ".png");
+                    screenshotNumber++; 
+                    screenshotReader.Close();
+                }
+                catch(Exception)
+                {
+                    numberTaken = false;
+                }
+            }
+
+            canvas.SaveAsPng("screenshots/screenshot" + (screenshotNumber > 0 ? screenshotNumber.ToString() : "") + ".png");
+            Selection.PrtSc = false;
+        }
+
         this.enterFolderTextbox.Update(Mouse.GetState(), Keyboard.GetState());
     }
 }

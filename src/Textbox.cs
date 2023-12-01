@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
@@ -91,23 +92,18 @@ class Textbox
                 }
             }
 
-            if (e.Key == Keys.Back)
+            if (e.Key == Keys.Escape)
+            {
+                this.isSelected = false;
+                selectedTextboxes = selectedTextboxes > 0 ? selectedTextboxes - 1 : 0;
+            }
+            else if (e.Key == Keys.Back)
             {
                 if (this.textStr != "")
                 {
                     this.textStr = this.textStr.Remove(this.textStr.Length - 1);
                     editedTextStr = true;
                 }
-            }
-            else if (validInput)
-            {
-                //Console.WriteLine($"Input char : {input}");
-                if (this.textStr == "")
-                    this.textStr = $"{input}";
-                else
-                    this.textStr += input;
-
-                editedTextStr = true;
             }
             else if (e.Key == Keys.Enter)
             {
@@ -117,8 +113,18 @@ class Textbox
                     this.textStr = this.whenEntered.Invoke(this.ghostStr);
                     editedTextStr = true;
                     this.isSelected = false;
-                    selectedTextboxes--;
+                    selectedTextboxes = selectedTextboxes > 0 ? selectedTextboxes - 1 : 0;
                 }
+            }            
+            else if (validInput)
+            {
+                //Console.WriteLine($"Input char : {input}");
+                if (this.textStr == "")
+                    this.textStr = $"{input}";
+                else
+                    this.textStr += input;
+
+                editedTextStr = true;
             }
             else
             {
@@ -220,7 +226,7 @@ class Textbox
                 else
                 {
                     this.isSelected = false;
-                    selectedTextboxes--;
+                    selectedTextboxes = selectedTextboxes > 0 ? selectedTextboxes - 1 : 0;
                 }
             }
         }
@@ -301,7 +307,11 @@ class Textbox
 
         // Draw text
         Vector2 drawPosition = new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize);
-        string bgString = $"{this.textStr} --> {this.ghostStr}";
+        //string bgString = $"{this.textStr} --> {this.ghostStr}";
+        string bgString = this.textStr;
+        if (this.suggestions.Length > 0) {
+            bgString += $"  --->  {this.ghostStr}";
+        }
         Window.spriteBatch.DrawString(this.font, bgString, drawPosition, Color.Black * 0.75f);
         Window.spriteBatch.DrawString(this.font, this.textStr, drawPosition, Color.Black);
 
@@ -324,7 +334,7 @@ class Textbox
         if (effectiveStr == "")
             effectiveStr = "-";
         else
-            effectiveStr = $"{this.textStr} --> {this.ghostStr}";
+            effectiveStr = $"{this.textStr}  --->  {this.ghostStr}";
         Vector2 textSize = this.font.MeasureString(effectiveStr);
         int width = ((int)textSize.X) + 2 * (outlinePxSize + outlineTextBufferPxSize);
         int height = ((int)textSize.Y) + 2 * (outlinePxSize + outlineTextBufferPxSize);

@@ -126,7 +126,7 @@ class HighlightButton
             foreach(var otherPort in this.Component.connections.Keys)
             {
                 otherRectangle = Canvas.Camera.ModifiedDrawArea(otherPort.Rectangle);
-                Component.DrawArrowBody(sb, rectangle.Center, otherRectangle.Center, 2*lineThickness, ((Port)this.Component).ConnectionOffset, color);
+                Component.DrawArrowBody(sb, rectangle.Center, otherRectangle.Center, 2*lineThickness, ((Port)otherPort).ConnectionOffset, color);
                 sb.Draw(Window.whitePixelTexture, otherRectangle, color);
                 sb.Draw(Window.whitePixelTexture, new Rectangle(otherRectangle.X + lineThickness, otherRectangle.Y + lineThickness,  otherRectangle.Width- 2*lineThickness, otherRectangle.Height - 2*lineThickness), Color.White);
             }     
