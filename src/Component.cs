@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Net.Mime;
@@ -81,7 +82,7 @@ public class Component
 	{
 		return "RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency;
 	}
-	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)//FontSystem fontSystem, int size)
+	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
 		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
 		this.width  = Constants.ComponentSize*zoomLevel/12;
@@ -182,6 +183,7 @@ public class Component
 		this.initStack += child.initStack;
 		this.frequency += child.frequency;
 	}
+
 	public static void DrawArrowBody(SpriteBatch sb, Point A, Point B, int thickness, float offset = 0.5f, Color color = new())
 	{	
 		if (color == new Color())
@@ -256,15 +258,34 @@ public class Component
 				break;
 		}
 	}
-	public void DrawArrowHead(SpriteBatch sb, Point pos, int spacing, float rotation)
+	protected void DrawArrowHead(SpriteBatch sb, Point pos, int spacing, Component.Direction direction = Direction.None)
 	{
-		int width = 3/4 * spacing;
-		int height = spacing/2;
-		Rectangle destination = new(pos.X - width/2, pos.Y - height/2, width, height);
-		Rectangle source = new(0,0, TopologyHead.arrowhead.Width, TopologyHead.arrowhead.Height);
-		Vector2 center = new(width/2, height/2);
+		double rotation = 0f;
+		float scaling = (float)spacing/67f;
+		int width =  (int)Math.Ceiling(scaling * TopologyHead.arrowhead.Width);
+		int height = (int)Math.Ceiling(scaling * TopologyHead.arrowhead.Height);
+		Vector2 destination = new(pos.X, pos.Y - height/2);
+		Vector2 center = new(TopologyHead.arrowhead.Width/2, height);
+		switch(direction)
+		{
+			case Direction.Right:
+			rotation = 0f;
+			break;
+			case Direction.Down:
+			rotation = Math.PI/2;
+			break;
+			case Direction.Left:
+			rotation = Math.PI;
+			break;
+			case Direction.Up:
+			rotation = -Math.PI/2;
+			break;
+		}
+
 		//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
-		sb.Draw(TopologyHead.arrowhead, destination, null, Color.White, rotation, center, SpriteEffects.None, 1f);
+		//sb.Draw(TopologyHead.arrowhead, destination, null, Color.Black, (float)rotation, Vector2.Zero, SpriteEffects.None, 0f);
+		sb.Draw(TopologyHead.arrowhead, destination, null, Color.Black, (float)rotation, center, scaling, SpriteEffects.None, 1);
+	
 	}
 
     public override string ToString()
@@ -329,6 +350,47 @@ class Computer : Component
 	{}
 	public Computer(string name, List<Component> children) : base(name, children, Type.Computer)
 	{}
+	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
+	{
+		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
+		this.width  = (int)Math.Ceiling(1.2*Constants.ComponentSize*zoomLevel/12);
+		this.height = this.width;
+		int spacing = this.width/4;
+		int border  = Component.lineThickness; //Just for reading clarity's sake
+		int innerHeight = this.height - 2*border;
+		int innerWidth  = this.width  - 2*border;
+
+		//Updates component's position
+		this.position = pos;
+
+		
+		//Draws small square to the right:
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + spacing/2, spacing/2, 3*spacing), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + spacing/2 + border, spacing/2 - border, 3*spacing - 2*border), Color.White);
+		//Draws big square:
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, width, height), Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + border, pos.Y + border, innerWidth, innerHeight), Color.White);
+		
+		//Connections out Arrow
+		Point arrowHead = new(pos.X + width + spacing, pos.Y + (int)(5f/3f * spacing));
+		Point arrowCenter = new(arrowHead.X - ((int)Math.Ceiling(zoomLevel/67f * TopologyHead.arrowhead.Width/4)), arrowHead.Y - (int)(zoomLevel/2f));
+		Point arrowStart = new(arrowHead.X - spacing/2 - lineThickness, arrowCenter.Y);
+		DrawArrowHead(sb, arrowHead, zoomLevel);
+		DrawArrowBody(sb, arrowStart, arrowCenter, zoomLevel, 1f);
+
+		//Connections in Arrow
+		arrowHead.Y   += (int)(3f/2f*spacing);
+		arrowStart.Y  += spacing;
+		arrowStart.X += spacing;
+		arrowCenter.Y = arrowStart.Y;
+		arrowCenter.X = arrowHead.X;
+		DrawArrowHead(sb, arrowHead, zoomLevel, Direction.Left);
+		DrawArrowBody(sb, arrowStart, arrowCenter, zoomLevel, 1f);
+
+		//Draws out the name
+		string displayName = this.CalculateDisplayName(font);
+		sb.DrawString(font, displayName, new Vector2(pos.X + 2*border , pos.Y + 2*border), Color.Black);
+	}
 
 	public int connectionsExternalSend = 0;
 	public int connectionsExternalRecieve = 0;
