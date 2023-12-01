@@ -31,7 +31,7 @@ public class Component
     public              int                 linkDrawIndex        = 0;
     public static readonly int              numberOfVisibleLinks = 5;
     public static readonly int              lineThickness        = 3;
-	private enum Direction{Up, Right, Down, Left};
+	protected enum Direction{Up, Right, Down, Left, None};
 
 	//Info:
 	public int ramSize 	 = 0;
@@ -192,9 +192,9 @@ public class Component
 		Direction direction = Direction.Right;
 		if (offset < 0f || offset > 1f)
 		{
-			offset = 0.5f;
+			offset = 1f;
 		}
-		if((A.Y < B.Y) && (2*Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
+		if((A.Y < B.Y) && (1.5*Math.Abs(A.X - B.X) < Math.Abs(A.Y - B.Y)))
 		{
 			direction = Direction.Down;
 		}		
