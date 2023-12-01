@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using OkLab;
 
 static class ColorConfiguration
 {
@@ -12,16 +13,16 @@ static class ColorConfiguration
 
     private static readonly float luminance = 0.89f;
 
-    private static readonly OkLab.Lab lab_0 = new OkLab.Lab(){L = luminance, a = -0.000f, b = -0.000f};
-    private static readonly OkLab.Lab lab_1 = new OkLab.Lab(){L = luminance, a = -0.016f, b = -0.109f};
-    private static readonly OkLab.Lab lab_2 = new OkLab.Lab(){L = luminance, a = -0.031f, b = -0.218f};
-    private static readonly OkLab.Lab lab_3 = new OkLab.Lab(){L = luminance, a = -0.047f, b = -0.327f};
-    private static readonly OkLab.Lab lab_4 = new OkLab.Lab(){L = luminance, a = -0.063f, b = -0.436f};
+    private static readonly Lab lab_0 = new Lab(luminance, -0.000f, -0.000f);
+    private static readonly Lab lab_1 = new Lab(luminance, -0.016f, -0.109f);
+    private static readonly Lab lab_2 = new Lab(luminance, -0.031f, -0.218f);
+    private static readonly Lab lab_3 = new Lab(luminance, -0.047f, -0.327f);
+    private static readonly Lab lab_4 = new Lab(luminance, -0.063f, -0.436f);
 
-    public static readonly Color color_0 = OkLab.ToLinearColor(lab_0);
-    public static readonly Color color_1 = OkLab.ToLinearColor(lab_1);
-    public static readonly Color color_2 = OkLab.ToLinearColor(lab_2);
-    public static readonly Color color_3 = OkLab.ToLinearColor(lab_3);
-    public static readonly Color color_4 = OkLab.ToLinearColor(lab_4);
+    public static readonly Color color_0 = lab_0;
+    public static readonly Color color_1 = lab_1;
+    public static readonly Color color_2 = lab_2;
+    public static readonly Color color_3 = lab_3;
+    public static readonly Color color_4 = lab_4;
 
 }
