@@ -43,11 +43,12 @@ class Textbox
 
     public bool IsSelected { 
         get {return this.isSelected;} 
-        set {if (value) selectedTextboxes++; else selectedTextboxes--; this.isSelected = value;} 
+        set {if(isSelected != value){ if (value) selectedTextboxes++; else selectedTextboxes--; } this.isSelected = value;}    //  ugly one liner
     }
     private bool isSelected = false;
     private bool potentialSelection = false;
     private bool needToUpdateTexture = false;
+    private bool isKeyFPressed = false;
 
     private Texture2D drawTexture;
 
@@ -224,6 +225,22 @@ class Textbox
             }
         }
 
+        //  cltrl f to select
+        if (keyboardState.IsKeyDown(Keys.F))
+        {
+            if (!isKeyFPressed)
+                if (keyboardState.IsKeyDown(Keys.LeftControl))
+                    this.IsSelected = true;
+            isKeyFPressed = true;
+        }
+        else
+        {
+            isKeyFPressed = false;
+        }
+        //  escpare to deselect
+        if (this.IsSelected && keyboardState.IsKeyDown(Keys.Escape))
+            this.IsSelected = false;
+
         if (this.needToUpdateTexture)
         {
             this.size = this.CalculateSize();
@@ -292,6 +309,12 @@ class Textbox
 
     public void Draw()
     {
+        if (this.IsSelected)
+        {
+            Rectangle shellArea = this.DrawArea;
+            shellArea.Inflate(2,2);
+            Window.spriteBatch.Draw(Window.whitePixelTexture, shellArea, ColorConfiguration.color_0);
+        }
         Window.spriteBatch.Draw(this.drawTexture, this.DrawArea, Color.White);
     }
 
