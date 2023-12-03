@@ -82,32 +82,34 @@ public class Component
 	{
 		return "RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency;
 	}
+
+
 	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
-		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
+		//Updates component info:
+		this.position = pos;
 		this.width  = Constants.ComponentSize*zoomLevel/12;
 		this.height = this.width;
-		int spacing = this.width/4;
-		int border  = Component.lineThickness; //Just for reading clarity's sake
-		int innerHeight = this.height - 2*border;
-		int innerWidth  = this.width  - 2*border;
-
-		//Updates component's position
-		this.position = pos;
+		
+		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
+		Rectangle internalRectangle = new(pos.X + lineThickness, pos.Y + lineThickness, this.height - 2*lineThickness, this.width  - 2*lineThickness);
+		Rectangle sideRectangle = new(pos.X + width, pos.Y + height/8, 3* width/4, 3* height/4);
+		Rectangle internalSideRectangle = new(sideRectangle.X, sideRectangle.Y + lineThickness, sideRectangle.Width - lineThickness, sideRectangle.Height - 2* lineThickness);
 
 		//Draws small square to the right:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + height/8, 3* width/4, 3* height/4), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + spacing/2 + border, 3 * width/4 - border, 3 * width/4 - 2*border), Color.White);
+		sb.Draw(Window.whitePixelTexture, sideRectangle, Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, internalSideRectangle, Color.White);
 		//Draws big square:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, width, height), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + border, pos.Y + border, innerWidth, innerHeight), Color.White);
-		
-		//Draws out the name
+		sb.Draw(Window.whitePixelTexture, this.Rectangle, Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, internalRectangle, Color.White);
+		//Draws component name:
 		string displayName = this.CalculateDisplayName(font);
-		sb.DrawString(font, displayName, new Vector2(pos.X + 2*border , pos.Y + 2*border), Color.Black);
-
+		sb.DrawString(font, displayName, new Vector2(pos.X + 2*lineThickness , pos.Y + 2*lineThickness), Color.Black);
+		//Handles buttons:
 		this.DrawLinkbuttons(sb, fontSystem);
 	}
+
+
 	private void DrawLinkbuttons(SpriteBatch sb, FontSystem fontSystem)
 	{
 		 if (this.connections.Count == 0) return;
@@ -211,15 +213,19 @@ public class Component
 
 		switch(direction)
 		{
+			case Direction.Left:
+				DrawArrowBody(sb, B, A, thickness, 1f - offset, color);
+				break;
+			case Direction.Up:
+				DrawArrowBody(sb, B, A, thickness, 1f - offset, color);
+				break;
 			case Direction.Right:
 				body.Y -= thickness/2;
 				sb.Draw(Window.whitePixelTexture, body, color);
-			
 				body.X += body.Width - thickness/2;
 				body.Width = (int)((1f - offset) * Math.Abs(A.X - B.X)) + thickness/2;
 				body.Y += B.Y - A.Y;
 				sb.Draw(Window.whitePixelTexture, body, color);
-			
 				body.Width = thickness;
 				body.Height = Math.Abs(A.Y - B.Y) + thickness/2;
 				if(A.Y > B.Y)
@@ -232,12 +238,6 @@ public class Component
 				}
 				body.X -= thickness/2;
 				sb.Draw(Window.whitePixelTexture, body, color);
-				break;
-			case Direction.Left:
-				DrawArrowBody(sb, B, A, thickness, 1f - offset, color);
-				break;
-			case Direction.Up:
-				DrawArrowBody(sb, B, A, thickness, 1f - offset, color);
 				break;
 			case Direction.Down:
 				body.X -= thickness/2;
@@ -261,11 +261,10 @@ public class Component
 	protected void DrawArrowHead(SpriteBatch sb, Point pos, int spacing, Component.Direction direction = Direction.None)
 	{
 		double rotation = 0f;
-		float scaling = (float)spacing/67f;
-		int width =  (int)Math.Ceiling(scaling * TopologyHead.arrowhead.Width);
-		int height = (int)Math.Ceiling(scaling * TopologyHead.arrowhead.Height);
-		Vector2 destination = new(pos.X, pos.Y - height/2);
-		Vector2 center = new(TopologyHead.arrowhead.Width/2, height);
+		int width =  spacing;
+		int height = (int)(3/4f*spacing);
+		Rectangle destination = new(pos.X, pos.Y, width, height);
+		Vector2 center = new(TopologyHead.arrowhead.Width/2, TopologyHead.arrowhead.Height/2);
 		switch(direction)
 		{
 			case Direction.Right:
@@ -281,11 +280,8 @@ public class Component
 			rotation = -Math.PI/2;
 			break;
 		}
-
 		//This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
-		//sb.Draw(TopologyHead.arrowhead, destination, null, Color.Black, (float)rotation, Vector2.Zero, SpriteEffects.None, 0f);
-		sb.Draw(TopologyHead.arrowhead, destination, null, Color.Black, (float)rotation, center, scaling, SpriteEffects.None, 1);
-	
+		sb.Draw(TopologyHead.arrowhead, destination, null, Color.Black, (float)rotation, center, SpriteEffects.None, 0f);	
 	}
 
     public override string ToString()
@@ -353,43 +349,43 @@ class Computer : Component
 	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
 		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
+		string connectionCount = new(this.connections.Keys.Count.ToString());
 		this.width  = (int)Math.Ceiling(1.2*Constants.ComponentSize*zoomLevel/12);
 		this.height = this.width;
 		int spacing = this.width/4;
-		int border  = Component.lineThickness; //Just for reading clarity's sake
-		int innerHeight = this.height - 2*border;
-		int innerWidth  = this.width  - 2*border;
+		Rectangle internalRectangle = new(pos.X + lineThickness, pos.Y + lineThickness, this.height - 2*lineThickness, this.width  - 2*lineThickness);
+		Rectangle sideRectangle = new(pos.X + width, pos.Y + spacing/2, connectionCount.Length * spacing/2, 3*spacing);
+		Rectangle internalSideRectangle = new(sideRectangle.X, sideRectangle.Y + lineThickness, sideRectangle.Width - lineThickness, sideRectangle.Height - 2* lineThickness);
 
 		//Updates component's position
 		this.position = pos;
 
-		
 		//Draws small square to the right:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + spacing/2, spacing/2, 3*spacing), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + width, pos.Y + spacing/2 + border, spacing/2 - border, 3*spacing - 2*border), Color.White);
+		sb.Draw(Window.whitePixelTexture, sideRectangle, Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, internalSideRectangle, Color.White);
 		//Draws big square:
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X, pos.Y, width, height), Color.Black); //black outline
-		sb.Draw(Window.whitePixelTexture, new Rectangle(pos.X + border, pos.Y + border, innerWidth, innerHeight), Color.White);
-		
+		sb.Draw(Window.whitePixelTexture, this.Rectangle, Color.Black); //black outline
+		sb.Draw(Window.whitePixelTexture, internalRectangle, Color.White);
+
 		//Connections out Arrow
-		Point arrowHead = new(pos.X + width + spacing, pos.Y + (int)(5f/3f * spacing));
-		Point arrowCenter = new(arrowHead.X - ((int)Math.Ceiling(zoomLevel/67f * TopologyHead.arrowhead.Width/4)), arrowHead.Y - (int)(zoomLevel/2f));
-		Point arrowStart = new(arrowHead.X - spacing/2 - lineThickness, arrowCenter.Y);
-		DrawArrowHead(sb, arrowHead, zoomLevel);
-		DrawArrowBody(sb, arrowStart, arrowCenter, zoomLevel, 1f);
+		Point arrowHead = new(sideRectangle.X + spacing - lineThickness, sideRectangle.Center.Y - spacing/4);
+		Point arrowStart = new(arrowHead.X - spacing/2, arrowHead.Y - zoomLevel/2);
+		DrawArrowHead(sb, arrowHead, spacing);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(arrowStart, new Point(spacing/2, zoomLevel)), Color.Black);
 
 		//Connections in Arrow
-		arrowHead.Y   += (int)(3f/2f*spacing);
-		arrowStart.Y  += spacing;
-		arrowStart.X += spacing;
-		arrowCenter.Y = arrowStart.Y;
-		arrowCenter.X = arrowHead.X;
-		DrawArrowHead(sb, arrowHead, zoomLevel, Direction.Left);
-		DrawArrowBody(sb, arrowStart, arrowCenter, zoomLevel, 1f);
+		arrowHead.Y += spacing/2;
+		arrowStart.Y += spacing/2;
+		arrowStart.X += spacing/2;
+		DrawArrowHead(sb, arrowHead, spacing, Direction.Left);
+		sb.Draw(Window.whitePixelTexture, new Rectangle(arrowStart, new Point(spacing/2, zoomLevel)), Color.Black);
+
+		//Draws out the number of connections
+		sb.DrawString(fontSystem.GetFont(2*zoomLevel), connectionCount ,new Vector2(sideRectangle.X + lineThickness, sideRectangle.Center.Y - zoomLevel), Color.Black);
 
 		//Draws out the name
 		string displayName = this.CalculateDisplayName(font);
-		sb.DrawString(font, displayName, new Vector2(pos.X + 2*border , pos.Y + 2*border), Color.Black);
+		sb.DrawString(font, displayName, new Vector2(pos.X + 2*lineThickness , pos.Y + 2*lineThickness), Color.Black);
 	}
 
 	public int connectionsExternalSend = 0;
