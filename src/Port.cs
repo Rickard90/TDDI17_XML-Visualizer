@@ -10,7 +10,6 @@ class Port : Component
 	public string interf 	= ""; 
 	public string role		= "";
 
-
 	public Port(string name, 
 				string interf, string role) : base(name, Type.Port)
 	{
