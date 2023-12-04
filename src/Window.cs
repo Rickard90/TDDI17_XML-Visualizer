@@ -231,6 +231,11 @@ public class Window : Game
             canvas.zoomLevel = Constants.screenshotZoom;
 
             UpdateCanvasSize(numberOfColums, numberOfRows);
+
+            if (!Directory.Exists("screenshots"))
+            {
+                Directory.CreateDirectory("screenshots");
+            }
             
             while(numberTaken){
                 try
