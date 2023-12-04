@@ -71,7 +71,7 @@ public class Window : Game
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
         this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");
-        this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "Help");
+        this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "(H)elp");
 
         Tooltip.spriteBatch = spriteBatch;
         Tooltip.graphicsDevice = this.GraphicsDevice;    
@@ -182,6 +182,10 @@ public class Window : Game
             this.highlightButton.Component = this.top.GetCurrent().Children.First();
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
+        //else if(Selection.CursorIsInside(helpButton.rectangle) && Selection.LeftMouseJustReleased())
+        //{
+          //  this.updateCanvas = true;
+        //}
 
         if (Selection.ComponentGoRight)
         {

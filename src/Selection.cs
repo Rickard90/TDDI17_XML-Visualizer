@@ -99,6 +99,12 @@ public static class Selection
             {
                 ScrollChange = CanvasScroll.Up;
             }
+            /* 
+            if (currentKeyboardState.IsKeyDown(Keys.H))
+            {
+                // go to usermanual view
+            }
+            */
         }
 
         GoToLink = -1;
