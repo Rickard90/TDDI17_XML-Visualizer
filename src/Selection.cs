@@ -23,9 +23,9 @@ public static class Selection
     
     public         enum LinkScroll { Nothing, Up, Down }
     public static       LinkScroll linkScroll = LinkScroll.Nothing;
-    public        enum CanvasZoomChange  { Nothing, In, Out }
+    public         enum CanvasZoomChange  { Nothing, In, Out }
     public static       CanvasZoomChange ZoomChange = CanvasZoomChange.Nothing;
-    public        enum CanvasScroll  { Nothing, Up, Down, Left, Right }
+    public         enum CanvasScroll  { Nothing, Up, Down, Left, Right }
     public static       CanvasScroll ScrollChange = CanvasScroll.Nothing;
     
 

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
@@ -43,11 +44,12 @@ class Textbox
 
     public bool IsSelected { 
         get {return this.isSelected;} 
-        set {if (value) selectedTextboxes++; else selectedTextboxes--; this.isSelected = value;} 
+        set {if(isSelected != value){ if (value) selectedTextboxes++; else selectedTextboxes--; } this.isSelected = value;}    //  ugly one liner
     }
     private bool isSelected = false;
     private bool potentialSelection = false;
     private bool needToUpdateTexture = false;
+    private bool isKeyFPressed = false;
 
     private Texture2D drawTexture;
 
@@ -90,7 +92,12 @@ class Textbox
                 }
             }
 
-            if (e.Key == Keys.Back)
+            if (e.Key == Keys.Escape)
+            {
+                this.isSelected = false;
+                selectedTextboxes = selectedTextboxes > 0 ? selectedTextboxes - 1 : 0;
+            }
+            else if (e.Key == Keys.Back)
             {
                 if (this.textStr != "")
                 {
@@ -106,7 +113,7 @@ class Textbox
                     this.textStr = this.whenEntered.Invoke(this.ghostStr);
                     editedTextStr = true;
                     this.isSelected = false;
-                    selectedTextboxes--;
+                    selectedTextboxes = selectedTextboxes > 0 ? selectedTextboxes - 1 : 0;
                 }
             }            
             else if (validInput)
@@ -219,10 +226,26 @@ class Textbox
                 else
                 {
                     this.isSelected = false;
-                    selectedTextboxes--;
+                    selectedTextboxes = selectedTextboxes > 0 ? selectedTextboxes - 1 : 0;
                 }
             }
         }
+
+        //  cltrl f to select
+        if (keyboardState.IsKeyDown(Keys.F))
+        {
+            if (!isKeyFPressed)
+                if (keyboardState.IsKeyDown(Keys.LeftControl))
+                    this.IsSelected = true;
+            isKeyFPressed = true;
+        }
+        else
+        {
+            isKeyFPressed = false;
+        }
+        //  escpare to deselect
+        if (this.IsSelected && keyboardState.IsKeyDown(Keys.Escape))
+            this.IsSelected = false;
 
         if (this.needToUpdateTexture)
         {
@@ -284,7 +307,11 @@ class Textbox
 
         // Draw text
         Vector2 drawPosition = new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize);
-        string bgString = $"{this.textStr} --> {this.ghostStr}";
+        //string bgString = $"{this.textStr} --> {this.ghostStr}";
+        string bgString = this.textStr;
+        if (this.suggestions.Length > 0) {
+            bgString += $"  --->  {this.ghostStr}";
+        }
         Window.spriteBatch.DrawString(this.font, bgString, drawPosition, Color.Black * 0.75f);
         Window.spriteBatch.DrawString(this.font, this.textStr, drawPosition, Color.Black);
 
@@ -292,6 +319,12 @@ class Textbox
 
     public void Draw()
     {
+        if (this.IsSelected)
+        {
+            Rectangle shellArea = this.DrawArea;
+            shellArea.Inflate(2,2);
+            Window.spriteBatch.Draw(Window.whitePixelTexture, shellArea, ColorConfiguration.color_0);
+        }
         Window.spriteBatch.Draw(this.drawTexture, this.DrawArea, Color.White);
     }
 
@@ -301,7 +334,7 @@ class Textbox
         if (effectiveStr == "")
             effectiveStr = "-";
         else
-            effectiveStr = $"{this.textStr} --> {this.ghostStr}";
+            effectiveStr = $"{this.textStr}  --->  {this.ghostStr}";
         Vector2 textSize = this.font.MeasureString(effectiveStr);
         int width = ((int)textSize.X) + 2 * (outlinePxSize + outlineTextBufferPxSize);
         int height = ((int)textSize.Y) + 2 * (outlinePxSize + outlineTextBufferPxSize);
