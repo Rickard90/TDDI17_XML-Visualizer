@@ -220,10 +220,7 @@ public class Window : Game
             Canvas.Camera.Update(Selection.ScrollChange, canvas.CanvasSize, Window.ClientBounds);
         }
 
-        if (Selection.PrtSc) {
-            int screenshotNumber = 0;
-            bool numberTaken = true;
-            
+        if (Selection.PrtSc) {    
             int numberOfColums = top.NumberOfColums(windowSize.X, canvas.zoomLevel);
             int numberOfRows = (top.NumberOfChildren()-1) / top.NumberOfColums(windowSize.X, canvas.zoomLevel) + 1;
         
@@ -236,25 +233,11 @@ public class Window : Game
             {
                 Directory.CreateDirectory("screenshots");
             }
-            
-            while(numberTaken){
-                try
-                {
-                    using StreamReader screenshotReader = new("screenshots/screenshot" + (screenshotNumber > 0 ? screenshotNumber.ToString() : "") + ".png");
-                    screenshotNumber++; 
-                    screenshotReader.Close();
-                }
-                catch(Exception)
-                {
-                    numberTaken = false;
-                }
-            }
-            canvas.SaveAsPng("screenshots/screenshot" + (screenshotNumber > 0 ? screenshotNumber.ToString() : "") + ".png");
+            canvas.SaveAsPng("screenshots/screenshot " + DateTime.Now.ToString("yyyy-MM-dd ") + DateTime.Now.ToString("[HH;mm;ss]")+ ".png");
             Selection.PrtSc = false;
 
             canvas.zoomLevel = currentZoom;
             UpdateCanvasSize(numberOfColums, numberOfRows);
-
         }
 
         this.enterFolderTextbox.Update(Mouse.GetState(), Keyboard.GetState());
