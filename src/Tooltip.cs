@@ -15,6 +15,8 @@ class Tooltip
 
     public static SpriteBatch spriteBatch;
     public static GraphicsDevice graphicsDevice;
+    //public static FontSystem fontSystem;
+    //public static int fontSize = 16;
 
     private static Tooltip currentTooltip = null;
     public static Rectangle CurrentArea
@@ -47,6 +49,17 @@ class Tooltip
             CurrentArea = currentTooltip.DrawArea;
         }
     }
+
+    // private static void RerenderTooltipTextures()
+    // {
+    //     foreach (KeyValuePair<Component, Tooltip> item in toolTipDict)
+    //     {
+    //         Tooltip tooltip = item.Value;
+    //         tooltip.size = tooltip.CalculateSize();
+    //         tooltip.drawTexture = tooltip.RenderTexture();
+    //     }
+    // }
+
     public static void DrawCurrent()
     {
         currentTooltip?.Draw();
@@ -60,19 +73,13 @@ class Tooltip
 
     private readonly Texture2D drawTexture;
 
-
-    private Tooltip(Point drawPoint, Component component, SpriteFontBase font)
+    public Tooltip(Point drawPoint, string text, SpriteFontBase font)
     {
         this.position = drawPoint;
         this.font = font;
-        //  the font is have a constant size, monogame is to blame
-        //font.MeasureString("text");
 
-        string line_0 = $"{component.Parent}/{component.Name}";
-        string line_1 = $"{component.GetInfo()}";
 
-        this.text = line_0 + '\n' + line_1; 
-
+        this.text = text; 
         this.size = this.CalculateSize();
 
         //
@@ -82,8 +89,11 @@ class Tooltip
         //
         //  ^ --------------------- ^
         //
-
     }
+
+    private Tooltip(Point drawPoint, Component component, SpriteFontBase font)
+        : this(drawPoint, $"{component.Parent}/{component.Name}\n{component.GetInfo()}", font)
+    {}
 
     private Texture2D RenderTexture()
     {

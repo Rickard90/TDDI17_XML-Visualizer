@@ -32,8 +32,8 @@ class Port : Component
 				{
 					if (role == "Sender") {
 						((Computer)this.Parent.Parent.Parent.Parent).connectionsExternalSend++;
-					} else if (role == "Reciever"){ //Reciever
-						((Computer)this.Parent.Parent.Parent.Parent).connectionsExternalRecieve++;
+					} else if (role == "Receiver"){ //Receiver
+						((Computer)this.Parent.Parent.Parent.Parent).connectionsExternalReceive++;
 					}
 				} else { //Internal
 					((Computer)this.Parent.Parent.Parent.Parent).connectionsInternal++;

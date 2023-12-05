@@ -97,7 +97,7 @@ public class Window : Game
         {
             int numberOfRows = (top.NumberOfChildren()-1) / top.NumberOfColums(windowSize.X, canvas.zoomLevel) + 1;
             int numberOfColums = top.NumberOfColums(windowSize.X, canvas.zoomLevel);
-            UpdateCanvasSize(numberOfRows, numberOfColums);
+            UpdateCanvasSize(numberOfColums, numberOfRows);
             Canvas.Camera.ControlOffset(canvas.CanvasSize, Window.ClientBounds);
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }

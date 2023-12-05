@@ -342,6 +342,10 @@ public class Component
 /*_______C_O_M_P_U_T_E_R________*/
 class Computer : Component
 {
+	public int connectionsExternalSend = 0;
+	public int connectionsExternalReceive = 0;
+	public int connectionsInternal = 0;
+
 	public Computer(string name) : base(name, Type.Computer)
 	{}
 	public Computer(string name, List<Component> children) : base(name, children, Type.Computer)
@@ -349,12 +353,13 @@ class Computer : Component
 	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
 		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
-		string connectionCount = new(this.connections.Keys.Count.ToString());
 		this.width  = (int)Math.Ceiling(1.2*Constants.ComponentSize*zoomLevel/12);
 		this.height = this.width;
 		int spacing = this.width/4;
+		int biggestConnectionStringLength = connectionsExternalSend > connectionsExternalReceive ? connectionsExternalSend.ToString().Length : connectionsExternalReceive.ToString().Length;
+		int sideRectangleOffset = biggestConnectionStringLength * zoomLevel;
 		Rectangle internalRectangle = new(pos.X + lineThickness, pos.Y + lineThickness, this.height - 2*lineThickness, this.width  - 2*lineThickness);
-		Rectangle sideRectangle = new(pos.X + width, pos.Y + spacing/2, connectionCount.Length * spacing/2, 3*spacing);
+		Rectangle sideRectangle = new(pos.X + width, pos.Y + spacing/2, sideRectangleOffset + 2*lineThickness, 3*spacing);
 		Rectangle internalSideRectangle = new(sideRectangle.X, sideRectangle.Y + lineThickness, sideRectangle.Width - lineThickness, sideRectangle.Height - 2* lineThickness);
 
 		//Updates component's position
@@ -368,29 +373,27 @@ class Computer : Component
 		sb.Draw(Window.whitePixelTexture, internalRectangle, Color.White);
 
 		//Connections out Arrow
-		Point arrowHead = new(sideRectangle.X + spacing - lineThickness, sideRectangle.Center.Y - spacing/4);
+		Point arrowHead = new(sideRectangle.X + spacing/2 + biggestConnectionStringLength * zoomLevel + lineThickness, sideRectangle.Center.Y - 3*spacing/4);
 		Point arrowStart = new(arrowHead.X - spacing/2, arrowHead.Y - zoomLevel/2);
+		sideRectangleOffset = zoomLevel*(biggestConnectionStringLength-connectionsExternalSend.ToString().Length);
 		DrawArrowHead(sb, arrowHead, spacing);
 		sb.Draw(Window.whitePixelTexture, new Rectangle(arrowStart, new Point(spacing/2, zoomLevel)), Color.Black);
+		sb.DrawString(fontSystem.GetFont(2*zoomLevel), connectionsExternalSend.ToString() ,new Vector2(sideRectangle.X + sideRectangleOffset, arrowHead.Y - zoomLevel), Color.Black);
+
 
 		//Connections in Arrow
-		arrowHead.Y += spacing/2;
-		arrowStart.Y += spacing/2;
+		arrowHead.Y += 6*spacing/4;
+		arrowStart.Y += 6*spacing/4;
 		arrowStart.X += spacing/2;
+		sideRectangleOffset = zoomLevel*(biggestConnectionStringLength-connectionsExternalReceive.ToString().Length);
 		DrawArrowHead(sb, arrowHead, spacing, Direction.Left);
 		sb.Draw(Window.whitePixelTexture, new Rectangle(arrowStart, new Point(spacing/2, zoomLevel)), Color.Black);
-
-		//Draws out the number of connections
-		sb.DrawString(fontSystem.GetFont(2*zoomLevel), connectionCount ,new Vector2(sideRectangle.X + lineThickness, sideRectangle.Center.Y - zoomLevel), Color.Black);
+		sb.DrawString(fontSystem.GetFont(2*zoomLevel), connectionsExternalReceive.ToString() ,new Vector2(sideRectangle.X + sideRectangleOffset, arrowHead.Y - zoomLevel), Color.Black);
 
 		//Draws out the name
 		string displayName = this.CalculateDisplayName(font);
 		sb.DrawString(font, displayName, new Vector2(pos.X + 2*lineThickness , pos.Y + 2*lineThickness), Color.Black);
 	}
-
-	public int connectionsExternalSend = 0;
-	public int connectionsExternalRecieve = 0;
-	public int connectionsInternal = 0;
 }
 
 /*______P_A_R_T_I_T_I_O_N________*/
