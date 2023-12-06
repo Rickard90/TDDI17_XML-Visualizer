@@ -16,6 +16,13 @@ partial class Canvas
 
             return new Rectangle(xOffset, yOffset, width, height);
         }
+		public static Point ModifiedPosition(Point position)
+        {
+            int xOffset = (int)(position.X + offset.X);
+            int yOffset = (int)(position.Y + offset.Y);
+
+            return new Point(xOffset, yOffset);
+        }
 
         public static void ControlOffset(Point canvasSize, Rectangle WindowSize)
         {
