@@ -173,7 +173,7 @@ public class Window : Game
                 this.top.GoToChild(child, this.highlightButton);
             }
             else {
-                Tooltip.SetTooltip(child, Selection.MouseCursorPosition(), fontSystem.GetFont(14));
+                Tooltip.SetTooltip(child, new Point(child.Rectangle.Right,child.Rectangle.Top), fontSystem.GetFont(14));
             }
         }
         else if (Selection.LeftMouseJustReleased() && (linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null
