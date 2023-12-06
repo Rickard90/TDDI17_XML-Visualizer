@@ -68,6 +68,11 @@ public class Component
 
     public void AddChild(Component newChild) 	=> this.children.Add(newChild);
 	
+	public bool IsEmpty()
+	{
+		return this.Children.Count == 0;
+	}
+	
 	//Virtual Functions:   
 	public virtual void SetChildren(List<Component> newChildren)
 	{
@@ -80,6 +85,7 @@ public class Component
 	}
 	public virtual string GetInfo()
 	{
+		
 		return "RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency;
 	}
 
