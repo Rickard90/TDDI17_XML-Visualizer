@@ -8,15 +8,13 @@ class Tooltip
     private const int outlinePxSize = 4;
     private const int outlineTextBufferPxSize = 2; 
 
-    private static readonly Color outlineColor = Color.Red;
+    private static readonly Color outlineColor = ColorConfiguration.color_3;
     private static readonly Color fillColor = Color.DarkGray;
 
     private static readonly Dictionary<Component,Tooltip> toolTipDict = new();
 
     public static SpriteBatch spriteBatch;
     public static GraphicsDevice graphicsDevice;
-    //public static FontSystem fontSystem;
-    //public static int fontSize = 16;
 
     private static Tooltip currentTooltip = null;
     public static Rectangle CurrentArea

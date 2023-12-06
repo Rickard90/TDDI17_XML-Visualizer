@@ -28,7 +28,7 @@ namespace OkLab
         {
             return (RGB)lab;
         }       
-        public override string ToString()
+        public override readonly string ToString()
         {
             return $"Lab [L={L}, a={a}, b={b}]";
         }
@@ -67,7 +67,7 @@ namespace OkLab
         {
             return new Microsoft.Xna.Framework.Color((float)rgb.r, (float)rgb.g, (float)rgb.b);
         }        
-        public override string ToString()
+        public override readonly string ToString()
         {
             return $"RGB [R={r}, G={g}, B={b}]";
         }        
