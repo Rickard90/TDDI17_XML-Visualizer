@@ -49,7 +49,7 @@ public class Window : Game
 
     protected override void LoadContent()
     {
-		Console.WriteLine("Loading Content");
+		Log.Print("Loading Content");
         spriteBatch = new SpriteBatch(GraphicsDevice);
         graphicsDevice = this.GraphicsDevice;
 
@@ -125,7 +125,7 @@ public class Window : Game
         this.top.Draw(spriteBatch, this.fontSystem, canvas.zoomLevel, canvasSize.X);
     }
 
-    private void UpdateCanvasSize(int numberOfColums, int numberOfRows) {
+    private void UpdateCanvasSize(int numberOfRows, int numberOfColums) {
         int canvasHeight;
         int canvasWidth;
         if(this.top.GetCurrent().type != Component.Type.Thread)

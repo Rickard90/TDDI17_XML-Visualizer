@@ -49,9 +49,9 @@ static class XmlReader {
             }
             topologyReader.Close();
         }
-        catch(Exception)
+        catch(Exception e)
         {
-            //Console.WriteLine("Exception: " + e.Message);
+            Log.Print("Exception: " + e.Message);
         }
 
         //Sets connections off all ports:
@@ -106,9 +106,9 @@ static class XmlReader {
             }
             applicationReader.Close();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-           // Console.WriteLine("Exception: " + e.Message);
+            Log.Print("Exception: " + e.Message);
         }
     }
 
@@ -131,9 +131,9 @@ static class XmlReader {
                 line = ResourcesReader.ReadLine();
             }
         }
-        catch(Exception)
+        catch(Exception e)
         {
-            // Console.WriteLine("Exception: " + e.Message);
+            Log.Print("Exception: " + e.Message);
         }
     }
 }

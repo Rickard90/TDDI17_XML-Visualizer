@@ -74,11 +74,11 @@ static class ComponentFinder
     // For debugging purposes
     public static void Print()
     {
-        Console.WriteLine("[ComponentFinder] ALL COMPONENTS (EXCEPT PORTS)");
+        Log.Print("[ComponentFinder] ALL COMPONENTS (EXCEPT PORTS)");
         foreach (KeyValuePair<string, Component> entry in ComponentFinder.componentDict)
         {
-            Console.WriteLine("Name: {0} Type: {1}", entry.Key, entry.Value.type);
+            Log.Print("Name: {0} Type: {1}" + entry.Key.ToString() + entry.Value.type.ToString());
         }
-        Console.WriteLine("END");
+        Log.Print("END");
     }
 }

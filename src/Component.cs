@@ -302,7 +302,7 @@ public class Component
 
 		if (size.X < innerWidth)
 		{
-			//Console.WriteLine($"			 name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
+			Log.Print("			 name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
 			return displayName;
 		}
 		else
@@ -381,7 +381,8 @@ class Computer : Component
 		sb.Draw(Window.whitePixelTexture, new Rectangle(arrowStart, new Point(spacing/2, zoomLevel)), Color.Black);
 
 		//Draws out the number of connections
-		sb.DrawString(fontSystem.GetFont(2*zoomLevel), connectionCount ,new Vector2(sideRectangle.X + lineThickness, sideRectangle.Center.Y - zoomLevel), Color.Black);
+		sb.DrawString(fontSystem.GetFont(2*zoomLevel), connectionsExternalSend.ToString(), new Vector2(sideRectangle.X + lineThickness, sideRectangle.Center.Y - 2*zoomLevel), Color.Black);
+		sb.DrawString(fontSystem.GetFont(2*zoomLevel), connectionCount.ToString(), new Vector2(sideRectangle.X + lineThickness, sideRectangle.Center.Y + 2*zoomLevel), Color.Black);
 
 		//Draws out the name
 		string displayName = this.CalculateDisplayName(font);

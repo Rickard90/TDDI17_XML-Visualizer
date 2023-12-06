@@ -18,7 +18,7 @@ class Port : Component
 	}
 	public void AddConnections(List<Port> connections)
 	{
-		Console.WriteLine(this.parent.Name + " : " + this.name + role);
+		Log.Print(this.parent.Name + " : " + this.name + role);
 		foreach (Component connectedTo in connections) {
 			if (this != connectedTo && !this.connections.ContainsKey(connectedTo)) {
 				this.connections.Add(connectedTo, 1);
@@ -28,12 +28,21 @@ class Port : Component
 		foreach (Port connectedTo in this.connections.Keys) {
 			if (this.role != connectedTo.role)
 			{
-				if (connectedTo.Parent.Parent.Parent.Parent != this.Parent.Parent.Parent.Parent)
+				Component thisParentComputer = connectedTo;
+				Component connectedParentComputer = this;
+				while (thisParentComputer.type != Type.Computer) {
+					thisParentComputer = thisParentComputer.Parent;
+				}
+				while (connectedParentComputer.type != Type.Computer) {
+					connectedParentComputer = connectedParentComputer.Parent;
+				}
+				
+				if (connectedParentComputer != thisParentComputer)
 				{
 					if (role == "Sender") {
-						((Computer)this.Parent.Parent.Parent.Parent).connectionsExternalSend++;
+						((Computer)thisParentComputer).connectionsExternalSend++;
 					} else if (role == "Reciever"){ //Reciever
-						((Computer)this.Parent.Parent.Parent.Parent).connectionsExternalRecieve++;
+						((Computer)thisParentComputer).connectionsExternalRecieve++;
 					}
 				} else { //Internal
 					((Computer)this.Parent.Parent.Parent.Parent).connectionsInternal++;

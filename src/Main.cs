@@ -2,6 +2,8 @@
 
 class MainClass {
     static void Main(string[] args){
+        Log.LogCreate();
+
         string fileName;
         if(args.Length == 1){
           fileName = args[0];

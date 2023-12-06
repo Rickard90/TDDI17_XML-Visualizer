@@ -107,7 +107,7 @@ class Textbox
             }
             else if (e.Key == Keys.Enter)
             {
-                //Console.WriteLine("Is enter key");
+                //Log.Print("Is enter key");
                 if (this.whenEntered != null)
                 {
                     this.textStr = this.whenEntered.Invoke(this.ghostStr);
@@ -118,7 +118,7 @@ class Textbox
             }            
             else if (validInput)
             {
-                //Console.WriteLine($"Input char : {input}");
+                //Log.Print($"Input char : {input}");
                 if (this.textStr == "")
                     this.textStr = $"{input}";
                 else
@@ -128,7 +128,7 @@ class Textbox
             }
             else
             {
-                //Console.WriteLine("Ignored input");
+                //Log.Print("Ignored input");
             }
 
 
