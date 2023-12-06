@@ -34,7 +34,7 @@ class Thread : Component
  		foreach(Port c in newChildren) {
 			this.AddChild(c);
 			c.Parent = this;
-			Console.WriteLine(c.Name);
+			Log.Print(c.Name);
 
 		}
 	}
@@ -42,9 +42,9 @@ class Thread : Component
 	
     public override string GetInfo()
 	{
-		Console.WriteLine("|" + this.Name);
+		Log.Print("|" + this.Name);
 		foreach(var test in connections){
-			Console.WriteLine("---->" + test.Key.Name + "Connection Weight: " + test.Value);
+			Log.Print("---->" + test.Key.Name + "Connection Weight: " + test.Value);
 		}
 		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
 	}

@@ -308,7 +308,7 @@ public class Component
 
 		if (size.X < innerWidth)
 		{
-			//Console.WriteLine($"			 name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
+			Log.Print("			 name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
 			return displayName;
 		}
 		else
@@ -395,7 +395,6 @@ class Computer : Component
 		DrawArrowHead(sb, arrowHead, spacing, Direction.Left);
 		sb.Draw(Window.whitePixelTexture, new Rectangle(arrowStart, new Point(spacing/2, zoomLevel)), Color.Black);
 		sb.DrawString(fontSystem.GetFont(2*zoomLevel), connectionsExternalReceive.ToString() ,new Vector2(sideRectangle.X + sideRectangleOffset, arrowHead.Y - zoomLevel), Color.Black);
-
 		//Draws out the name
 		string displayName = this.CalculateDisplayName(font);
 		sb.DrawString(font, displayName, new Vector2(pos.X + 2*lineThickness , pos.Y + 2*lineThickness), Color.Black);

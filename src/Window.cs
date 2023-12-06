@@ -49,7 +49,7 @@ public class Window : Game
 
     protected override void LoadContent()
     {
-		Console.WriteLine("Loading Content");
+		Log.Print("Loading Content");
         spriteBatch = new SpriteBatch(GraphicsDevice);
         graphicsDevice = this.GraphicsDevice;
 

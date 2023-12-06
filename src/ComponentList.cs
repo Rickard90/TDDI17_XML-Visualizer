@@ -79,9 +79,9 @@ static class ComponentList
     // For debugging purposes
     public static void Print()
     {
-        Console.WriteLine("ALL COMPONENTS (EXCEPT PORTS)");
+        Log.Print("ALL COMPONENTS (EXCEPT PORTS)");
         foreach (Component c in ComponentList.list)
-            Console.WriteLine("Name: {0} Type: {1}, FullPathName: {2}", c.Name, c.type, ComponentFinder.FullPathName(c));
-        Console.WriteLine("END");
+            Log.Print("Name: {0} Type: {1}, FullPathName: {2}" + c.Name.ToString() + c.type.ToString() + ComponentFinder.FullPathName(c));
+        Log.Print("END");
     }
 }
