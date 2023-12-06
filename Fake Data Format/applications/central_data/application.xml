@@ -3,9 +3,9 @@
 <Application name="CENTRAL_DATA">
  
   <Thread name="CENTRAL_DATA_64" frequency="64HZ">
-    <Port name="Air_Speed" interface="Air_Data_Interface.Air_Speed" role="Reciever"/>
-    <Port name="Levitation" interface="NAVIGATION_DATA_Interface.Levitation" role="Reciever"/>
-    <Port name="Fatigue" interface="PRES_AIM_Interface.Fatigue" role="Reciever"/>
+    <Port name="Air_Speed" interface="Air_Data_Interface.Air_Speed" role="Receiver"/>
+    <Port name="Levitation" interface="NAVIGATION_DATA_Interface.Levitation" role="Receiver"/>
+    <Port name="Fatigue" interface="PRES_AIM_Interface.Fatigue" role="Receiver"/>
   </Thread>
 
 </Application>

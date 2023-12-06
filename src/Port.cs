@@ -28,8 +28,8 @@ class Port : Component
 		foreach (Port connectedTo in this.connections.Keys) {
 			if (this.role != connectedTo.role)
 			{
-				Component thisParentComputer = connectedTo;
-				Component connectedParentComputer = this;
+				Component thisParentComputer = this;
+				Component connectedParentComputer = connectedTo;
 				while (thisParentComputer.type != Type.Computer) {
 					thisParentComputer = thisParentComputer.Parent;
 				}
@@ -41,11 +41,11 @@ class Port : Component
 				{
 					if (role == "Sender") {
 						((Computer)thisParentComputer).connectionsExternalSend++;
-					} else if (role == "Reciever"){ //Reciever
-						((Computer)thisParentComputer).connectionsExternalRecieve++;
+					} else if (role == "Receiver"){
+						((Computer)thisParentComputer).connectionsExternalReceive++;
 					}
 				} else { //Internal
-					((Computer)this.Parent.Parent.Parent.Parent).connectionsInternal++;
+					((Computer)thisParentComputer).connectionsInternal++;
 				}
 			}
 		}
