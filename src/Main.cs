@@ -7,14 +7,21 @@ class MainClass {
 
         string fileName;
         if(args.Length == 1){
-          fileName = args[0];
+            if (args[0] == "-h" || args[0] == "--help")
+            {
+                //  Display the readme.txt file here!!!
+                return;
+            }
+            else
+                fileName = args[0];
+     
         }
         else if (args.Length > 1)
         {
             Console.WriteLine($"Incorrect number of arguments given ({args.Length}):");
-            Console.WriteLine($"Usage:\n    {System.AppDomain.CurrentDomain.FriendlyName} <path>");
-            Console.WriteLine("Using default file: Fake Data Format");
-            fileName = "Fake Data Format";
+            Console.WriteLine($"Usage: {System.AppDomain.CurrentDomain.FriendlyName} [topology path]");
+            Console.WriteLine("Getting help: -h or --help");
+            return;
         }
         else
         {
