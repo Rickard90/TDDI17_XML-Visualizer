@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-public class Window : Game
+class Window : Game
 {
     public static Texture2D whitePixelTexture;
     public static SpriteBatch spriteBatch;
@@ -21,14 +21,15 @@ public class Window : Game
     private HelpButton helpButton;
     private Textbox enterFolderTextbox;
 
-    private string folderPath;
+    //private string folderPath;
     private bool updateCanvas;
 
     public Point windowSize; 
     
-    public Window(string folderPath)
+    public Window(TopologyHead topologyHead)
     {
-        this.folderPath = folderPath;
+        this.top = topologyHead;
+        //this.folderPath = folderPath;
         _ = new GraphicsDeviceManager(this);
         base.Content.RootDirectory = "Content";
         base.IsMouseVisible = true;
@@ -67,8 +68,6 @@ public class Window : Game
         {
             renderFunction = this.RenderTopology
         };
-        this.top = new TopologyHead(folderPath);
-
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
         this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");

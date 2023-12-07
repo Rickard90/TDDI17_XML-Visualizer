@@ -4,6 +4,7 @@ class MainClass {
     static void Main(string[] args){
         Log.LogCreate();
 
+
         string fileName;
         if(args.Length == 1){
           fileName = args[0];
@@ -20,7 +21,15 @@ class MainClass {
             Console.WriteLine("You did not enter a file. \nUsing default file: Fake Data Format");
             fileName = "Fake Data Format";
         }
-        using var window = new Window(fileName);
-        window.Run();
+
+        TopologyHead topologyHead = new TopologyHead(fileName);
+        if (topologyHead.GetCurrent().IsEmpty())
+            Console.WriteLine($"Could not load topology with file path \"{fileName}\""); 
+        else  
+        {
+            using var window = new Window(topologyHead);
+            window.Run();
+        }    
+
     }
 }
