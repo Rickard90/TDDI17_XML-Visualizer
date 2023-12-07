@@ -17,7 +17,9 @@ public static class Selection
     private static bool leftMouseJustReleased   = false;
     public  static bool ComponentGoRight        = false;
     public  static bool ComponentGoLeft         = false;
-    public static bool PrtSc                   = false;
+    public  static bool ComponentEnter          = false;
+    public  static bool ComponentGoBack         = false;
+    public  static bool PrtSc                   = false;
 
     public  static int  GoToLink                = -1;
     
@@ -71,6 +73,18 @@ public static class Selection
             }
             else {
                 ComponentGoLeft = false;
+            }
+            if (previousKeyboardState.IsKeyDown(Keys.Enter) && currentKeyboardState.IsKeyUp(Keys.Enter)) {
+                ComponentEnter = true;
+            }
+            else {
+                ComponentEnter = false;
+            }
+            if (previousKeyboardState.IsKeyDown(Keys.Back) && currentKeyboardState.IsKeyUp(Keys.Back)) {
+                ComponentGoBack = true;
+            }
+            else {
+                ComponentGoBack = false;
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.LeftControl) || currentKeyboardState.IsKeyDown(Keys.RightControl)) {

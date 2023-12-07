@@ -152,6 +152,7 @@ class Window : Game
         LinkButton linkButton = null;
         Tooltip.SetTooltip(null, Selection.MouseCursorPosition(), null);
 
+        // Check if we should go to a connected/linked component
         if (Selection.GoToLink != -1)
         {
             int offset = Selection.GoToLink - 1;
@@ -162,11 +163,13 @@ class Window : Game
                 this.top.GoToAny(highlightedComponent.linkButtons[selectedIndex].Component, this.highlightButton);
             }
         }
+        // Else check if we should scroll through our connections/links
         else if (Selection.linkScroll != Selection.LinkScroll.Nothing)
         {
             this.updateCanvas = true;
             this.highlightButton.Component.UpdateLinkDrawIndex();
         }
+        // Else check if the mouse cursor is inside a component
         else if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null
             && Selection.CursorIsInside(new Rectangle (0, Constants.ToolbarHeight, Window.ClientBounds.Width, Window.ClientBounds.Height)))
         {
@@ -178,6 +181,7 @@ class Window : Game
 				Tooltip.SetTooltip(child, Canvas.Camera.ModifiedPosition(new Point(child.Rectangle.Right - Component.lineThickness, child.Rectangle.Top)), fontSystem.GetFont(14));
             }
         }
+        // Else check if the mouse cursor clicked on the help button
         else if(Selection.CursorIsInside(helpButton.rectangle) && Selection.LeftMouseJustReleased())
         {
             using StreamReader topologyReader = new("help.txt");
@@ -189,6 +193,7 @@ class Window : Game
             }
             
         }
+        // Else check if we clicked on a linkbutton
         else if (Selection.LeftMouseJustReleased() && (linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null
             && Selection.CursorIsInside(new Rectangle (0, Constants.ToolbarHeight, Window.ClientBounds.Width, Window.ClientBounds.Height)))
         {
@@ -196,6 +201,7 @@ class Window : Game
             this.top.GoToAny(linkButton.Component, this.highlightButton);
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
+        // Else check if we should go to arbitrary component (this is triggered by the textbox)
         else if (ComponentFinder.componentToGoTo != null)
         {
             this.updateCanvas = true;
@@ -203,6 +209,7 @@ class Window : Game
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
             ComponentFinder.componentToGoTo = null;
         }
+        // Else check if we clicked on the back button
         else if (Selection.CursorIsInside(backButton.rectangle) && Selection.LeftMouseJustReleased())
         {
             this.updateCanvas = true;
@@ -211,8 +218,20 @@ class Window : Game
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
 
-
-        if (Selection.ComponentGoRight)
+        if (Selection.ComponentEnter)
+        {
+            this.updateCanvas = true;
+            this.top.GoToChild(this.highlightButton.Component, this.highlightButton);
+            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+        }
+        else if (Selection.ComponentGoBack)
+        {
+            this.updateCanvas = true;
+            this.top.GoBack();
+            this.highlightButton.Component = this.top.GetCurrent().Children.First();
+            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+        }
+        else if (Selection.ComponentGoRight)
         {
             this.highlightButton.GoRight(this.top.GetCurrent().Children);
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
