@@ -33,7 +33,10 @@
     </Content> 
     <Content Include="Fake Data Format/**"> 
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
-    </Content>     
+    </Content> 
+    <Content Include="help.txt"> 
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
+    </Content>           
   </ItemGroup>
 
   <ItemGroup>

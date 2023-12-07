@@ -9,7 +9,10 @@ class MainClass {
         if(args.Length == 1){
             if (args[0] == "-h" || args[0] == "--help")
             {
-                //  Display the readme.txt file here!!!
+                if (File.Exists("help.txt"))
+                    Console.WriteLine(File.ReadAllText("help.txt"));
+                else
+                    Console.WriteLine("help file does not exist");
                 return;
             }
             else
