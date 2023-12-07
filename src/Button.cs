@@ -161,3 +161,31 @@ class HighlightButton
             this.Component = components[components.IndexOf(this.Component) - 1];
     }
 }
+
+    /*---------------------------*/
+    /*      HelpButton           */
+    /*---------------------------*/
+
+public class HelpButton : Button
+{
+    private readonly string description;
+
+    public HelpButton(Rectangle rectangle, string description)
+        :   base(rectangle)
+    {
+        this.description = description;
+    }
+
+    public void UpdatePosition(Point windowSize)
+    {
+        rectangle.X = windowSize.X - 110;
+    }
+
+    public void Draw(SpriteBatch sb, SpriteFontBase font, int windowSize)
+    {
+        Rectangle modifiedArea = this.rectangle;
+        modifiedArea.X = windowSize - 110;
+        sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Black);
+        sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);
+    }
+}

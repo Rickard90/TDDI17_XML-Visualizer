@@ -18,6 +18,7 @@ public class Window : Game
 
     private BackButton backButton;
     private HighlightButton highlightButton;
+    private HelpButton helpButton;
     private Textbox enterFolderTextbox;
 
     private string folderPath;
@@ -45,6 +46,7 @@ public class Window : Game
         this.windowSize = base.Window.ClientBounds.Size;
         Canvas.Camera.offset.X = (Window.ClientBounds.Size.X - canvas.CanvasSize.X) / 2;
         this.enterFolderTextbox.OnResize(windowSize);
+        helpButton.UpdatePosition(windowSize);
     }
 
     protected override void LoadContent()
@@ -70,7 +72,7 @@ public class Window : Game
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
         this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");
-
+        this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "(H)elp");
         Tooltip.spriteBatch = spriteBatch;
         Tooltip.graphicsDevice = this.GraphicsDevice;    
 
@@ -109,6 +111,7 @@ public class Window : Game
         spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 0, Window.ClientBounds.Size.X, Constants.ToolbarHeight), new Color(230, 230, 230, 255));
         spriteBatch.Draw(whitePixelTexture, new Rectangle(0, Constants.ToolbarHeight-3, Window.ClientBounds.Size.X, 3), Color.Gray);
         this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
+        this.helpButton.Draw(spriteBatch, this.fontSystem.GetFont(32), windowSize.X);
         this.top.DrawPath(spriteBatch, this.fontSystem.GetFont(22));
         
         this.enterFolderTextbox.Draw();
@@ -175,6 +178,17 @@ public class Window : Game
             else {
 				Tooltip.SetTooltip(child, Canvas.Camera.ModifiedPosition(new Point(child.Rectangle.Right - Component.lineThickness, child.Rectangle.Top)), fontSystem.GetFont(14));
             }
+        }
+        else if(Selection.CursorIsInside(helpButton.rectangle) && Selection.LeftMouseJustReleased())
+        {
+            using StreamReader topologyReader = new("help.txt");
+            string line = topologyReader.ReadLine();
+            while (line != null)
+            {
+                Console.WriteLine(line);
+                line = topologyReader.ReadLine();
+            }
+            
         }
         else if (Selection.LeftMouseJustReleased() && (linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null
             && Selection.CursorIsInside(new Rectangle (0, Constants.ToolbarHeight, Window.ClientBounds.Width, Window.ClientBounds.Height)))

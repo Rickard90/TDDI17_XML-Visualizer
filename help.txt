@@ -1,0 +1,22 @@
+
+===============================HELP===============================
+
+Hotkeys:
+	
+View commands:	
+	Zoom in			Ctrl + '+' or Ctrl + mousewheelup
+	Zoom out		Ctrl + '-' or Ctrl + mousewheeldown
+	Move View		Arrow Keys
+
+Print:
+	Print			Ctrl + 'P'
+	Help			'H'
+
+Navigate Components:
+	Select Next 		'D'
+	Select Previous		'A'
+
+Search:
+	Aktivate Search		Ctrl + 'F'
+	Search			Enter
+	Deselect		Esc
