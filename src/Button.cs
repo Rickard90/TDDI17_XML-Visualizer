@@ -41,7 +41,6 @@ public class LinkButton : Button
 		if(Highlight)
 		{
 			DrawHighlight(sb, font);
-			this.Highlight = false;
 		}
 		else
 		{		
