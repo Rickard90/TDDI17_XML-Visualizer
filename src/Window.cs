@@ -134,12 +134,12 @@ public class Window : Game
         if(this.top.GetCurrent().type != Component.Type.Thread)
         {
             canvasHeight = ((numberOfRows * Constants.ComponentSize + Constants.Spacing)*canvas.zoomLevel/8) + Constants.ToolbarHeight;
-            canvasWidth = (numberOfColums*(8*Constants.Spacing + Constants.ComponentSize) - 3*Constants.Spacing)*canvas.zoomLevel/12;
+            canvasWidth = (numberOfColums*(8*Constants.Spacing + Constants.ComponentSize) - 3*Constants.Spacing)*canvas.zoomLevel/Constants.defaultZoom;
         }
-        else //this.top.GetCurrent().type == Component.Type.Thread need rework
+        else //this.top.GetCurrent().type == Component.Type.Thread :  need rework so that is only sets canvas size to lowest possible
         {
-            canvasHeight = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
-            canvasWidth = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
+            canvasHeight = 8*Constants.ComponentSize*canvas.zoomLevel/Constants.defaultZoom + Constants.ToolbarHeight;
+            canvasWidth = 8*Constants.ComponentSize*canvas.zoomLevel/Constants.defaultZoom + Constants.ToolbarHeight;
         }
         this.canvas.ReSize(new Point(canvasWidth, canvasHeight));
         this.canvas.UpdateTexture();
@@ -181,14 +181,17 @@ public class Window : Game
         }
         else if(Selection.CursorIsInside(helpButton.rectangle) && Selection.LeftMouseJustReleased())
         {
-            using StreamReader topologyReader = new("help.txt");
-            string line = topologyReader.ReadLine();
-            while (line != null)
-            {
-                Console.WriteLine(line);
-                line = topologyReader.ReadLine();
+            try {
+                using StreamReader topologyReader = new("help.txt");
+                string line = topologyReader.ReadLine();
+                while (line != null)
+                {
+                    Console.WriteLine(line);
+                    line = topologyReader.ReadLine();
+                }
+            } catch (Exception e){
+                Log.Print(e.ToString());
             }
-            
         }
         else if (Selection.LeftMouseJustReleased() && (linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null
             && Selection.CursorIsInside(new Rectangle (0, Constants.ToolbarHeight, Window.ClientBounds.Width, Window.ClientBounds.Height)))
