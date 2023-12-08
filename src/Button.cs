@@ -68,6 +68,19 @@ public class LinkButton : Button
 
         sb.DrawString(font, newName, new Vector2(pos.X, pos.Y), Color.Black);
     }
+    public void Highlight(SpriteBatch sb, SpriteFontBase font)
+    {
+        
+        int nameSize = (int)font.MeasureString(this.Component.Name).X;
+        int alteredWidth =  nameSize > this.rectangle.Width ? nameSize : this.rectangle.Width;
+
+        Color highlightColor = ColorConfiguration.color_3;
+        Vector2 namePos = new(this.rectangle.X - 3*this.rectangle.Width, this.rectangle.Y);
+        Rectangle spaceToDrawOn = new(this.rectangle.X, this.rectangle.Y, alteredWidth, this.rectangle.Height);
+
+        sb.Draw(Window.whitePixelTexture, spaceToDrawOn, highlightColor);
+        sb.DrawString(font, this.Component.Name, namePos, Color.Black);
+    }
 }
 
 /*---------------------------*/
