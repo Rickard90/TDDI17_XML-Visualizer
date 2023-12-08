@@ -231,16 +231,26 @@ class Window : Game
             this.highlightButton.Component = this.top.GetCurrent().Children.First();
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
-        else if (Selection.ComponentGoRight)
+        else if (Selection.ComponentGoUp)
         {
-            this.highlightButton.GoRight(this.top.GetCurrent().Children);
+            this.highlightButton.GoUp(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
-        } 
+        }
+        else if (Selection.ComponentGoDown)
+        {
+            this.highlightButton.GoDown(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
+            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+        }
         else if (Selection.ComponentGoLeft)
         {
             this.highlightButton.GoLeft(this.top.GetCurrent().Children);
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
+        else if (Selection.ComponentGoRight)
+        {
+            this.highlightButton.GoRight(this.top.GetCurrent().Children);
+            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+        } 
 
         
         if (Selection.ZoomChange != Selection.CanvasZoomChange.Nothing) {

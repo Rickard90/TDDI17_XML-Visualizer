@@ -145,12 +145,14 @@ class HighlightButton
 
     }
 
-    public void GoRight(List<Component> components)
+    public void GoUp(List<Component> components, int columns)
     {
-        if (this.Component == components.Last())
-            this.Component = components.First();
-        else
-            this.Component = components[components.IndexOf(this.Component) + 1];
+
+    }
+
+    public void GoDown(List<Component> components, int columns)
+    {
+
     }
 
     public void GoLeft(List<Component> components)
@@ -159,6 +161,14 @@ class HighlightButton
             this.Component = components.Last();
         else
             this.Component = components[components.IndexOf(this.Component) - 1];
+    }
+
+    public void GoRight(List<Component> components)
+    {
+        if (this.Component == components.Last())
+            this.Component = components.First();
+        else
+            this.Component = components[components.IndexOf(this.Component) + 1];
     }
 }
 
