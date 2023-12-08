@@ -23,6 +23,7 @@ public abstract class Button
 public class LinkButton : Button
 {
     public Component Component;
+	public Boolean Highlight = false;
 
     public LinkButton(Component Component)
         :   base(new())
@@ -32,55 +33,77 @@ public class LinkButton : Button
 
     public void Draw(SpriteBatch sb, SpriteFontBase font, Point pos, int height, int width)
     {
-        this.rectangle.X = pos.X + width;
+        this.rectangle.X = pos.X;
         this.rectangle.Y = pos.Y;
-        this.rectangle.Width = width/3;
+        this.rectangle.Width = width;
         this.rectangle.Height = height;
-
-        //Draws the arrow-body
-        //sb.Draw(Window.whitePixelTexture, new Rectangle(this.rectangle.X, this.rectangle.Y, width/4, height/2), Color.Black);
-        //This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
-        //sb.Draw(TopologyHead.arrowhead, new Rectangle(this.rectangle.X, this.rectangle.Y, width/3, height), Color.White);
-        //Draws the arrow-body
-		sb.Draw(Window.whitePixelTexture, new Rectangle(this.rectangle.Left, this.rectangle.Center.Y - (int)Math.Round((float)this.rectangle.Height/6f), this.rectangle.Width/2, this.rectangle.Height/3), Color.Black);
 		
-        sb.Draw(TopologyHead.arrowhead, this.rectangle, Color.White);
+		if(Highlight)
+		{
+			DrawHighlight(sb, font);
+			this.Highlight = false;
+		}
+		else
+		{		
+			DrawDefault(sb, font);
+		}
+		DrawArrow(sb, width);
 
+    }
+	private void DrawDefault(SpriteBatch sb, SpriteFontBase font)
+	{
         Vector2 size = font.MeasureString(this.Component.Name);
-        if (size.X < width)
+        if (size.X < this.rectangle.Width)
         {
-            sb.DrawString(font, this.Component.Name, new Vector2(pos.X, pos.Y), Color.Black);
+            sb.DrawString(font, this.Component.Name, new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
             return;
         }
-
         string newName = this.Component.Name + "...";
         size = font.MeasureString(newName);
         float excess;
         int reduceBy;
         do
         {
-            excess = (size.X - width) / font.FontSize;
+            excess = (size.X - this.rectangle.Width) / font.FontSize;
             reduceBy = Math.Max(1, (int)excess) + "...".Length;
             newName = newName[..^reduceBy] + "...";
             size = font.MeasureString(newName);
         }
-        while (size.X > width);
+        while (size.X > this.rectangle.Width);
 
-        sb.DrawString(font, newName, new Vector2(pos.X, pos.Y), Color.Black);
-    }
-    public void Highlight(SpriteBatch sb, SpriteFontBase font)
+        sb.DrawString(font, newName, new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
+	}
+	
+    private void DrawHighlight(SpriteBatch sb, SpriteFontBase font)
     {
-        
         int nameSize = (int)font.MeasureString(this.Component.Name).X;
         int alteredWidth =  nameSize > this.rectangle.Width ? nameSize : this.rectangle.Width;
+		int borderOffset = Component.lineThickness;
 
-        Color highlightColor = ColorConfiguration.color_3;
-        Vector2 namePos = new(this.rectangle.X - 3*this.rectangle.Width, this.rectangle.Y);
-        Rectangle spaceToDrawOn = new(this.rectangle.X, this.rectangle.Y, alteredWidth, this.rectangle.Height);
+        Color highlightColor = ColorConfiguration.color_1;
+        Vector2 namePos = new(this.rectangle.X, this.rectangle.Y);
+        Rectangle spaceToDrawOn = new(this.rectangle.X - borderOffset, this.rectangle.Y - borderOffset, alteredWidth + 2*borderOffset, this.rectangle.Height + 2*borderOffset);
 
         sb.Draw(Window.whitePixelTexture, spaceToDrawOn, highlightColor);
-        sb.DrawString(font, this.Component.Name, namePos, Color.Black);
+		spaceToDrawOn = this.rectangle;
+		spaceToDrawOn.Width = alteredWidth;
+		sb.Draw(Window.whitePixelTexture, spaceToDrawOn, Color.White);
+		sb.DrawString(font, this.Component.Name, namePos, Color.Black);
+		
+		this.rectangle.Width = alteredWidth + borderOffset;
     }
+	
+	private void DrawArrow(SpriteBatch sb, int size)
+	{
+		Rectangle arrowRectangle = new(this.rectangle.Left + this.rectangle.Width, this.rectangle.Center.Y - (int)Math.Round((float)this.rectangle.Height/6f), size/6, this.rectangle.Height/3);
+        //Draws the arrow-body
+		sb.Draw(Window.whitePixelTexture, arrowRectangle , Color.Black);
+        //Draws the arrowhead
+		arrowRectangle.Y = this.rectangle.Y;
+		arrowRectangle.Width = 2*arrowRectangle.Width;
+		arrowRectangle.Height = this.rectangle.Height;
+		sb.Draw(TopologyHead.arrowhead, arrowRectangle, Color.Black);
+	}
 }
 
 /*---------------------------*/

@@ -228,9 +228,7 @@ class Window : Game
             else if ((linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null
                 && Selection.CursorIsInside(new Rectangle (0, Constants.ToolbarHeight, Window.ClientBounds.Width, Window.ClientBounds.Height)))
             {
-                //spriteBatch.Begin();
-                //linkButton.Highlight(spriteBatch,this.fontSystem.GetFont(canvas.zoomLevel));
-                //spriteBatch.End();
+                linkButton.Highlight = true;
             }
         }
 
