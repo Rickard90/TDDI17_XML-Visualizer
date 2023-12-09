@@ -16,7 +16,7 @@ partial class Canvas
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
     public int zoomLevel = 12; //default zoom level
-    private const int minZoom = 6;
+    private const int minZoom = 9;
     private const int maxZoom = 25;
 
     public Point CanvasSize{
@@ -40,40 +40,32 @@ partial class Canvas
     }
     public void Draw()
     {
-
         if (this.texture == null)
             throw new Exception("Tried to draw canvas without generating texture");
         Rectangle area = Camera.ModifiedDrawArea(new Rectangle(0,0, canvasSize.X, canvasSize.Y));           
         this.spriteBatch.Draw(this.texture, area, Color.White);
     }
 
-    public void Update(MouseState mouseState, KeyboardState keyboardState)
+    public void Update(Selection.CanvasZoomChange zoomChange, Rectangle WindowSize)
     {
-        Camera.UpdateByKeyboard(keyboardState);
-        if (keyboardState.IsKeyDown(Keys.I)) {
+        if (zoomChange == Selection.CanvasZoomChange.In) {
             zoomLevel = Math.Min(maxZoom, zoomLevel+1);
-            Console.WriteLine("zoom in " + zoomLevel);
-        }
-        if (keyboardState.IsKeyDown(Keys.O)) {
+        } else if (zoomChange == Selection.CanvasZoomChange.Out) {
             zoomLevel = Math.Max(minZoom, zoomLevel-1);
-            Console.WriteLine("zoom out " + zoomLevel);
         }
     }
 
-    public void OffetControl(Rectangle WindowSize) {
-        if (WindowSize.Width < canvasSize.X) {
-            Camera.offset.X = Math.Min(0, Camera.offset.X);
-            Camera.offset.X = Math.Max(WindowSize.Width-canvasSize.X, Camera.offset.X);
-        } else {
-            Camera.offset.X = Math.Max(0, Camera.offset.X);
-            Camera.offset.X = Math.Min(WindowSize.Width-canvasSize.X, Camera.offset.X);
+    public void ScrollCanvasToArea(Rectangle target, Rectangle windowRect) 
+    {
+        if ( target.Y > - Camera.offset.Y + windowRect.Height ) {
+            Camera.offset.Y = -target.Y - 4*target.Height/3 + windowRect.Height;
+        } else if ( target.Y < - Camera.offset.Y ) {
+            Camera.offset.Y = -target.Y + 2*target.Height/3;
         }
-        if (WindowSize.Height < canvasSize.Y) {
-            Camera.offset.Y = Math.Min(0, Camera.offset.Y);
-            Camera.offset.Y = Math.Max(WindowSize.Height-canvasSize.Y, Camera.offset.Y);
-        } else {
-            Camera.offset.Y = Math.Max(0, Camera.offset.Y);
-            Camera.offset.Y = Math.Min(WindowSize.Height-canvasSize.Y, Camera.offset.Y);
+        if ( target.X+target.Width > - Camera.offset.X + windowRect.Width ) {
+            Camera.offset.X = -target.X-target.Width - 4*target.Width/3 + windowRect.Width;
+        } else if ( target.X < - Camera.offset.X ) {
+            Camera.offset.X = -target.X + 2*target.Width/3;
         }
     }
     public void UpdateTexture()
@@ -101,7 +93,20 @@ partial class Canvas
 
             graphicsDevice.SetRenderTarget(null);
         }
+
+        //this.SaveAsPng("test.png");
         
+    }
+
+    public void SaveAsPng(string path)
+    {
+        if (!path.EndsWith(".png"))
+            throw new ArgumentException("Path should end with \".png\" since the output file is .png !");
+
+        using MemoryStream data = new MemoryStream();
+        texture.SaveAsPng(data, this.texture.Width, this.texture.Height);
+        File.WriteAllBytes(path, data.ToArray());
+
     }
 
 }

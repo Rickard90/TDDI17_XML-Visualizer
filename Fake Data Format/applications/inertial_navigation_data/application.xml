@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Application name="Inertial_Navigation_DATA">
+ 
+  <Thread name="INERTIAL_NAVIGATION_DATA_73" frequency="42HZ">
+    <Port name="Fatigue" interface="PRES_AIM_Interface.Fatigue" role="Receiver"/>
+    <Port name="Flight_control_surfaces" interface="PRES_AIM_Interface.Flight_control_surfaces" role="Receiver"/>
+    <Port name="Flight_dynamics" interface="PRES_AIM_Interface.Flight_dynamics" role="Receiver"/>
+    <Port name="FMS" interface="PRES_AIM_Interface.FMS" role="Receiver"/>
+    <Port name="Fluid" interface="PRES_AIM_Interface.Fluid" role="Receiver"/>
+    <Port name="Force" interface="PRES_AIM_Interface.Force" role="Receiver"/>
+    <Port name="Fuselage" interface="PRES_AIM_Interface.Fuselage" role="Receiver"/>
+    <Port name="FANS" interface="PRES_AIM_Interface.FANS" role="Receiver"/>
+    <Port name="Galaxy" interface="PRES_AIM_Interface.Galaxy" role="Receiver"/>
+    <Port name="Glider" interface="PRES_AIM_Interface.Glider" role="Receiver"/>
+    <Port name="Goddard" interface="PRES_AIM_Interface.Goddard" role="Receiver"/>
+    <Port name="Heat_shield" interface="PRES_AIM_Interface.Heat_shield" role="Receiver"/>
+    <Port name="Hypersonic" interface="PRES_AIM_Interface.Hypersonic" role="Receiver"/>
+    <Port name="Indicated_airspeed" interface="PRES_AIM_Interface.Indicated_airspeed" role="Receiver"/>
+  </Thread>
+
+</Application>

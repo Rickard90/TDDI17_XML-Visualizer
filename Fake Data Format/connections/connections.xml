@@ -4,42 +4,107 @@
 
   <Connection>
     <SenderPort name="AIR_DATA.AIR_DATA_64.Airspeed"/>
-    <RecieverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Airspeed"/>
+    <ReceiverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Airspeed"/>
   </Connection>
 
   <Connection>
     <SenderPort name="AIR_DATA.AIR_DATA_64.Altitude"/>
-    <RecieverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Altitude"/>
+    <ReceiverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Altitude"/>
   </Connection>
 
   <Connection>
     <SenderPort name="AIR_DATA.AIR_DATA_16.Pressure"/>
-    <RecieverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Pressure"/>
+    <ReceiverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Pressure"/>
   </Connection>
 
   <Connection>
     <SenderPort name="AIR_DATA.AIR_DATA_16.Temperature"/>
-    <RecieverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Temperature"/>
+    <ReceiverPort name="FLIGHT_DATA_PRES.FLIGHT_DATA_PRES_64.Temperature"/>
   </Connection>
 
   <Connection>
-    <SenderPort name="NAVIGATION_DATA.NAVIGATION_DATA_64.Levitation"/>
-    <RecieverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Levitation"/>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_1.Levitation"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Levitation"/>
   </Connection>
 
   <Connection>
-    <SenderPort name="NAVIGATION_DATA.NAVIGATION_DATA_64.Aerostat"/>
-    <RecieverPort name="FMISSION_HANDLING.MISSION_HANDLING_64.Aerostat"/>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_2.Aerostat"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Aerostat"/>
   </Connection>
 
   <Connection>
-    <SenderPort name="NAVIGATION_DATA.NAVIGATION_DATA_16.Motion"/>
-    <RecieverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Motion"/>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_3.Motion"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Motion"/>
   </Connection>
 
   <Connection>
-    <SenderPort name="NAVIGATION_DATA.NAVIGATION_DATA_16.Weather"/>
-    <RecieverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Weather"/>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_4.Weather"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Weather"/>
+  </Connection>
+
+  <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_5.Humidity"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Humidity"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_6.Acceleration"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Acceleration"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_7.ADF"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.ADF"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_8.Aeroacoustics"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Aeroacoustics"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_9.Aerobraking"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Aerobraking"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_10.IDF"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.IDF"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_11.Compression"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Compression"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_12.Decalage"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Decalage"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_13.Deflection"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Deflection"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_14.Dihedral"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Dihedral"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_15.Fatigue"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Fatigue"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_16.Floatstick"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Floatstick"/>
+  </Connection>
+
+ <Connection>
+    <SenderPort name="NAVIGATION_DATA.N_DATA_17.Fuselage"/>
+    <ReceiverPort name="MISSION_HANDLING.MISSION_HANDLING_64.Fuselage"/>
   </Connection>
 
 </Connections>

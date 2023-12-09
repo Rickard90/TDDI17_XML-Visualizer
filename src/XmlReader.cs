@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Data;
+using System.Globalization;
 using System.IO;
 
 static class XmlReader {
@@ -17,8 +18,8 @@ static class XmlReader {
         int initStack = 0;
 
         try
-        {            
-            StreamReader topologyReader = new(path + "/topology/topology.xml");
+        {
+            using StreamReader topologyReader = new(path + "/topology/topology.xml");
             line = topologyReader.ReadLine();
             while (line != null)
             {
@@ -33,8 +34,6 @@ static class XmlReader {
                     }else if (line.Split('\"')[0] == "<Application name=" ) {
                         threads.Clear();
                         applicationName = (line.Split('\"')[1]);
-                        // Raden nedan är viktig för att file-path ska bli korrekt på Windows och Linux. /Mattias
-                        applicationName = applicationName.ToLower();
                         ReadResourses(applicationName, threads, ref ramSize, ref initStack, path);
                         ReadApplication(applicationName, threads, path, connections);
                         applications.Add(new Application(applicationName, ramSize, initStack));
@@ -50,9 +49,9 @@ static class XmlReader {
             }
             topologyReader.Close();
         }
-        catch(Exception)
+        catch(Exception e)
         {
-            //Console.WriteLine("Exception: " + e.Message);
+            Log.Print("Exception: " + e.Message);
         }
 
         //Sets connections off all ports:
@@ -78,7 +77,7 @@ static class XmlReader {
         int frequency = 0;
         try
         {
-            StreamReader applicationReader = new(path + "/applications/"+applicationName+"/application.xml");
+            using StreamReader applicationReader = new(path + "/applications/"+applicationName.ToLower()+"/application.xml");
             line = applicationReader.ReadLine();
             
             while (line != null)
@@ -107,16 +106,16 @@ static class XmlReader {
             }
             applicationReader.Close();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-           // Console.WriteLine("Exception: " + e.Message);
+            Log.Print("Exception: " + e.Message);
         }
     }
 
     private static void ReadResourses(string applicationName, List<Component> threads, ref int ramSize, ref int initStack, string path) {
         string line;
         try {
-            StreamReader ResourcesReader = new(path + "/applications/"+applicationName+"/resources.xml");
+            using StreamReader ResourcesReader = new(path + "/applications/"+applicationName.ToLower()+"/resources.xml");
             line = ResourcesReader.ReadLine();
             while (line != null)
             {
@@ -132,9 +131,9 @@ static class XmlReader {
                 line = ResourcesReader.ReadLine();
             }
         }
-        catch(Exception)
+        catch(Exception e)
         {
-            // Console.WriteLine("Exception: " + e.Message);
+            Log.Print("Exception: " + e.Message);
         }
     }
 }

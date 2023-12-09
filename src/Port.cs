@@ -5,6 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 /*__________P_O_R_T___________*/
 class Port : Component
 {
+	public 	float ConnectionOffset{get => this.connectionOffset; set => this.connectionOffset = value;}
+	private float connectionOffset = 0.5f;
+	public string interf 	= ""; 
+	public string role		= "";
+
 	public Port(string name, 
 				string interf, string role) : base(name, Type.Port)
 	{
@@ -13,13 +18,43 @@ class Port : Component
 	}
 	public void AddConnections(List<Port> connections)
 	{
+		Log.Print(this.parent.Name + " : " + this.name + role);
 		foreach (Component connectedTo in connections) {
 			if (this != connectedTo && !this.connections.ContainsKey(connectedTo)) {
 				this.connections.Add(connectedTo, 1);
 			}
 		}
+
+		foreach (Port connectedTo in this.connections.Keys) {
+			if (this.role != connectedTo.role)
+			{
+				Component thisParentComputer = this;
+				Component connectedParentComputer = connectedTo;
+				while (thisParentComputer.type != Type.Computer) {
+					thisParentComputer = thisParentComputer.Parent;
+				}
+				while (connectedParentComputer.type != Type.Computer) {
+					connectedParentComputer = connectedParentComputer.Parent;
+				}
+				
+				if (connectedParentComputer != thisParentComputer)
+				{
+					if (role == "Sender") {
+						((Computer)thisParentComputer).connectionsExternalSend++;
+					} else if (role == "Receiver"){
+						((Computer)thisParentComputer).connectionsExternalReceive++;
+					}
+				} else { //Internal
+					((Computer)thisParentComputer).connectionsInternal++;
+				}
+			}
+		}
 	}
-	public override void Draw(Point pos, SpriteBatch sb, SpriteFontBase font, int spacing)
+	public override string GetInfo()
+	{
+		return "";
+	}
+	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int spacing)
 	{
 		int border = Component.lineThickness; //Just for reading clarity's sake
 		this.width  = spacing/2;
@@ -33,6 +68,4 @@ class Port : Component
 		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X, this.position.Y, this.width, this.height), Color.Black); //black outline
 		sb.Draw(Window.whitePixelTexture, new Rectangle(this.position.X + border, this.position.Y + border, this.width - 2*border, this.height - 2*border), Color.White);
 	}
-	public string interf 	= ""; 
-	public string role		= "";
 }

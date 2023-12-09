@@ -3,10 +3,10 @@
 <Application name="FLIGHT_DATA_PRES">
  
   <Thread name="FLIGHT_DATA_PRES_64" frequency="64HZ">
-    <Port name="Air_Speed" interface="Air_Data_Interface.Speed" role="Reciever"/>
-    <Port name="Altitude" interface="Air_Data_Interface.Altitude" role="Reciever"/>
-    <Port name="Pressure" interface="Air_Data_Interface.Pressure" role="Reciever"/>
-    <Port name="Temperature" interface="Air_Data_Interface.Temperature" role="Reciever"/>
+    <Port name="Air_Speed" interface="Air_Data_Interface.Air_Speed" role="Receiver"/>
+    <Port name="Altitude" interface="Air_Data_Interface.Altitude" role="Receiver"/>
+    <Port name="Pressure" interface="Air_Data_Interface.Pressure" role="Receiver"/>
+    <Port name="Temperature" interface="Air_Data_Interface.Temperature" role="Receiver"/>
   </Thread>
 
 </Application>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Application name="MISSION_HANDLING">
+ 
+  <Thread name="MISSION_HANDLING_64" frequency="64HZ">
+    <Port name="Levitation" interface="NAVIGATION_DATA_Interface.Levitation" role="Receiver"/>
+    <Port name="Aerostat" interface="NAVIGATION_DATA_Interface.Aerostat" role="Receiver"/>
+    <Port name="Motion" interface="NAVIGATION_DATA_Interface.Motion" role="Receiver"/>
+    <Port name="Weather" interface="NAVIGATION_DATA_Interface.Weather" role="Receiver"/>
+    <Port name="Humidity" interface="NAVIGATION_DATA_Interface.Humidity" role="Receiver"/>
+    <Port name="Acceleration" interface="NAVIGATION_DATA_Interface.Acceleration" role="Receiver"/>
+    <Port name="ADF" interface="NAVIGATION_DATA_Interface.ADF" role="Receiver"/>
+    <Port name="Aeroacoustics" interface="NAVIGATION_DATA_Interface.Aeroacoustics" role="Receiver"/>
+    <Port name="Aerobraking" interface="NAVIGATION_DATA_Interface.Aerobraking" role="Receiver"/>
+    <Port name="IDF" interface="NAVIGATION_DATA_Interface.IDF" role="Receiver"/>
+    <Port name="Compression" interface="NAVIGATION_DATA_Interface.Compression" role="Receiver"/>
+    <Port name="Decalage" interface="NAVIGATION_DATA_Interface.Decalage" role="Receiver"/>
+    <Port name="Deflection" interface="NAVIGATION_DATA_Interface.Deflection" role="Receiver"/>
+    <Port name="Dihedral" interface="NAVIGATION_DATA_Interface.Dihedral" role="Receiver"/>
+    <Port name="Fatigue" interface="NAVIGATION_DATA_Interface.Fatigue" role="Receiver"/>
+    <Port name="Floatstick" interface="NAVIGATION_DATA_Interface.Floatstick" role="Receiver"/>
+    <Port name="Fuselage" interface="NAVIGATION_DATA_Interface.Fuselage" role="Receiver"/>
+    <Port name="Indicated_airspeed" interface="PRES_AIM_Interface.Indicated_airspeed" role="Receiver"/>
+
+  </Thread>
+
+</Application>

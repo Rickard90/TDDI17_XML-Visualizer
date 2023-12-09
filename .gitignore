@@ -7,3 +7,5 @@
 .vs/*
 vs
 XML-Visualizer.csproj.user
+screenshot*
+log.txt
