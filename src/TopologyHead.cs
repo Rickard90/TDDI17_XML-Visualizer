@@ -152,7 +152,7 @@ class TopologyHead
 		int width = 800*zoomLevel/12;//for now
 		try{
 			Thread thread = (Thread)this.GetCurrent();
-			Point pos = new(width/2, 2*width/5 + Constants.ToolbarHeight);
+			Point pos = new(width/2, 2*width/5 + (int)(1.5f*Constants.ToolbarHeight));
 			thread.Draw(pos, sb, font, width);
 		}
 		catch{};
