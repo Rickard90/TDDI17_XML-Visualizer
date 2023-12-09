@@ -304,7 +304,7 @@ class Window : Game
             {
                 Directory.CreateDirectory("screenshots");
             }
-            canvas.SaveAsPng("screenshots/screenshot " + DateTime.Now.ToString("yyyy-MM-dd ") + DateTime.Now.ToString("[HH;mm;ss]")+ ".png");
+            canvas.SaveAsPng("screenshots/screenshot_" + DateTime.Now.ToString("yyyy-MM-dd_") + DateTime.Now.ToString("HH-mm-ss")+ ".png");
             Selection.PrtSc = false;
 
             canvas.zoomLevel = currentZoom;

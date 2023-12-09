@@ -182,12 +182,25 @@ class HighlightButton
 
     public void GoUp(List<Component> components, int columns)
     {
-
+        int currentIndex = components.IndexOf(this.Component);
+        int row = currentIndex / columns;
+        int column = currentIndex % columns;
+        if (row == 0) {
+            return;
+        }
+        this.Component = components[(row-1) * columns + column];
     }
 
     public void GoDown(List<Component> components, int columns)
     {
-
+        int currentIndex = components.IndexOf(this.Component);
+        int row = currentIndex / columns;
+        int column = currentIndex % columns;
+        int newIndex = (row+1) * columns + column;
+        if (newIndex >= components.Count) {
+            return;
+        }
+        this.Component = components[newIndex];
     }
 
     public void GoLeft(List<Component> components)
