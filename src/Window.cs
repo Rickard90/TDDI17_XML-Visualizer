@@ -20,6 +20,8 @@ class Window : Game
     private HighlightButton highlightButton;
     private HelpButton helpButton;
     private Textbox enterFolderTextbox;
+	
+	private LinkButton hoveredLinkButton = null;
 
     //private string folderPath;
     private bool updateCanvas;
@@ -163,44 +165,6 @@ class Window : Game
                 this.top.GoToAny(highlightedComponent.linkButtons[selectedIndex].Component, this.highlightButton);
             }
         }
-        // Else check if we should scroll through our connections/links
-        else if (Selection.linkScroll != Selection.LinkScroll.Nothing)
-        {
-            this.updateCanvas = true;
-            this.highlightButton.Component.UpdateLinkDrawIndex();
-        }
-        // Else check if the mouse cursor is inside a component
-        else if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null
-            && Selection.CursorIsInside(new Rectangle (0, Constants.ToolbarHeight, Window.ClientBounds.Width, Window.ClientBounds.Height)))
-        {
-            if (Selection.LeftMouseJustReleased()) {
-                this.updateCanvas = true;
-                this.top.GoToChild(child, this.highlightButton);
-            }
-            else {
-				Tooltip.SetTooltip(child, Canvas.Camera.ModifiedPosition(new Point(child.Rectangle.Right - Component.lineThickness, child.Rectangle.Top)), fontSystem.GetFont(14));
-            }
-        }
-        // Else check if the mouse cursor clicked on the help button
-        else if(Selection.CursorIsInside(helpButton.rectangle) && Selection.LeftMouseJustReleased())
-        {
-            using StreamReader topologyReader = new("help.txt");
-            string line = topologyReader.ReadLine();
-            while (line != null)
-            {
-                Console.WriteLine(line);
-                line = topologyReader.ReadLine();
-            }
-            
-        }
-        // Else check if we clicked on a linkbutton
-        else if (Selection.LeftMouseJustReleased() && (linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null
-            && Selection.CursorIsInside(new Rectangle (0, Constants.ToolbarHeight, Window.ClientBounds.Width, Window.ClientBounds.Height)))
-        {
-            this.updateCanvas = true;
-            this.top.GoToAny(linkButton.Component, this.highlightButton);
-            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
-        }
         // Else check if we should go to arbitrary component (this is triggered by the textbox)
         else if (ComponentFinder.componentToGoTo != null)
         {
@@ -209,16 +173,81 @@ class Window : Game
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
             ComponentFinder.componentToGoTo = null;
         }
-        // Else check if we clicked on the back button
-        else if (Selection.CursorIsInside(backButton.rectangle) && Selection.LeftMouseJustReleased())
+        // Else check if we should scroll through our connections/links
+        else if (Selection.linkScroll != Selection.LinkScroll.Nothing)
         {
             this.updateCanvas = true;
-            this.top.GoBack();
-            this.highlightButton.Component = this.top.GetCurrent().Children.First();
-            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+            this.highlightButton.Component.UpdateLinkDrawIndex();
+        }
+        //Else if the mouse is clicked and we are inside the window
+        else if(Selection.LeftMouseJustReleased() 
+				&& Selection.CursorIsInside(new Rectangle (0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height)))
+        {
+            //If a component was clicked
+            if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null)
+			{
+                this.updateCanvas = true;
+                this.top.GoToChild(child, this.highlightButton);
+            }
+            //Else check if we clicked on a linkbutton
+            else if ((linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null)
+			{
+                this.updateCanvas = true;
+                this.top.GoToAny(linkButton.Component, this.highlightButton);
+                canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+            }
+            //Else check if it clicked the help button
+            else if(Selection.CursorIsInside(helpButton.rectangle))
+            {
+                using StreamReader topologyReader = new("help.txt");
+                string line = topologyReader.ReadLine();
+                while (line != null)
+                {
+                    Console.WriteLine(line);
+                    line = topologyReader.ReadLine();
+                }
+            }
+             // Else check if we clicked on the back button
+            else if (Selection.CursorIsInside(backButton.rectangle))
+            {
+                this.updateCanvas = true;
+                this.top.GoBack();
+                this.highlightButton.Component = this.top.GetCurrent().Children.First();
+                canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+            }
+        }
+        // Else check if any tooltips/highlights should be shown
+        else 
+        {
+            //Check if the mouse is hovering a component
+            if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().TooltipList())) != null )
+            {
+				Tooltip.SetTooltip(child, Canvas.Camera.ModifiedPosition(new Point(child.Rectangle.Right - Component.lineThickness, child.Rectangle.Top)), fontSystem.GetFont(14));
+            }
+            //Else check if we are hovering a linkbutton
+            else if ((linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null)
+			{
+				if (hoveredLinkButton != linkButton)
+				{
+					if (hoveredLinkButton != null)
+					{
+						hoveredLinkButton.Highlight = false;
+					}
+					this.updateCanvas = true;
+					hoveredLinkButton = linkButton;
+					linkButton.Highlight = true;
+				}
+            }
+			//Check if we just stopped hovering a linkbutton
+            if (hoveredLinkButton != null && linkButton == null)
+            {
+				this.updateCanvas = true;
+                hoveredLinkButton.Highlight = false;
+				hoveredLinkButton = null;
+            }
         }
 
-        if (Selection.ComponentEnter)
+        if (Selection.ComponentEnter && ComponentFinder.componentToGoTo == null)
         {
             this.updateCanvas = true;
             this.top.GoToChild(this.highlightButton.Component, this.highlightButton);

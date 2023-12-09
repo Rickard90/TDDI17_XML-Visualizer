@@ -48,6 +48,20 @@ class Thread : Component
 		}
 		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
 	}
+	public override List<Component> TooltipList()
+	{
+		List<Component> tooltipList = new(this.children);
+		tooltipList.Add(this);
+		foreach(Component port in this.children)
+		{
+			foreach(Component otherPort in port.connections.Keys)
+			{
+				tooltipList.Add(otherPort);
+				tooltipList.Add(otherPort.Parent);
+			}
+		}
+		return tooltipList;
+	}
 
 	//OBS: Does not overload Component.Draw(), Used if you explicitly cast a component into a thread
 	public new void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int size)

@@ -66,7 +66,7 @@ public class Component
 		this.SetChildren(children);
 	}
 
-    public void AddChild(Component newChild) 	=> this.children.Add(newChild);
+    public void AddChild(Component newChild) => this.children.Add(newChild);
 	
 	public bool IsEmpty()
 	{
@@ -85,10 +85,12 @@ public class Component
 	}
 	public virtual string GetInfo()
 	{
-		
 		return "RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency;
 	}
-
+	public virtual List<Component> TooltipList()
+	{
+		return this.children;
+	}
 
 	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
