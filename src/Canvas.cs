@@ -15,7 +15,7 @@ partial class Canvas
     private GraphicsDevice graphicsDevice;
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
-    public int zoomLevel = 12; //default zoom level
+    public int zoomLevel = Constants.defaultZoom;
     private const int minZoom = 9;
     private const int maxZoom = 25;
 

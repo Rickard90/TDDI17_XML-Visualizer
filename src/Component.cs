@@ -22,8 +22,8 @@ public class Component
 	public 				enum 				Type{Component, Computer, Partition, Application, Thread, Port};
 	public	  readonly 	Type 				type 		         = Type.Component;
 	protected 		 	string				name		         = "";
-	protected 		   	int 				width		         = 125;
-	protected 		   	int 				height		         = 100;
+	protected 		   	int 				width		         = Constants.componentSize;//125;
+	protected 		   	int 				height		         = Constants.componentSize;//100;
 	protected			Point				position	         = new(0,0);
     protected 			Component 			parent 	        	 = null;
 	protected 		 	List<Component> 	children	         = new();
@@ -96,7 +96,7 @@ public class Component
 	{
 		//Updates component info:
 		this.position = pos;
-		this.width  = Constants.ComponentSize*zoomLevel/12;
+		this.width  = Constants.componentSize*zoomLevel/Constants.defaultZoom;
 		this.height = this.width;
 		
 		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
@@ -361,7 +361,7 @@ class Computer : Component
 	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
 		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
-		this.width  = (int)Math.Ceiling(1.2*Constants.ComponentSize*zoomLevel/12);
+		this.width  = (int)Math.Ceiling(1.2*Constants.componentSize*zoomLevel/Constants.defaultZoom);
 		this.height = this.width;
 		int spacing = this.width/4;
 		int biggestConnectionStringLength = connectionsExternalSend > connectionsExternalReceive ? connectionsExternalSend.ToString().Length : connectionsExternalReceive.ToString().Length;
