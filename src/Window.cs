@@ -12,7 +12,7 @@ class Window : Game
     public static GraphicsDevice graphicsDevice;
 
     private FontSystem fontSystem;
-
+    
     private TopologyHead top; 
 	private Canvas canvas;
 
@@ -57,6 +57,8 @@ class Window : Game
 		Log.Print("Loading Content");
         spriteBatch = new SpriteBatch(GraphicsDevice);
         graphicsDevice = this.GraphicsDevice;
+        Tooltip.spriteBatch = spriteBatch;
+        Tooltip.graphicsDevice = this.GraphicsDevice;
 
         this.fontSystem = new();
         this.fontSystem.AddFont(File.ReadAllBytes("resource/font/arial.ttf"));
@@ -73,9 +75,7 @@ class Window : Game
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
         this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");
-        this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "(H)elp");
-        Tooltip.spriteBatch = spriteBatch;
-        Tooltip.graphicsDevice = this.GraphicsDevice;    
+        this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "(H)elp", this.fontSystem.GetFont(5+canvas.zoomLevel));
 
         this.enterFolderTextbox = new Textbox(this.windowSize, this.fontSystem.GetFont(18), ComponentFinder.GoToComponentWithName, ComponentList.GetSuggestions, null);
         this.Window.TextInput += enterFolderTextbox.RegisterTextInput;
@@ -199,19 +199,7 @@ class Window : Game
             //Else check if it clicked the help button
             else if(Selection.CursorIsInside(helpButton.rectangle))
             {
-                try 
-                {
-                    using StreamReader topologyReader = new("help.txt");
-                    string line = topologyReader.ReadLine();
-                    while (line != null)
-                    {
-                        Console.WriteLine(line);
-                        line = topologyReader.ReadLine();
-                    }
-                } catch (Exception e) 
-                {
-                    Log.Print(e.ToString());
-                }
+                this.helpButton.isPressed = !this.helpButton.isPressed; 
             }
              // Else check if we clicked on the back button
             else if (Selection.CursorIsInside(backButton.rectangle))
@@ -278,12 +266,12 @@ class Window : Game
         }
         else if (Selection.ComponentGoLeft)
         {
-            this.highlightButton.GoLeft(this.top.GetCurrent().Children);
+            this.highlightButton.GoLeft(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
         else if (Selection.ComponentGoRight)
         {
-            this.highlightButton.GoRight(this.top.GetCurrent().Children);
+            this.highlightButton.GoRight(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         } 
 
