@@ -272,12 +272,12 @@ class Window : Game
         }
         else if (Selection.ComponentGoLeft)
         {
-            this.highlightButton.GoLeft(this.top.GetCurrent().Children);
+            this.highlightButton.GoLeft(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         }
         else if (Selection.ComponentGoRight)
         {
-            this.highlightButton.GoRight(this.top.GetCurrent().Children);
+            this.highlightButton.GoRight(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
         } 
 
