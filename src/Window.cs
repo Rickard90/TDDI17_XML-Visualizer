@@ -75,7 +75,7 @@ class Window : Game
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
         this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");
-        this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "(H)elp", this.fontSystem.GetFont(21));
+        this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "(H)elp", this.fontSystem.GetFont(21), windowSize);
 
         this.enterFolderTextbox = new Textbox(this.windowSize, this.fontSystem.GetFont(18), ComponentFinder.GoToComponentWithName, ComponentList.GetSuggestions, null);
         this.Window.TextInput += enterFolderTextbox.RegisterTextInput;

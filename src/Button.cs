@@ -231,17 +231,20 @@ public class HelpButton : Button
     private readonly string text;
     private readonly Tooltip tooltip;
 
-    public HelpButton(Rectangle rectangle, string description, SpriteFontBase font)
+    public HelpButton(Rectangle rectangle, string description, SpriteFontBase font, Point windowSize)
         :   base(rectangle)
     {
         this.description = description;
         this.text = File.ReadAllText("help.txt");
         this.tooltip = new Tooltip(Point.Zero, text, font);
+        UpdatePosition(windowSize);
     }
 
     public void UpdatePosition(Point windowSize)
     {
         rectangle.X = windowSize.X - 110;
+        this.tooltip.position.X = windowSize.X / 2 - this.tooltip.size.X / 2;
+        this.tooltip.position.Y = Constants.ToolbarHeight + 2; 
     }
 
     public void Draw(SpriteBatch sb, SpriteFontBase font, int windowSize)

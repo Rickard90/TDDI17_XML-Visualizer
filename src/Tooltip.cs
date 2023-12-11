@@ -65,7 +65,7 @@ class Tooltip
 
     public Rectangle DrawArea{get { return new Rectangle(position, size);}}
     public Point position;
-    private readonly Point size;
+    public  readonly Point size;
     private readonly SpriteFontBase font;
     private readonly string text;
 
