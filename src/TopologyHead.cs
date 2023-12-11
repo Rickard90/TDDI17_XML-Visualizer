@@ -90,10 +90,6 @@ class TopologyHead
 
 	public void GoToChild(Component child, HighlightButton highlightButton)
 	{
-        if(child.GetInfo() != "") {
-            Log.Print("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
-        }
-        //Log.Print("Component children: {0}", child.Children.Count);
         if(child.type != Component.Type.Port && child.Children.Count > 0) {
             this.path.Add(child);
             if (child.Children.Count == 0) {

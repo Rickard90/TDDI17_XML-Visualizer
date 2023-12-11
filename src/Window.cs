@@ -54,7 +54,6 @@ class Window : Game
 
     protected override void LoadContent()
     {
-		Log.Print("Loading Content");
         spriteBatch = new SpriteBatch(GraphicsDevice);
         graphicsDevice = this.GraphicsDevice;
         Tooltip.spriteBatch = spriteBatch;
@@ -83,9 +82,7 @@ class Window : Game
         // Fill the global component list, must be done only after reading and constructing the topology.
         ComponentList.Construct(this.top);
         ComponentList.Sort();
-        //ComponentList.Print();
         ComponentFinder.Construct(this.top);
-        ComponentFinder.Print();
     }
 
     protected override void Update(GameTime gameTime)

@@ -58,19 +58,6 @@ static class ComponentFinder
         return "";
     }
 
-    /* Don't delete this function yet
-    public static string[] GetAllWhoseNameStartsWith(string s)
-    {
-        List<string> result = new();
-        var filteredPairs = componentDict.Where(pair => pair.Key.StartsWith(s));
-        foreach (var pair in filteredPairs)
-        {
-            result.Add(pair.Key);
-        }
-        return result.ToArray();
-    }
-    */
-
     // For debugging purposes
     public static void Print()
     {

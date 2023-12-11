@@ -310,7 +310,6 @@ public class Component
 
 		if (size.X < innerWidth)
 		{
-			Log.Print("			 name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
 			return displayName;
 		}
 		else
