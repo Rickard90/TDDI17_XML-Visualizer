@@ -139,7 +139,7 @@ class Tooltip
         spriteBatch.DrawString(this.font, this.text, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black);
     }
 
-    private void Draw()
+    public void Draw()
     {
         spriteBatch.Draw(this.drawTexture, this.DrawArea, Color.White);
     }

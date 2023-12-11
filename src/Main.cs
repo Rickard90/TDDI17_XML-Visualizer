@@ -22,7 +22,7 @@ class MainClass {
         else if (args.Length > 1)
         {
             Console.WriteLine($"Incorrect number of arguments given ({args.Length}):");
-            Console.WriteLine($"Usage: {System.AppDomain.CurrentDomain.FriendlyName} [topology path]");
+            Console.WriteLine($"Usage: {System.AppDomain.CurrentDomain.FriendlyName} [topology data folder path]");
             Console.WriteLine("Getting help: -h or --help");
             return;
         }
