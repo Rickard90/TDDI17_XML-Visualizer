@@ -10,7 +10,7 @@ class Window : Game
     public static GraphicsDevice graphicsDevice;
 
     private FontSystem fontSystem;
-
+    
     private TopologyHead top; 
 	private Canvas canvas;
 
@@ -72,7 +72,7 @@ class Window : Game
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
         this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");
-        this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "(H)elp", this.fontSystem.GetFont(21));
+        this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "(H)elp", this.fontSystem.GetFont(5+canvas.zoomLevel));
 
         this.enterFolderTextbox = new Textbox(this.windowSize, this.fontSystem.GetFont(18), ComponentFinder.GoToComponentWithName, ComponentList.GetSuggestions, null);
         this.Window.TextInput += enterFolderTextbox.RegisterTextInput;
@@ -104,8 +104,8 @@ class Window : Game
         this.canvas.Draw();
 
         this.highlightButton.Draw(spriteBatch);
-        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 0, Window.ClientBounds.Size.X, Constants.ToolbarHeight), new Color(230, 230, 230, 255));
-        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, Constants.ToolbarHeight-3, Window.ClientBounds.Size.X, 3), Color.Gray);
+        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, 0, Window.ClientBounds.Size.X, Constants.toolbarHeight), new Color(230, 230, 230, 255));
+        spriteBatch.Draw(whitePixelTexture, new Rectangle(0, Constants.toolbarHeight-3, Window.ClientBounds.Size.X, 3), Color.Gray);
         this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
         this.helpButton.Draw(spriteBatch, this.fontSystem.GetFont(32), windowSize.X);
         this.top.DrawPath(spriteBatch, this.fontSystem.GetFont(22));
@@ -129,13 +129,13 @@ class Window : Game
         int canvasWidth;
         if(this.top.GetCurrent().type != Component.Type.Thread)
         {
-            canvasHeight = ((numberOfRows * Constants.ComponentSize + Constants.Spacing)*canvas.zoomLevel/8) + Constants.ToolbarHeight;
-            canvasWidth = (numberOfColums*(8*Constants.Spacing + Constants.ComponentSize) - 3*Constants.Spacing)*canvas.zoomLevel/12;
+            canvasHeight = ((numberOfRows * Constants.componentSize + Constants.spacing)*canvas.zoomLevel/8) + Constants.toolbarHeight;
+            canvasWidth = (numberOfColums*(8*Constants.spacing + Constants.componentSize) - 3*Constants.spacing)*canvas.zoomLevel/Constants.defaultZoom;
         }
         else //this.top.GetCurrent().type == Component.Type.Thread need rework
         {
-            canvasHeight = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
-            canvasWidth = 8*Constants.ComponentSize*canvas.zoomLevel/12 + Constants.ToolbarHeight;
+            canvasHeight = 8*Constants.componentSize*canvas.zoomLevel/Constants.defaultZoom + Constants.toolbarHeight;
+            canvasWidth = 8*Constants.componentSize*canvas.zoomLevel/Constants.defaultZoom + Constants.toolbarHeight;
         }
         this.canvas.ReSize(new Point(canvasWidth, canvasHeight));
         this.canvas.UpdateTexture();
@@ -195,13 +195,6 @@ class Window : Game
             else if(Selection.CursorIsInside(helpButton.rectangle))
             {
                 this.helpButton.isPressed = !this.helpButton.isPressed; 
-                // using StreamReader topologyReader = new("help.txt");
-                // string line = topologyReader.ReadLine();
-                // while (line != null)
-                // {
-                //     Console.WriteLine(line);
-                //     line = topologyReader.ReadLine();
-                // }
             }
              // Else check if we clicked on the back button
             else if (Selection.CursorIsInside(backButton.rectangle))
