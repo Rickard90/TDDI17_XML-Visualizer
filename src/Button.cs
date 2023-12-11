@@ -1,10 +1,6 @@
-using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-
 
 public abstract class Button
 {
@@ -203,20 +199,25 @@ class HighlightButton
         this.Component = components[newIndex];
     }
 
-    public void GoLeft(List<Component> components)
+    public void GoLeft(List<Component> components, int columns)
     {
-        if (this.Component == components.First())
-            this.Component = components.Last();
-        else
-            this.Component = components[components.IndexOf(this.Component) - 1];
+        int currentIndex = components.IndexOf(this.Component);
+        int column = currentIndex % columns;
+        if (column > 0) {
+            this.Component = components[currentIndex - 1];
+        }
     }
 
-    public void GoRight(List<Component> components)
-    {
-        if (this.Component == components.Last())
-            this.Component = components.First();
-        else
-            this.Component = components[components.IndexOf(this.Component) + 1];
+    public void GoRight(List<Component> components, int columns)
+    {   
+        if (this.Component == components.Last()) {
+            return;
+        }
+        int currentIndex = components.IndexOf(this.Component);
+        int column = currentIndex % columns;            
+        if (column < columns - 1) {
+            this.Component = components[currentIndex + 1];
+        }
     }
 }
 
@@ -244,7 +245,7 @@ public class HelpButton : Button
     {
         rectangle.X = windowSize.X - 110;
         this.tooltip.position.X = windowSize.X / 2 - this.tooltip.size.X / 2;
-        this.tooltip.position.Y = Constants.ToolbarHeight + 2; 
+        this.tooltip.position.Y = Constants.toolbarHeight + 2; 
     }
 
     public void Draw(SpriteBatch sb, SpriteFontBase font, int windowSize)

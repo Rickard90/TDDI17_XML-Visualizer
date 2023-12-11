@@ -18,7 +18,6 @@ class Port : Component
 	}
 	public void AddConnections(List<Port> connections)
 	{
-		Log.Print(this.parent.Name + " : " + this.name + role);
 		foreach (Component connectedTo in connections) {
 			if (this != connectedTo && !this.connections.ContainsKey(connectedTo)) {
 				this.connections.Add(connectedTo, 1);

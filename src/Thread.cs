@@ -1,4 +1,3 @@
-using System.Globalization;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -34,19 +33,13 @@ class Thread : Component
  		foreach(Port c in newChildren) {
 			this.AddChild(c);
 			c.Parent = this;
-			Log.Print(c.Name);
-
 		}
 	}
     public void SetFrequency(int frequency) => this.frequency = frequency;
 	
     public override string GetInfo()
 	{
-		Log.Print("|" + this.Name);
-		foreach(var test in connections){
-			Log.Print("---->" + test.Key.Name + "Connection Weight: " + test.Value);
-		}
-		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
+		return "Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack;
 	}
 	public override List<Component> TooltipList()
 	{

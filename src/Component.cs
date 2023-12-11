@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Linq.Expressions;
-using System.Net.Mime;
-using System.Reflection.Metadata.Ecma335;
-using FontStashSharp;
+﻿using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 //All types of components inherit constructor and fields from the component-type
 public class Component
@@ -22,8 +15,8 @@ public class Component
 	public 				enum 				Type{Component, Computer, Partition, Application, Thread, Port};
 	public	  readonly 	Type 				type 		         = Type.Component;
 	protected 		 	string				name		         = "";
-	protected 		   	int 				width		         = 125;
-	protected 		   	int 				height		         = 100;
+	protected 		   	int 				width		         = Constants.componentSize;//125;
+	protected 		   	int 				height		         = Constants.componentSize;//100;
 	protected			Point				position	         = new(0,0);
     protected 			Component 			parent 	        	 = null;
 	protected 		 	List<Component> 	children	         = new();
@@ -96,7 +89,7 @@ public class Component
 	{
 		//Updates component info:
 		this.position = pos;
-		this.width  = Constants.ComponentSize*zoomLevel/12;
+		this.width  = Constants.componentSize*zoomLevel/Constants.defaultZoom;
 		this.height = this.width;
 		
 		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
@@ -310,7 +303,6 @@ public class Component
 
 		if (size.X < innerWidth)
 		{
-			Log.Print("			 name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
 			return displayName;
 		}
 		else
@@ -361,7 +353,7 @@ class Computer : Component
 	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
 		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
-		this.width  = (int)Math.Ceiling(1.2*Constants.ComponentSize*zoomLevel/12);
+		this.width  = (int)Math.Ceiling(1.2*Constants.componentSize*zoomLevel/Constants.defaultZoom);
 		this.height = this.width;
 		int spacing = this.width/4;
 		int biggestConnectionStringLength = connectionsExternalSend > connectionsExternalReceive ? connectionsExternalSend.ToString().Length : connectionsExternalReceive.ToString().Length;

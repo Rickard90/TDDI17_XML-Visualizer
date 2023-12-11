@@ -1,7 +1,4 @@
-using System;
-using System.Reflection.Metadata;
 using FontStashSharp;
-using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -85,15 +82,11 @@ class TopologyHead
 
 	public int NumberOfColums(int width, int zoomLevel)
 	{
-		return Math.Max(1, (width+2*Constants.Spacing*zoomLevel/12) / ((Constants.ComponentSize + 7*Constants.Spacing)*zoomLevel/12));
+		return Math.Max(1, (width+2*Constants.spacing*zoomLevel/12) / ((Constants.componentSize + 7*Constants.spacing)*zoomLevel/12));
 	}
 
 	public void GoToChild(Component child, HighlightButton highlightButton)
 	{
-        if(child.GetInfo() != "") {
-            Log.Print("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
-        }
-        //Log.Print("Component children: {0}", child.Children.Count);
         if(child.type != Component.Type.Port && child.Children.Count > 0) {
             this.path.Add(child);
             if (child.Children.Count == 0) {
@@ -122,10 +115,10 @@ class TopologyHead
 	private void DrawDefault(SpriteBatch sb, FontSystem font, int zoomLevel, int width)
     {		
 		//The following three variables serve to decide edge and spacing layout:
-		int spacing = Constants.Spacing*zoomLevel/12;
+		int spacing = Constants.spacing*zoomLevel/12;
 		int startX  = -2*spacing;//change to some negative value so that it is equal deadspace left and right
-		int startY  = Constants.ToolbarHeight + spacing*zoomLevel/12;
-		int adjComponentSize = Constants.ComponentSize*zoomLevel/12;//zoom adjusted
+		int startY  = Constants.toolbarHeight + spacing*zoomLevel/12;
+		int adjcomponentSize = Constants.componentSize*zoomLevel/12;//zoom adjusted
 
 		Point pos = new(startX, startY);
 		
@@ -137,13 +130,13 @@ class TopologyHead
 			count++;
 			if(count < NumberOfColums(width, zoomLevel))
 			{
-				pos.X += adjComponentSize + 5*spacing;
+				pos.X += adjcomponentSize + 5*spacing;
 			}
 			else
 			{
 				count = 0;
 				pos.X = startX;
-				pos.Y += adjComponentSize + 2*spacing;
+				pos.Y += adjcomponentSize + 2*spacing;
 			}
 		}
 	}
@@ -152,7 +145,7 @@ class TopologyHead
 		int width = 800*zoomLevel/12;//for now
 		try{
 			Thread thread = (Thread)this.GetCurrent();
-			Point pos = new(width/2, 2*width/5 + (int)(1.5f*Constants.ToolbarHeight));
+			Point pos = new(width/2, 2*width/5 + (int)(1.5f*Constants.toolbarHeight));
 			thread.Draw(pos, sb, font, width);
 		}
 		catch{};
