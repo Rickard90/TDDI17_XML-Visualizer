@@ -226,12 +226,17 @@ class HighlightButton
 
 public class HelpButton : Button
 {
+    public bool isPressed = false;
     private readonly string description;
+    private readonly string text;
+    private readonly Tooltip tooltip;
 
-    public HelpButton(Rectangle rectangle, string description)
+    public HelpButton(Rectangle rectangle, string description, SpriteFontBase font)
         :   base(rectangle)
     {
         this.description = description;
+        this.text = File.ReadAllText("help.txt");
+        this.tooltip = new Tooltip(Point.Zero, text, font);
     }
 
     public void UpdatePosition(Point windowSize)
@@ -245,5 +250,7 @@ public class HelpButton : Button
         modifiedArea.X = windowSize - 110;
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Black);
         sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);
+        if (this.isPressed)
+            this.tooltip.Draw();
     }
 }
