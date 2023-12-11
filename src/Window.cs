@@ -1,6 +1,4 @@
-﻿using System.Dynamic;
-using System.Runtime.CompilerServices;
-using FontStashSharp;
+﻿using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

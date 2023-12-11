@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Linq.Expressions;
-using System.Net.Mime;
-using System.Reflection.Metadata.Ecma335;
-using FontStashSharp;
+﻿using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 //All types of components inherit constructor and fields from the component-type
 public class Component

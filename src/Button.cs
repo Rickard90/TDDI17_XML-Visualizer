@@ -1,10 +1,6 @@
-using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-
 
 public abstract class Button
 {

@@ -1,7 +1,4 @@
-using System;
-using System.Reflection.Metadata;
 using FontStashSharp;
-using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
