@@ -178,7 +178,7 @@ class Thread : Component
 				Component.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8, offset);
 				otherPort.Draw(portPos, sb, fontSystem, spacing);
 				((Thread)otherPort.Parent).DrawBody(threadPos, sb, fontSystem, spacing/2, spacing);
-				this.tooltipListHelper.Add(new Component((Thread)otherPort.Parent));
+				this.tooltipListHelper.Add((Component)(new Thread((Thread)otherPort.Parent)));
 			}
 		}
 	}
