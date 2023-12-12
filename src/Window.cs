@@ -180,7 +180,7 @@ class Window : Game
 				&& Selection.CursorIsInside(new Rectangle (0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height)))
         {
             //If a component was clicked
-            if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().Children)) != null)
+            if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().TooltipList())) != null)
 			{
                 this.updateCanvas = true;
                 this.top.GoToChild(child, this.highlightButton);
