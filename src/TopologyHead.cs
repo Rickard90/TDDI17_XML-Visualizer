@@ -100,9 +100,12 @@ class TopologyHead
 
     public void GoToAny(Component component, HighlightButton highlightButton)
     {
-		if(component.Parent != this.GetCurrent()) 
+		if (component.Parent != this.GetCurrent()) 
         {
 			this.path.Clear();
+            if (component.type == Component.Type.Thread) {
+                this.path.Add(component);
+            }
 			this.path.Add(component.Parent);
 			while (this.path.Last().Parent != null) 
 			{

@@ -183,7 +183,11 @@ class Window : Game
             if ((child = Selection.CursorIsInsideAnyComponent(this.top.GetCurrent().TooltipList())) != null)
 			{
                 this.updateCanvas = true;
-                this.top.GoToChild(child, this.highlightButton);
+                if (this.top.GetCurrent().type == Component.Type.Thread) {
+                    this.top.GoToAny(child, this.highlightButton);
+                } else {
+                    this.top.GoToChild(child, this.highlightButton);
+                }
             }
             //Else check if we clicked on a linkbutton
             else if ((linkButton = Selection.CursorIsInsideAnyLinkButton(this.top.GetCurrent().Children)) != null)
