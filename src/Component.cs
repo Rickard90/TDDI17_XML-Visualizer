@@ -135,7 +135,7 @@ public class Component
         Rectangle smallInner = new Rectangle(smallPoint.X + lineThickness, smallPoint.Y + lineThickness, smallInnerWidth, smallInnerHeight);
         int numberOfLinks = Component.numberOfVisibleLinks;
 		smallPoint.X += lineThickness;
-        smallPoint.Y += lineThickness + this.height/8;
+        smallPoint.Y += this.height / 8; // lineThickness;
         int linkButtonHeight = smallInner.Height / numberOfLinks;
         int linkButtonWidth  = smallWidth - lineThickness;
         if (this.connections.Count > numberOfLinks)
