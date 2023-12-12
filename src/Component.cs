@@ -5,7 +5,9 @@ using Microsoft.Xna.Framework.Graphics;
 //All types of components inherit constructor and fields from the component-type
 public class Component
 {
-	//Fields:	
+	//Fields:
+	public virtual Component.Type type {get => Type.Component;}
+	
 	public string Name		{get => this.name; set => this.name = value;}
     public Point Position	{get => this.position; set => this.position = value;}
     public Component Parent	{get => this.parent; set => this.parent = value;}
@@ -13,7 +15,6 @@ public class Component
 	public List<Component> Children => this.children;
     private int TextMaxWidth => (this.width - (4 * Component.lineThickness));	
 	public 				enum 				Type{Component, Computer, Partition, Application, Thread, Port};
-	public	  readonly 	Type 				type 		         = Type.Component;
 	protected 		 	string				name		         = "";
 	protected 		   	int 				width		         = Constants.componentSize;//125;
 	protected 		   	int 				height		         = Constants.componentSize;//100;
@@ -40,23 +41,31 @@ public class Component
 		
 	}
 	public Component(string name, List<Component> children)
-		: this(name, Type.Component)
+		: this(name)
 	{
 		this.SetChildren(children);
 	}
-	protected Component(Type type)
-	{
-		this.type = type;
-	}
-    public Component(string name, Type type)
-		: this(type)
+    public Component(string name)
     {
         this.name = name;
     }
-    public Component(string name, List<Component> children, Type type)
-		: this(name, type)
+	public Component(Component otherComponent)
+		: this(otherComponent.Name)
 	{
-		this.SetChildren(children);
+		this.position 	 = new Point(otherComponent.Position.X, otherComponent.Position.Y);
+		this.parent		 = otherComponent.Parent;
+		this.children 	 = otherComponent.children;
+		this.width		 = otherComponent.width;	
+		this.height 	 = otherComponent.height;
+		this.connections = otherComponent.connections;
+		this.linkButtons = otherComponent.linkButtons;
+		this.linkDrawIndex = otherComponent.linkDrawIndex;
+		
+		this.ramSize	= otherComponent.ramSize;
+		this.initStack	= otherComponent.initStack;
+		this.execTime 	= otherComponent.execTime;
+		this.execStack 	= otherComponent.execStack;
+		this.frequency 	= otherComponent.frequency;
 	}
 
     public void AddChild(Component newChild) => this.children.Add(newChild);
@@ -342,13 +351,14 @@ public class Component
 /*_______C_O_M_P_U_T_E_R________*/
 class Computer : Component
 {
+	public override Type type {get => Type.Computer;}
 	public int connectionsExternalSend = 0;
 	public int connectionsExternalReceive = 0;
 	public int connectionsInternal = 0;
 
-	public Computer(string name) : base(name, Type.Computer)
+	public Computer(string name) : base(name)
 	{}
-	public Computer(string name, List<Component> children) : base(name, children, Type.Computer)
+	public Computer(string name, List<Component> children) : base(name, children)
 	{}
 	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
@@ -398,11 +408,13 @@ class Computer : Component
 /*______P_A_R_T_I_T_I_O_N________*/
 class Partition : Component
 {
-	public Partition(string name) : base(name, Type.Partition)
+	public override Type type {get => Type.Partition;}
+	
+	public Partition(string name) : base(name)
 	{
 
 	}
-	public Partition(string name, List<Component> children) : base(name, children, Type.Partition)
+	public Partition(string name, List<Component> children) : base(name, children)
 	{
 		
 	}
@@ -411,14 +423,16 @@ class Partition : Component
 /*______A_P_P_L_I_C_A_T_I_O_N______*/
 class Application : Component
 {
+	public override Type type {get => Type.Application;}
+	
 	public Application(string name, List<Component> children,
-					   int ramSize, int initStack) : base(name, children, Type.Application)
+					   int ramSize, int initStack) : base(name, children)
 	{
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
 	public Application(string name,
-					   int ramSize, int initStack) : base(name, Type.Application)
+					   int ramSize, int initStack) : base(name)
 	{
 		this.ramSize   = ramSize;
 		this.initStack = initStack;

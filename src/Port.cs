@@ -5,13 +5,14 @@ using Microsoft.Xna.Framework.Graphics;
 /*__________P_O_R_T___________*/
 class Port : Component
 {
+	public override Type type {get => Type.Port;}
 	public 	float ConnectionOffset{get => this.connectionOffset; set => this.connectionOffset = value;}
 	private float connectionOffset = 0.5f;
 	public string interf 	= ""; 
 	public string role		= "";
 
 	public Port(string name, 
-				string interf, string role) : base(name, Type.Port)
+				string interf, string role) : base(name)
 	{
 			this.interf = interf;
 			this.role = role;
