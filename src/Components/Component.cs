@@ -466,7 +466,6 @@ class Application : Component
 		this.execTime  += child.execTime/child.frequency; //eller kanske child.execTime*child.frequency?
 		this.ramSize   += child.ramSize;
 		this.initStack += child.initStack;
-		this.externalConnections += ((Thread)child).connectionsIn + ((Thread)child).connectionsOut;
 	}
 	public override string GetInfo()
 	{
