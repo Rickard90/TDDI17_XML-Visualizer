@@ -1,4 +1,4 @@
-# Title
+# XML-Visualizer
 A projekt made to visualize xml data.
 
 ## Usage:
