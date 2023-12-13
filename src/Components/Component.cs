@@ -87,7 +87,14 @@ public class Component
 	}
 	public virtual string GetInfo()
 	{
-		return "RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency;
+		return this.BaseInfo();
+	}
+	protected string BaseInfo()
+	{
+		return 	"RamSize = " + ramSize + 
+				"\nInitStack = " + initStack + 
+				"\nExecution Time = " + execTime + 
+				"\nExecution Stack = " + execStack;
 	}
 	public virtual List<Component> TooltipList()
 	{
@@ -355,11 +362,19 @@ class Computer : Component
 	public int connectionsExternalSend = 0;
 	public int connectionsExternalReceive = 0;
 	public int connectionsInternal = 0;
+	public int TotalConnections {get => connectionsExternalReceive + connectionsExternalSend;}
 
 	public Computer(string name) : base(name)
 	{}
 	public Computer(string name, List<Component> children) : base(name, children)
 	{}
+	public override string GetInfo()
+	{
+		return 	this.BaseInfo() + 
+				"\nTotal Connections = " + this.TotalConnections +
+				"\nOutgoing Connections = " + connectionsExternalSend +
+				"\nIncoming Connections = " + connectionsExternalReceive;
+	}
 	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
 		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
