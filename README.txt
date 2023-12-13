@@ -1,17 +1,14 @@
-# Viewer for system/software modeling
-A projekt made to visualize xml data.
+							Viewer for system/software modeling
 
-![alt text](example.png?raw=true)
-
-# Description:
+Description:
 The system reads in information from a XML-file and then visualizes the XML data.
 Afterwards, a viewer can be started where the user can point out which part of 
 the system is drawn and at which level of abstraction.
 
-# Installation:
+Installation:
 
 
-# Usage:
+Usage:
 
 G    Function                  Hotkeys             Alternative Hotkeys
     ------------              ------------         ---------------------------
@@ -34,8 +31,7 @@ G    Function                  Hotkeys             Alternative Hotkeys
     Print                     Ctrl + 'P'
     Help                      'H'
 
-## Flags:
--h --help   Gettings help 
+Credits: 
 
-# License:
+License:
 Open Source
