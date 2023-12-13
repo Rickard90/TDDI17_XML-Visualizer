@@ -9,9 +9,9 @@ the system is drawn and at which level of abstraction.
 
 # Run program:
 
-![alt text](Run_Fake_data.png?raw=true)
+![alt text](RunFakeData.png?raw=true)
 
-![alt text](Run_Your_data.png?raw=true)
+![alt text](RunYourData.png?raw=true)
 # Usage:
 
 # Buttons:
