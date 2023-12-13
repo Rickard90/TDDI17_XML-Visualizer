@@ -9,8 +9,8 @@ class MainClass {
         if(args.Length == 1){
             if (args[0] == "-h" || args[0] == "--help")
             {
-                if (File.Exists("help.txt"))
-                    Console.WriteLine(File.ReadAllText("help.txt"));
+                if (File.Exists("resource/text/help.txt"))
+                    Console.WriteLine(File.ReadAllText("resource/text/help.txt"));
                 else
                     Console.WriteLine("help file does not exist");
                 return;

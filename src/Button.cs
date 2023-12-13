@@ -236,7 +236,7 @@ public class HelpButton : Button
         :   base(rectangle)
     {
         this.description = description;
-        this.text = File.ReadAllText("help.txt");
+        this.text = File.ReadAllText("resource/text/help.txt");
         this.tooltip = new Tooltip(Point.Zero, text, font);
         UpdatePosition(windowSize);
     }
