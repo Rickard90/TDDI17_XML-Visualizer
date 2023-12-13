@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 /*_________T_H_R_E_A_D__________*/
 class Thread : Component
 {
+	public int connectionsIn = 0;
+	public int connectionsOut = 0;
 	public override Type type {get => Type.Thread;}
 	
 	private List<Component> tooltipListHelper = new();
@@ -40,15 +42,26 @@ class Thread : Component
  		foreach(Port c in newChildren) {
 			this.AddChild(c);
 			c.Parent = this;
+			if(c.role == "sender")
+			{
+				connectionsOut++;
+			}
+			else
+			{
+				connectionsIn++;
+			}
 		}
 	}
     public void SetFrequency(int frequency) => this.frequency = frequency;
 	
     public override string GetInfo()
 	{
-		return "Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack;
+		return "Frequency = " + frequency 
+				+ "\nExecution Time = " + execTime 
+				+ "\nExecution Stack = " + execStack 
+				+ "\nConnections in = " + connectionsIn 
+				+ "\nConnections out = " + connectionsOut;
 	}
-	
 	public override List<Component> TooltipList()
 	{
 		List<Component> tooltipList = new(this.children);

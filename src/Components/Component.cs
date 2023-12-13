@@ -425,15 +425,12 @@ class Partition : Component
 		this.ramSize   += child.ramSize;
 		this.initStack += child.initStack;
 	}
-	public override string GetInfo()
-	{
-		return "Execution Time = " + execTime + "\nExecution Stack = " + execStack + "\nRamsize = " + ramSize;
-	}
 }
 
 /*______A_P_P_L_I_C_A_T_I_O_N______*/
 class Application : Component
 {
+	public int externalConnections = 0;
 	public override Type type {get => Type.Application;}
 	
 	public Application(string name, List<Component> children,
@@ -454,9 +451,15 @@ class Application : Component
 		this.execTime  += child.execTime/child.frequency; //eller kanske child.execTime*child.frequency?
 		this.ramSize   += child.ramSize;
 		this.initStack += child.initStack;
+		this.externalConnections += ((Thread)child).connectionsIn + ((Thread)child).connectionsOut;
 	}
 	public override string GetInfo()
 	{
-		return "Execution Time = " + execTime + "\nExecution Stack = " + execStack + "\nRamsize = " + ramSize;
+		return "Execution Time = " + execTime 
+				+ "\nExecution Stack = " + execStack 
+				+ "\nRamsize = " + ramSize
+				+ "\nExternal Connections = " + externalConnections;
 	}
+
+
 }
