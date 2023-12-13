@@ -46,8 +46,28 @@ class Thread : Component
 	
     public override string GetInfo()
 	{
-		return "Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack;
+		int connectionsIn = 0;
+		int connectionsOut = 0;
+		int portConnections = 0;
+		foreach(Component port in this.children)
+		{
+			portConnections = port.connections.Keys.Count;
+			if(((Port)port).role == "sender")
+			{
+				connectionsOut++;
+			}
+			else
+			{
+				connectionsIn++;
+			}
+		}
+		return "Frequency = " + frequency 
+				+ "\nExecution Time = " + execTime 
+				+ "\nExecution Stack = " + execStack 
+				+ "\nConnections in = " + connectionsIn 
+				+ "\nConnections out = " + connectionsOut;
 	}
+
 	public override List<Component> TooltipList()
 	{
 		List<Component> tooltipList = new(this.children);
