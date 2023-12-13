@@ -82,7 +82,7 @@ class TopologyHead
 
 	public int NumberOfColums(int width, int zoomLevel)
 	{
-		return Math.Max(1, (width+2*Constants.spacing*zoomLevel/12) / ((Constants.componentSize + 7*Constants.spacing)*zoomLevel/12));
+		return Math.Max(1, (width+2*Constants.spacing*zoomLevel/Constants.defaultZoom) / ((Constants.componentSize + 7*Constants.spacing)*zoomLevel/Constants.defaultZoom));
 	}
 
 	public void GoToChild(Component child, HighlightButton highlightButton)
@@ -122,10 +122,10 @@ class TopologyHead
 	private void DrawDefault(SpriteBatch sb, FontSystem font, int zoomLevel, int width)
     {		
 		//The following three variables serve to decide edge and spacing layout:
-		int spacing = Constants.spacing*zoomLevel/12;
+		int spacing = Constants.spacing*zoomLevel/Constants.defaultZoom;
 		int startX  = -2*spacing;//change to some negative value so that it is equal deadspace left and right
-		int startY  = Constants.toolbarHeight + spacing*zoomLevel/12;
-		int adjcomponentSize = Constants.componentSize*zoomLevel/12;//zoom adjusted
+		int startY  = Constants.toolbarHeight + spacing*zoomLevel/Constants.defaultZoom;
+		int adjComponentSize = Constants.componentSize*zoomLevel/Constants.defaultZoom;//zoom adjusted
 
 		Point pos = new(startX, startY);
 		
@@ -137,19 +137,19 @@ class TopologyHead
 			count++;
 			if(count < NumberOfColums(width, zoomLevel))
 			{
-				pos.X += adjcomponentSize + 5*spacing;
+				pos.X += adjComponentSize + 5*spacing;
 			}
 			else
 			{
 				count = 0;
 				pos.X = startX;
-				pos.Y += adjcomponentSize + 2*spacing;
+				pos.Y += adjComponentSize + 2*spacing;
 			}
 		}
 	}
 	private void DrawThread(SpriteBatch sb, FontSystem font, int zoomLevel)
     {
-		int width = 800*zoomLevel/12;//for now
+		int width = 800*zoomLevel/Constants.defaultZoom;//for now
 		try{
 			Thread thread = (Thread)this.GetCurrent();
 			Point pos = new(width/2, 2*width/5 + (int)(1.5f*Constants.toolbarHeight));

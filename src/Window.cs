@@ -133,7 +133,7 @@ class Window : Game
             canvasHeight = ((numberOfRows * Constants.componentSize + Constants.spacing)*canvas.zoomLevel/8) + Constants.toolbarHeight;
             canvasWidth = (numberOfColums*(8*Constants.spacing + Constants.componentSize) - 3*Constants.spacing)*canvas.zoomLevel/Constants.defaultZoom;
         }
-        else //this.top.GetCurrent().type == Component.Type.Thread need rework
+        else //this.top.GetCurrent().type == Component.Type.Thread :  need rework so that is only sets canvas size to lowest possible
         {
             canvasHeight = 8*Constants.componentSize*canvas.zoomLevel/Constants.defaultZoom + Constants.toolbarHeight;
             canvasWidth = 8*Constants.componentSize*canvas.zoomLevel/Constants.defaultZoom + Constants.toolbarHeight;
