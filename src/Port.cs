@@ -5,20 +5,20 @@ using Microsoft.Xna.Framework.Graphics;
 /*__________P_O_R_T___________*/
 class Port : Component
 {
+	public override Type type {get => Type.Port;}
 	public 	float ConnectionOffset{get => this.connectionOffset; set => this.connectionOffset = value;}
 	private float connectionOffset = 0.5f;
 	public string interf 	= ""; 
 	public string role		= "";
 
 	public Port(string name, 
-				string interf, string role) : base(name, Type.Port)
+				string interf, string role) : base(name)
 	{
 			this.interf = interf;
 			this.role = role;
 	}
 	public void AddConnections(List<Port> connections)
 	{
-		Log.Print(this.parent.Name + " : " + this.name + role);
 		foreach (Component connectedTo in connections) {
 			if (this != connectedTo && !this.connections.ContainsKey(connectedTo)) {
 				this.connections.Add(connectedTo, 1);

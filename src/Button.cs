@@ -1,10 +1,6 @@
-using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-
 
 public abstract class Button
 {
@@ -23,6 +19,7 @@ public abstract class Button
 public class LinkButton : Button
 {
     public Component Component;
+	public Boolean Highlight = false;
 
     public LinkButton(Component Component)
         :   base(new())
@@ -32,42 +29,76 @@ public class LinkButton : Button
 
     public void Draw(SpriteBatch sb, SpriteFontBase font, Point pos, int height, int width)
     {
-        this.rectangle.X = pos.X + width;
+        this.rectangle.X = pos.X;
         this.rectangle.Y = pos.Y;
-        this.rectangle.Width = width/3;
+        this.rectangle.Width = width;
         this.rectangle.Height = height;
-
-        //Draws the arrow-body
-        //sb.Draw(Window.whitePixelTexture, new Rectangle(this.rectangle.X, this.rectangle.Y, width/4, height/2), Color.Black);
-        //This draws an arrowhead, OBS: the rotation is by radians and Vector2.Zero denotes the point around which you rotate
-        //sb.Draw(TopologyHead.arrowhead, new Rectangle(this.rectangle.X, this.rectangle.Y, width/3, height), Color.White);
-        //Draws the arrow-body
-		sb.Draw(Window.whitePixelTexture, new Rectangle(this.rectangle.Left, this.rectangle.Center.Y - (int)Math.Round((float)this.rectangle.Height/6f), this.rectangle.Width/2, this.rectangle.Height/3), Color.Black);
 		
-        sb.Draw(TopologyHead.arrowhead, this.rectangle, Color.White);
+		if(Highlight)
+		{
+			DrawHighlight(sb, font);
+		}
+		else
+		{		
+			DrawDefault(sb, font);
+		}
+		DrawArrow(sb, width);
 
+    }
+	private void DrawDefault(SpriteBatch sb, SpriteFontBase font)
+	{
         Vector2 size = font.MeasureString(this.Component.Name);
-        if (size.X < width)
+        if (size.X < this.rectangle.Width)
         {
-            sb.DrawString(font, this.Component.Name, new Vector2(pos.X, pos.Y), Color.Black);
+            sb.DrawString(font, this.Component.Name, new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
             return;
         }
-
         string newName = this.Component.Name + "...";
         size = font.MeasureString(newName);
         float excess;
         int reduceBy;
         do
         {
-            excess = (size.X - width) / font.FontSize;
+            excess = (size.X - this.rectangle.Width) / font.FontSize;
             reduceBy = Math.Max(1, (int)excess) + "...".Length;
             newName = newName[..^reduceBy] + "...";
             size = font.MeasureString(newName);
         }
-        while (size.X > width);
+        while (size.X > this.rectangle.Width);
 
-        sb.DrawString(font, newName, new Vector2(pos.X, pos.Y), Color.Black);
+        sb.DrawString(font, newName, new Vector2(this.rectangle.X, this.rectangle.Y), Color.Black);
+	}
+	
+    private void DrawHighlight(SpriteBatch sb, SpriteFontBase font)
+    {
+        int nameSize = (int)font.MeasureString(this.Component.Name).X;
+        int alteredWidth =  nameSize > this.rectangle.Width ? nameSize : this.rectangle.Width;
+		int borderOffset = Component.lineThickness;
+
+        Color highlightColor = ColorConfiguration.color_1;
+        Vector2 namePos = new(this.rectangle.X, this.rectangle.Y);
+        Rectangle spaceToDrawOn = new(this.rectangle.X - borderOffset, this.rectangle.Y - borderOffset, alteredWidth + 2*borderOffset, this.rectangle.Height + 2*borderOffset);
+
+        sb.Draw(Window.whitePixelTexture, spaceToDrawOn, highlightColor);
+		spaceToDrawOn = this.rectangle;
+		spaceToDrawOn.Width = alteredWidth;
+		sb.Draw(Window.whitePixelTexture, spaceToDrawOn, Color.White);
+		sb.DrawString(font, this.Component.Name, namePos, Color.Black);
+		
+		this.rectangle.Width = alteredWidth + borderOffset;
     }
+	
+	private void DrawArrow(SpriteBatch sb, int size)
+	{
+		Rectangle arrowRectangle = new(this.rectangle.Left + this.rectangle.Width, this.rectangle.Center.Y - (int)Math.Round((float)this.rectangle.Height/6f), size/6, this.rectangle.Height/3);
+        //Draws the arrow-body
+		sb.Draw(Window.whitePixelTexture, arrowRectangle , Color.Black);
+        //Draws the arrowhead
+		arrowRectangle.Y = this.rectangle.Y;
+		arrowRectangle.Width = 2*arrowRectangle.Width;
+		arrowRectangle.Height = this.rectangle.Height;
+		sb.Draw(TopologyHead.arrowhead, arrowRectangle, Color.Black);
+	}
 }
 
 /*---------------------------*/
@@ -145,20 +176,48 @@ class HighlightButton
 
     }
 
-    public void GoRight(List<Component> components)
+    public void GoUp(List<Component> components, int columns)
     {
-        if (this.Component == components.Last())
-            this.Component = components.First();
-        else
-            this.Component = components[components.IndexOf(this.Component) + 1];
+        int currentIndex = components.IndexOf(this.Component);
+        int row = currentIndex / columns;
+        int column = currentIndex % columns;
+        if (row == 0) {
+            return;
+        }
+        this.Component = components[(row-1) * columns + column];
     }
 
-    public void GoLeft(List<Component> components)
+    public void GoDown(List<Component> components, int columns)
     {
-        if (this.Component == components.First())
-            this.Component = components.Last();
-        else
-            this.Component = components[components.IndexOf(this.Component) - 1];
+        int currentIndex = components.IndexOf(this.Component);
+        int row = currentIndex / columns;
+        int column = currentIndex % columns;
+        int newIndex = (row+1) * columns + column;
+        if (newIndex >= components.Count) {
+            return;
+        }
+        this.Component = components[newIndex];
+    }
+
+    public void GoLeft(List<Component> components, int columns)
+    {
+        int currentIndex = components.IndexOf(this.Component);
+        int column = currentIndex % columns;
+        if (column > 0) {
+            this.Component = components[currentIndex - 1];
+        }
+    }
+
+    public void GoRight(List<Component> components, int columns)
+    {   
+        if (this.Component == components.Last()) {
+            return;
+        }
+        int currentIndex = components.IndexOf(this.Component);
+        int column = currentIndex % columns;            
+        if (column < columns - 1) {
+            this.Component = components[currentIndex + 1];
+        }
     }
 }
 
@@ -168,17 +227,25 @@ class HighlightButton
 
 public class HelpButton : Button
 {
+    public bool isPressed = false;
     private readonly string description;
+    private readonly string text;
+    private readonly Tooltip tooltip;
 
-    public HelpButton(Rectangle rectangle, string description)
+    public HelpButton(Rectangle rectangle, string description, SpriteFontBase font, Point windowSize)
         :   base(rectangle)
     {
         this.description = description;
+        this.text = File.ReadAllText("help.txt");
+        this.tooltip = new Tooltip(Point.Zero, text, font);
+        UpdatePosition(windowSize);
     }
 
     public void UpdatePosition(Point windowSize)
     {
         rectangle.X = windowSize.X - 110;
+        this.tooltip.position.X = windowSize.X / 2 - this.tooltip.size.X / 2;
+        this.tooltip.position.Y = Constants.toolbarHeight + 2; 
     }
 
     public void Draw(SpriteBatch sb, SpriteFontBase font, int windowSize)
@@ -187,5 +254,7 @@ public class HelpButton : Button
         modifiedArea.X = windowSize - 110;
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Black);
         sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);
+        if (this.isPressed)
+            this.tooltip.Draw();
     }
 }

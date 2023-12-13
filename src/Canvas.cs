@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 //  todo:
 //      expose window size to allow for resizing of window
@@ -15,7 +14,7 @@ partial class Canvas
     private GraphicsDevice graphicsDevice;
     private SpriteBatch spriteBatch;
     private Texture2D texture = null;
-    public int zoomLevel = Constants.defaultZoom; //default zoom level
+    public int zoomLevel = Constants.defaultZoom;
     private const int minZoom = 9;
     private const int maxZoom = 25;
 

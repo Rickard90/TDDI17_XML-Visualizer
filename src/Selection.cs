@@ -1,6 +1,4 @@
-using System.Globalization;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
@@ -15,9 +13,13 @@ public static class Selection
 
     private static Point mouseCursorPosition;
     private static bool leftMouseJustReleased   = false;
-    public  static bool ComponentGoRight        = false;
+    public  static bool ComponentGoUp           = false;
+    public  static bool ComponentGoDown         = false;
     public  static bool ComponentGoLeft         = false;
-    public static bool PrtSc                   = false;
+    public  static bool ComponentGoRight        = false;
+    public  static bool ComponentEnter          = false;
+    public  static bool ComponentGoBack         = false;
+    public  static bool PrtSc                   = false;
 
     public  static int  GoToLink                = -1;
     
@@ -60,17 +62,35 @@ public static class Selection
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
 
-            if (previousKeyboardState.IsKeyDown(Keys.D) && currentKeyboardState.IsKeyUp(Keys.D)) {
-                ComponentGoRight = true;
+            if (previousKeyboardState.IsKeyDown(Keys.W) && currentKeyboardState.IsKeyUp(Keys.W)) {
+                ComponentGoUp = true;
+            } else {
+                ComponentGoUp = false;
             }
-            else {
-                ComponentGoRight = false;
+            if (previousKeyboardState.IsKeyDown(Keys.S) && currentKeyboardState.IsKeyUp(Keys.S)) {
+                ComponentGoDown = true;
+            } else {
+                ComponentGoDown = false;
             }
             if (previousKeyboardState.IsKeyDown(Keys.A) && currentKeyboardState.IsKeyUp(Keys.A)) {
                 ComponentGoLeft = true;
-            }
-            else {
+            } else {
                 ComponentGoLeft = false;
+            }
+            if (previousKeyboardState.IsKeyDown(Keys.D) && currentKeyboardState.IsKeyUp(Keys.D)) {
+                ComponentGoRight = true;
+            } else {
+                ComponentGoRight = false;
+            }
+            if (previousKeyboardState.IsKeyDown(Keys.Enter) && currentKeyboardState.IsKeyUp(Keys.Enter)) {
+                ComponentEnter = true;
+            } else {
+                ComponentEnter = false;
+            }
+            if (previousKeyboardState.IsKeyDown(Keys.Back) && currentKeyboardState.IsKeyUp(Keys.Back)) {
+                ComponentGoBack = true;
+            } else {
+                ComponentGoBack = false;
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.LeftControl) || currentKeyboardState.IsKeyDown(Keys.RightControl)) {

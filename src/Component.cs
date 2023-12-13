@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Linq.Expressions;
-using System.Net.Mime;
-using System.Reflection.Metadata.Ecma335;
-using FontStashSharp;
+﻿using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 //All types of components inherit constructor and fields from the component-type
 public class Component
 {
-	//Fields:	
+	//Fields:
+	public virtual Component.Type type {get => Type.Component;}
+	
 	public string Name		{get => this.name; set => this.name = value;}
     public Point Position	{get => this.position; set => this.position = value;}
     public Component Parent	{get => this.parent; set => this.parent = value;}
@@ -20,10 +15,9 @@ public class Component
 	public List<Component> Children => this.children;
     private int TextMaxWidth => (this.width - (4 * Component.lineThickness));	
 	public 				enum 				Type{Component, Computer, Partition, Application, Thread, Port};
-	public	  readonly 	Type 				type 		         = Type.Component;
 	protected 		 	string				name		         = "";
-	protected 		   	int 				width		         = 125;
-	protected 		   	int 				height		         = 100;
+	protected 		   	int 				width		         = Constants.componentSize;
+	protected 		   	int 				height		         = Constants.componentSize;
 	protected			Point				position	         = new(0,0);
     protected 			Component 			parent 	        	 = null;
 	protected 		 	List<Component> 	children	         = new();
@@ -47,26 +41,34 @@ public class Component
 		
 	}
 	public Component(string name, List<Component> children)
-		: this(name, Type.Component)
+		: this(name)
 	{
 		this.SetChildren(children);
 	}
-	protected Component(Type type)
-	{
-		this.type = type;
-	}
-    public Component(string name, Type type)
-		: this(type)
+    public Component(string name)
     {
         this.name = name;
     }
-    public Component(string name, List<Component> children, Type type)
-		: this(name, type)
+	public Component(Component otherComponent)
+		: this(otherComponent.Name)
 	{
-		this.SetChildren(children);
+		this.position 	 = new Point(otherComponent.Position.X, otherComponent.Position.Y);
+		this.parent		 = otherComponent.Parent;
+		this.children 	 = otherComponent.children;
+		this.width		 = otherComponent.width;	
+		this.height 	 = otherComponent.height;
+		this.connections = otherComponent.connections;
+		this.linkButtons = otherComponent.linkButtons;
+		this.linkDrawIndex = otherComponent.linkDrawIndex;
+		
+		this.ramSize	= otherComponent.ramSize;
+		this.initStack	= otherComponent.initStack;
+		this.execTime 	= otherComponent.execTime;
+		this.execStack 	= otherComponent.execStack;
+		this.frequency 	= otherComponent.frequency;
 	}
 
-    public void AddChild(Component newChild) 	=> this.children.Add(newChild);
+    public void AddChild(Component newChild) => this.children.Add(newChild);
 	
 	public bool IsEmpty()
 	{
@@ -85,16 +87,18 @@ public class Component
 	}
 	public virtual string GetInfo()
 	{
-		
 		return "RamSize = " + ramSize + "\nInitStack = " + initStack + "\nExecution Time = " + execTime + "\nExecution Stack = " + execStack + "\nFrequency = " + frequency;
 	}
-
+	public virtual List<Component> TooltipList()
+	{
+		return this.children;
+	}
 
 	public virtual void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
 		//Updates component info:
 		this.position = pos;
-		this.width  = Constants.ComponentSize*zoomLevel/12;
+		this.width  = Constants.componentSize*zoomLevel/Constants.defaultZoom;
 		this.height = this.width;
 		
 		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
@@ -131,7 +135,7 @@ public class Component
         Rectangle smallInner = new Rectangle(smallPoint.X + lineThickness, smallPoint.Y + lineThickness, smallInnerWidth, smallInnerHeight);
         int numberOfLinks = Component.numberOfVisibleLinks;
 		smallPoint.X += lineThickness;
-        smallPoint.Y += lineThickness + this.height/8;
+        smallPoint.Y += this.height / 8; // lineThickness;
         int linkButtonHeight = smallInner.Height / numberOfLinks;
         int linkButtonWidth  = smallWidth - lineThickness;
         if (this.connections.Count > numberOfLinks)
@@ -308,7 +312,6 @@ public class Component
 
 		if (size.X < innerWidth)
 		{
-			Log.Print("			 name is short enough already: size = {size.X}, innerWidth = {innerWidth}");
 			return displayName;
 		}
 		else
@@ -348,18 +351,19 @@ public class Component
 /*_______C_O_M_P_U_T_E_R________*/
 class Computer : Component
 {
+	public override Type type {get => Type.Computer;}
 	public int connectionsExternalSend = 0;
 	public int connectionsExternalReceive = 0;
 	public int connectionsInternal = 0;
 
-	public Computer(string name) : base(name, Type.Computer)
+	public Computer(string name) : base(name)
 	{}
-	public Computer(string name, List<Component> children) : base(name, children, Type.Computer)
+	public Computer(string name, List<Component> children) : base(name, children)
 	{}
 	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int zoomLevel)
 	{
 		SpriteFontBase font = fontSystem.GetFont(zoomLevel);
-		this.width  = (int)Math.Ceiling(1.2*Constants.ComponentSize*zoomLevel/12);
+		this.width  = (int)Math.Ceiling(1.2*Constants.componentSize*zoomLevel/Constants.defaultZoom);
 		this.height = this.width;
 		int spacing = this.width/4;
 		int biggestConnectionStringLength = connectionsExternalSend > connectionsExternalReceive ? connectionsExternalSend.ToString().Length : connectionsExternalReceive.ToString().Length;
@@ -404,29 +408,55 @@ class Computer : Component
 /*______P_A_R_T_I_T_I_O_N________*/
 class Partition : Component
 {
-	public Partition(string name) : base(name, Type.Partition)
+	public override Type type {get => Type.Partition;}
+	
+	public Partition(string name) : base(name)
 	{
 
 	}
-	public Partition(string name, List<Component> children) : base(name, children, Type.Partition)
+	public Partition(string name, List<Component> children) : base(name, children)
 	{
 		
+	}
+	protected override void UpdateStats(Component child)
+	{
+		this.execStack += child.execStack;
+		this.execTime  += child.execTime;
+		this.ramSize   += child.ramSize;
+		this.initStack += child.initStack;
+	}
+	public override string GetInfo()
+	{
+		return "Execution Time = " + execTime + "\nExecution Stack = " + execStack + "\nRamsize = " + ramSize;
 	}
 }
 
 /*______A_P_P_L_I_C_A_T_I_O_N______*/
 class Application : Component
 {
+	public override Type type {get => Type.Application;}
+	
 	public Application(string name, List<Component> children,
-					   int ramSize, int initStack) : base(name, children, Type.Application)
+					   int ramSize, int initStack) : base(name, children)
 	{
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
 	public Application(string name,
-					   int ramSize, int initStack) : base(name, Type.Application)
+					   int ramSize, int initStack) : base(name)
 	{
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
+	}
+	protected override void UpdateStats(Component child)
+	{
+		this.execStack += child.execStack;
+		this.execTime  += child.execTime/child.frequency; //eller kanske child.execTime*child.frequency?
+		this.ramSize   += child.ramSize;
+		this.initStack += child.initStack;
+	}
+	public override string GetInfo()
+	{
+		return "Execution Time = " + execTime + "\nExecution Stack = " + execStack + "\nRamsize = " + ramSize;
 	}
 }

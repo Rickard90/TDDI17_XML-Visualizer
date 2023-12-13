@@ -1,7 +1,4 @@
-using System;
-using System.Reflection.Metadata;
 using FontStashSharp;
-using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -85,16 +82,12 @@ class TopologyHead
 
 	public int NumberOfColums(int width, int zoomLevel)
 	{
-		return Math.Max(1, (width+2*Constants.Spacing*zoomLevel/Constants.defaultZoom) / ((Constants.ComponentSize + 7*Constants.Spacing)*zoomLevel/Constants.defaultZoom));
+		return Math.Max(1, (width+2*Constants.spacing*zoomLevel/Constants.defaultZoom) / ((Constants.componentSize + 7*Constants.spacing)*zoomLevel/Constants.defaultZoom));
 	}
 
 	public void GoToChild(Component child, HighlightButton highlightButton)
 	{
-        if(child.GetInfo() != "") {
-            Log.Print("Clicked component info: " + child.Name + " Type: " + child.GetType() + "\n" + child.GetInfo());
-        }
-        //Log.Print("Component children: {0}", child.Children.Count);
-        if(child.type != Component.Type.Port && child.Children.Count > 0) {
+        if(child.type != Component.Type.Port && child.Children.Count > 0 && child != this.GetCurrent()) {
             this.path.Add(child);
             if (child.Children.Count == 0) {
                 highlightButton.Component = null;
@@ -107,14 +100,21 @@ class TopologyHead
 
     public void GoToAny(Component component, HighlightButton highlightButton)
     {
-        this.path.Clear();
-        this.path.Add(component.Parent);
-        while (this.path.Last().Parent != null) {
-            this.path.Add(this.path.Last().Parent);
-        }
-        this.path.Reverse();
-        highlightButton.Component = component;
-    }
+		if (component.Parent != this.GetCurrent()) 
+        {
+			this.path.Clear();
+            if (component.type == Component.Type.Thread) {
+                this.path.Add(component);
+            }
+			this.path.Add(component.Parent);
+			while (this.path.Last().Parent != null) 
+			{
+				this.path.Add(this.path.Last().Parent);
+			}
+			this.path.Reverse();
+			highlightButton.Component = component;
+		}
+	}
 
 
 
@@ -122,10 +122,10 @@ class TopologyHead
 	private void DrawDefault(SpriteBatch sb, FontSystem font, int zoomLevel, int width)
     {		
 		//The following three variables serve to decide edge and spacing layout:
-		int spacing = Constants.Spacing*zoomLevel/Constants.defaultZoom;
+		int spacing = Constants.spacing*zoomLevel/Constants.defaultZoom;
 		int startX  = -2*spacing;//change to some negative value so that it is equal deadspace left and right
-		int startY  = Constants.ToolbarHeight + spacing*zoomLevel/Constants.defaultZoom;
-		int adjComponentSize = Constants.ComponentSize*zoomLevel/Constants.defaultZoom;//zoom adjusted
+		int startY  = Constants.toolbarHeight + spacing*zoomLevel/Constants.defaultZoom;
+		int adjComponentSize = Constants.componentSize*zoomLevel/Constants.defaultZoom;//zoom adjusted
 
 		Point pos = new(startX, startY);
 		
@@ -152,7 +152,7 @@ class TopologyHead
 		int width = 800*zoomLevel/Constants.defaultZoom;//for now
 		try{
 			Thread thread = (Thread)this.GetCurrent();
-			Point pos = new(width/2, 2*width/5 + Constants.ToolbarHeight);
+			Point pos = new(width/2, 2*width/5 + (int)(1.5f*Constants.toolbarHeight));
 			thread.Draw(pos, sb, font, width);
 		}
 		catch{};

@@ -1,22 +1,20 @@
+    Function                     Hotkeys           Alternative Hotkeys
+    ------------                    ------------         ---------------------------
 
-===============================HELP===============================
+    Zoom in                      Ctrl + '+'          Ctrl + mousewheelup
+    Zoom out                    Ctrl + '-'           Ctrl + mousewheeldown   
+    Move View                 Arrow Keys
 
-Hotkeys:
-	
-View commands:	
-	Zoom in			Ctrl + '+' or Ctrl + mousewheelup
-	Zoom out		Ctrl + '-' or Ctrl + mousewheeldown
-	Move View		Arrow Keys
-
-Print:
-	Print			Ctrl + 'P'
-	Help			'H'
-
-Navigate Components:
-	Select Next 		'D'
-	Select Previous		'A'
-
-Search:
-	Aktivate Search		Ctrl + 'F'
-	Search			Enter
-	Deselect		Esc
+    Go Up                         'W'
+    Go Down                    'S'
+    Go Left                        'A'
+    Go Right                     'D'
+    Enter Component       Enter
+    Exit Component         Backspace
+     
+    Enter Search             Ctrl + 'F'
+    Exit Search                Esc
+    Search                       Enter
+     
+    Print                           Ctrl + 'P'
+    Help                           'H'

@@ -1,4 +1,3 @@
-using System.Globalization;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -65,7 +64,7 @@ class Tooltip
 
     public Rectangle DrawArea{get { return new Rectangle(position, size);}}
     public Point position;
-    private readonly Point size;
+    public  readonly Point size;
     private readonly SpriteFontBase font;
     private readonly string text;
 
@@ -139,7 +138,7 @@ class Tooltip
         spriteBatch.DrawString(this.font, this.text, new Vector2(renderArea.X + outlineTextBufferPxSize + outlinePxSize, renderArea.Y + outlineTextBufferPxSize + outlinePxSize), Color.Black);
     }
 
-    private void Draw()
+    public void Draw()
     {
         spriteBatch.Draw(this.drawTexture, this.DrawArea, Color.White);
     }

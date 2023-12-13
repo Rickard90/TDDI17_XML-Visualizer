@@ -1,4 +1,3 @@
-using System.Globalization;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,26 +5,33 @@ using Microsoft.Xna.Framework.Graphics;
 /*_________T_H_R_E_A_D__________*/
 class Thread : Component
 {
+	public override Type type {get => Type.Thread;}
+	
+	private List<Component> tooltipListHelper = new();
+	
 	//Constructors:
 	public Thread(string name, List<Component> children,
-				  int frequency, int execTime, int execStack) : base(name, children, Type.Thread)
+				  int frequency, int execTime, int execStack) : base(name, children)
 	{
 		this.frequency = frequency;
 		this.execTime   = execTime;
 		this.execStack  = execStack;
 	}
 	public Thread(string name,
-				  int frequency, int execTime, int execStack) : base(name, Type.Thread)
+				  int frequency, int execTime, int execStack) : base(name)
 	{
 		this.frequency = frequency;
 		this.execTime  = execTime;
 		this.execStack = execStack;
 	}
 	public Thread(string name,
-				  int execTime, int execStack) : base(name, Type.Thread)
+				  int execTime, int execStack) : base(name)
 	{
 		this.execTime   = execTime;
 		this.execStack  = execStack;
+	}
+	public Thread(Thread otherThread) : base((Component)otherThread)
+	{
 	}
 
 	//Functions:
@@ -34,19 +40,32 @@ class Thread : Component
  		foreach(Port c in newChildren) {
 			this.AddChild(c);
 			c.Parent = this;
-			Log.Print(c.Name);
-
 		}
 	}
     public void SetFrequency(int frequency) => this.frequency = frequency;
 	
     public override string GetInfo()
 	{
-		Log.Print("|" + this.Name);
-		foreach(var test in connections){
-			Log.Print("---->" + test.Key.Name + "Connection Weight: " + test.Value);
+		return "Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack;
+	}
+	
+	public override List<Component> TooltipList()
+	{
+		List<Component> tooltipList = new(this.children);
+		tooltipList.Add(this);
+		
+		foreach(Component otherThread in tooltipListHelper)
+		{
+			tooltipList.Add(otherThread);
 		}
-		return ("Frequency = " + frequency + ", Execution Time = " + execTime + ", Execution Stack = " + execStack);
+		foreach(Component port in this.children)
+		{
+			foreach(Component otherPort in port.connections.Keys)
+			{
+				tooltipList.Add(otherPort);
+			}
+		}
+		return tooltipList;
 	}
 
 	//OBS: Does not overload Component.Draw(), Used if you explicitly cast a component into a thread
@@ -107,6 +126,8 @@ class Thread : Component
 		Point portPos = new();
 		Point threadPos = new();
 		Component otherPort = new();
+		
+		this.tooltipListHelper.Clear();
 
 		for(int x = 0; x < first_third; x++)
 		{
@@ -158,6 +179,7 @@ class Thread : Component
 				Component.DrawArrowBody(sb, port.Rectangle.Center, portPos, spacing/8, offset);
 				otherPort.Draw(portPos, sb, fontSystem, spacing);
 				((Thread)otherPort.Parent).DrawBody(threadPos, sb, fontSystem, spacing/2, spacing);
+				this.tooltipListHelper.Add((Component)(new Thread((Thread)otherPort.Parent)));
 			}
 		}
 	}
