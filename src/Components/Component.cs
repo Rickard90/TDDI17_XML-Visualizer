@@ -16,8 +16,8 @@ public class Component
     private int TextMaxWidth => (this.width - (4 * Component.lineThickness));	
 	public 				enum 				Type{Component, Computer, Partition, Application, Thread, Port};
 	protected 		 	string				name		         = "";
-	protected 		   	int 				width		         = Constants.componentSize;//125;
-	protected 		   	int 				height		         = Constants.componentSize;//100;
+	protected 		   	int 				width		         = Constants.componentSize;
+	protected 		   	int 				height		         = Constants.componentSize;
 	protected			Point				position	         = new(0,0);
     protected 			Component 			parent 	        	 = null;
 	protected 		 	List<Component> 	children	         = new();
@@ -433,11 +433,19 @@ class Partition : Component
 	{
 		
 	}
+	protected override void UpdateStats(Component child)
+	{
+		this.execStack += child.execStack;
+		this.execTime  += child.execTime;
+		this.ramSize   += child.ramSize;
+		this.initStack += child.initStack;
+	}
 }
 
 /*______A_P_P_L_I_C_A_T_I_O_N______*/
 class Application : Component
 {
+	public int externalConnections = 0;
 	public override Type type {get => Type.Application;}
 	
 	public Application(string name, List<Component> children,
@@ -452,4 +460,20 @@ class Application : Component
 		this.ramSize   = ramSize;
 		this.initStack = initStack;
 	}
+	protected override void UpdateStats(Component child)
+	{
+		this.execStack += child.execStack;
+		this.execTime  += child.execTime/child.frequency; //eller kanske child.execTime*child.frequency?
+		this.ramSize   += child.ramSize;
+		this.initStack += child.initStack;
+	}
+	public override string GetInfo()
+	{
+		return "Execution Time = " + execTime 
+				+ "\nExecution Stack = " + execStack 
+				+ "\nRamsize = " + ramSize
+				+ "\nExternal Connections = " + externalConnections;
+	}
+
+
 }

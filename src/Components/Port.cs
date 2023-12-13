@@ -28,31 +28,42 @@ class Port : Component
 		foreach (Port connectedTo in this.connections.Keys) {
 			if (this.role != connectedTo.role)
 			{
-				Component thisParentComputer = this;
-				Component connectedParentComputer = connectedTo;
-				while (thisParentComputer.type != Type.Computer) {
-					thisParentComputer = thisParentComputer.Parent;
+				Component thisParent = this;
+				Component connectedParent = connectedTo;
+				while (thisParent.type != Type.Application) {
+					thisParent = thisParent.Parent;
 				}
-				while (connectedParentComputer.type != Type.Computer) {
-					connectedParentComputer = connectedParentComputer.Parent;
+				while (connectedParent.type != Type.Application) {
+					connectedParent = connectedParent.Parent;
 				}
 				
-				if (connectedParentComputer != thisParentComputer)
+				if (connectedParent != thisParent)
+				{
+					((Application)thisParent).externalConnections++;
+				}
+
+				while (thisParent.type != Type.Computer) {
+					thisParent = thisParent.Parent;
+				}
+				while (connectedParent.type != Type.Computer) {
+					connectedParent = connectedParent.Parent;
+				}
+				if (connectedParent != thisParent)
 				{
 					if (role == "Sender") {
-						((Computer)thisParentComputer).connectionsExternalSend++;
+						((Computer)thisParent).connectionsExternalSend++;
 					} else if (role == "Receiver"){
-						((Computer)thisParentComputer).connectionsExternalReceive++;
+						((Computer)thisParent).connectionsExternalReceive++;
 					}
 				} else { //Internal
-					((Computer)thisParentComputer).connectionsInternal++;
+					((Computer)thisParent).connectionsInternal++;
 				}
 			}
 		}
 	}
 	public override string GetInfo()
 	{
-		return "";
+		return role;
 	}
 	public override void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int spacing)
 	{
