@@ -9,11 +9,11 @@ the system is drawn and at which level of abstraction.
 
 # Run program:
 Run program with default data
-![alt text](RunFakeData.png?raw=true)
+<br>![alt text](RunFakeData.png?raw=true)
 
 Run program with custom data. 
 <br>~./XML_Visualizer.exe <"YourFolderName">
-![alt text](RunYourData.png?raw=true)
+<br>![alt text](RunYourData.png?raw=true)
 
 # Usage:
 
