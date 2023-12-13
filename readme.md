@@ -8,8 +8,11 @@ Afterwards, a viewer can be started where the user can point out which part of
 the system is drawn and at which level of abstraction.
 
 # Run program:
-
+Run program with default data
 ![alt text](RunFakeData.png?raw=true)
+
+Run program with custom data.
+~./XML_Visualizer.exe <"YourFolderName">
 
 ![alt text](RunYourData.png?raw=true)
 # Usage:
