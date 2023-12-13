@@ -89,7 +89,7 @@ class Tooltip
     }
 
     private Tooltip(Point drawPoint, Component component, SpriteFontBase font)
-        : this(drawPoint, $"{component.Parent}/{component.Name}\n{component.GetInfo()}", font)
+        : this(drawPoint, $"{component.type}:\n{component.Name}\n{component.GetInfo()}", font)
     {}
 
     private Texture2D RenderTexture()
