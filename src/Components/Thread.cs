@@ -42,6 +42,13 @@ class Thread : Component
  		foreach(Port c in newChildren) {
 			this.AddChild(c);
 			c.Parent = this;
+		}
+	}
+    public void SetFrequency(int frequency) => this.frequency = frequency;
+	
+    public override string GetInfo()
+	{
+		foreach(Port c in children) {
 			if(c.role == "sender")
 			{
 				connectionsOut++;
@@ -51,11 +58,6 @@ class Thread : Component
 				connectionsIn++;
 			}
 		}
-	}
-    public void SetFrequency(int frequency) => this.frequency = frequency;
-	
-    public override string GetInfo()
-	{
 		return "Frequency = " + frequency 
 				+ "\nExecution Time = " + execTime 
 				+ "\nExecution Stack = " + execStack 
