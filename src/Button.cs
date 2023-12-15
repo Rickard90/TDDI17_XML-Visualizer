@@ -108,6 +108,7 @@ public class LinkButton : Button
 class BackButton : Button
 {
     private readonly string description;
+    private Texture2D sprite;
 
     public BackButton(Rectangle rectangle, string description)
         :   base(rectangle)
@@ -115,12 +116,22 @@ class BackButton : Button
         this.description = description;
     }
 
+    public BackButton(Rectangle rectangle, string description, Texture2D sprite)
+        :   base(rectangle)
+    {
+        this.description = description;
+        this.sprite = sprite;
+    }
+
     public void Draw(SpriteBatch sb, SpriteFontBase font)
     {
         //Rectangle modifiedArea = Canvas.Camera.ModifiedDrawArea(this.rectangle);
         Rectangle modifiedArea = this.rectangle;
         sb.Draw(Window.whitePixelTexture, modifiedArea, Color.Black);
-        sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);  //  consider cacheing drawing fonts
+        if (sprite != null)
+            sb.Draw(sprite, new Vector2(modifiedArea.X, modifiedArea.Y), Color.White);
+        else
+            sb.DrawString(font, this.description, new Vector2(modifiedArea.X + 10, modifiedArea.Y + 10), Color.White);  //  consider cacheing drawing fonts
     }
 }
 

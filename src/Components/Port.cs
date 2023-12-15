@@ -30,21 +30,6 @@ class Port : Component
 			{
 				Component thisParent = this;
 				Component connectedParent = connectedTo;
-				
-				/*while (thisParent.type != Type.Thread) {
-					thisParent = thisParent.Parent;
-				}
-				while (connectedParent.type != Type.Thread) {
-					connectedParent = connectedParent.Parent;
-				}
-				if (connectedParent != thisParent)
-				{
-					if (role == "Sender") {
-						((Thread)thisParent).connectionsOut++;
-					} else if (role == "Receiver"){
-						((Thread)thisParent).connectionsIn++;
-					}
-				}*/
 
 				while (thisParent.type != Type.Application) {
 					thisParent = thisParent.Parent;

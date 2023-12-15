@@ -71,7 +71,18 @@ class Window : Game
         };
 
         this.highlightButton = new HighlightButton(this.top.GetCurrent().Children.First());
-        this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");
+        try 
+        {
+            FileStream fileStream = new FileStream("Content/back.png", FileMode.Open);
+            Texture2D sprite = Texture2D.FromStream(graphicsDevice, fileStream);
+            fileStream.Dispose();
+            this.backButton = new BackButton(new Rectangle(10, 10, sprite.Width, sprite.Height), "back", sprite);
+
+        } catch (Exception e)
+        {
+            Log.Print(e.ToString());
+            this.backButton = new BackButton(new Rectangle(10, 10, 100, 50), "back");
+        }
 
         this.helpButton = new HelpButton(new Rectangle ( windowSize.X - 110, 10, 100, 50), "(H)elp", this.fontSystem.GetFont(5+canvas.zoomLevel), this.windowSize);
 
@@ -109,7 +120,7 @@ class Window : Game
         spriteBatch.Draw(whitePixelTexture, new Rectangle(0, Constants.toolbarHeight-3, Window.ClientBounds.Size.X, 3), Color.Gray);
         this.backButton.Draw(spriteBatch, this.fontSystem.GetFont(32));
         this.helpButton.Draw(spriteBatch, this.fontSystem.GetFont(32), windowSize.X);
-        this.top.DrawPath(spriteBatch, this.fontSystem.GetFont(22));
+        this.top.DrawPath(spriteBatch, backButton.rectangle.X + backButton.rectangle.Width, this.fontSystem.GetFont(22));
         
         this.enterFolderTextbox.Draw();
         Tooltip.DrawCurrent();

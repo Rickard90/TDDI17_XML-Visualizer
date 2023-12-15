@@ -86,6 +86,7 @@ class Thread : Component
 	//OBS: Does not overload Component.Draw(), Used if you explicitly cast a component into a thread
 	public new void Draw(Point pos, SpriteBatch sb, FontSystem fontSystem, int size)
 	{
+		//pos.Y += Constants.toolbarHeight; //quickfix
 		SpriteFontBase font = fontSystem.GetFont(size/67);
 		int spacing = size/24; //Each component is measured in a number of blocks of this size
 		this.width  = 4*spacing;
