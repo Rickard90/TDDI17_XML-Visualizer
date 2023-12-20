@@ -100,8 +100,6 @@ class TopologyHead
 
     public void GoToAny(Component component, HighlightButton highlightButton)
     {
-		if (component.Parent != this.GetCurrent()) 
-        {
 			this.path.Clear();
             if (component.type == Component.Type.Thread) {
                 this.path.Add(component);
@@ -113,7 +111,6 @@ class TopologyHead
 			}
 			this.path.Reverse();
 			highlightButton.Component = component;
-		}
 	}
 
 
