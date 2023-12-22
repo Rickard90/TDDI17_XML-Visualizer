@@ -87,7 +87,7 @@ class TopologyHead
 
 	public void GoToChild(Component child, HighlightButton highlightButton)
 	{
-        if(child.type != Component.Type.Port && child.Children.Count > 0 && child != this.GetCurrent()) {
+		if(child.type != Component.Type.Port && child.Children.Count > 0 && child != this.GetCurrent()) {
             this.path.Add(child);
             if (child.Children.Count == 0) {
                 highlightButton.Component = null;
@@ -100,17 +100,17 @@ class TopologyHead
 
     public void GoToAny(Component component, HighlightButton highlightButton)
     {
-			this.path.Clear();
-            if (component.type == Component.Type.Thread) {
-                this.path.Add(component);
-            }
-			this.path.Add(component.Parent);
-			while (this.path.Last().Parent != null) 
-			{
-				this.path.Add(this.path.Last().Parent);
-			}
-			this.path.Reverse();
-			highlightButton.Component = component;
+		this.path.Clear();
+        if (component.type == Component.Type.Thread) {
+            this.path.Add(component);
+        }
+		this.path.Add(component.Parent);
+		while (this.path.Last().Parent != null) 
+		{
+			this.path.Add(this.path.Last().Parent);
+		}
+		this.path.Reverse();
+		highlightButton.Component = component;
 	}
 
 

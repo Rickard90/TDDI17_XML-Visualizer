@@ -1,4 +1,5 @@
-﻿using FontStashSharp;
+﻿using System.Collections;
+using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -173,11 +174,12 @@ class Window : Game
             }
         }
         // Else check if we should go to arbitrary component (this is triggered by the textbox)
-        else if (ComponentFinder.componentToGoTo != null)
+        else if (ComponentFinder.componentToGoTo != null && Selection.Action == Selection.Key.Enter)
         {
             this.updateCanvas = true;
             this.top.GoToAny(ComponentFinder.componentToGoTo, this.highlightButton);
             canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+            Selection.Action = Selection.Key.None;
             ComponentFinder.componentToGoTo = null;
         }
         // Else check if we should scroll through our connections/links
@@ -251,40 +253,36 @@ class Window : Game
 				hoveredLinkButton = null;
             }
         }
-
-        if (Selection.ComponentEnter && ComponentFinder.componentToGoTo == null)
+        switch(Selection.Action)
         {
-            this.updateCanvas = true;
-            this.top.GoToChild(this.highlightButton.Component, this.highlightButton);
-            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+            case (Selection.Key.Enter):
+                this.updateCanvas = true;
+                this.top.GoToChild(this.highlightButton.Component, this.highlightButton);
+                canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+                break;
+            case(Selection.Key.Back):
+                this.updateCanvas = true;
+                this.top.GoBack();
+                this.highlightButton.Component = this.top.GetCurrent().Children.First();
+                canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+                break;
+            case(Selection.Key.Up):
+                this.highlightButton.GoUp(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
+                canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+                break;
+            case(Selection.Key.Down):
+                this.highlightButton.GoDown(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
+                canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+                break;
+            case(Selection.Key.Left):
+                this.highlightButton.GoLeft(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
+                canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+                break;
+            case(Selection.Key.Right):
+                this.highlightButton.GoRight(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
+                canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
+                break;
         }
-        else if (Selection.ComponentGoBack)
-        {
-            this.updateCanvas = true;
-            this.top.GoBack();
-            this.highlightButton.Component = this.top.GetCurrent().Children.First();
-            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
-        }
-        else if (Selection.ComponentGoUp)
-        {
-            this.highlightButton.GoUp(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
-            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
-        }
-        else if (Selection.ComponentGoDown)
-        {
-            this.highlightButton.GoDown(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
-            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
-        }
-        else if (Selection.ComponentGoLeft)
-        {
-            this.highlightButton.GoLeft(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
-            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
-        }
-        else if (Selection.ComponentGoRight)
-        {
-            this.highlightButton.GoRight(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
-            canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
-        } 
 
         
         if (Selection.ZoomChange != Selection.CanvasZoomChange.Nothing) {
