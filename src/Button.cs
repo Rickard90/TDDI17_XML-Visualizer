@@ -189,34 +189,41 @@ class HighlightButton
 
     public void GoUp(List<Component> components, int columns)
     {
-        int currentIndex = components.IndexOf(this.Component);
-        int row = currentIndex / columns;
-        int column = currentIndex % columns;
-        if (row == 0) {
-            return;
+        if (this.Component.type != Component.Type.Port)
+        {
+            int currentIndex = components.IndexOf(this.Component);
+            int row = currentIndex / columns;
+            int column = currentIndex % columns;
+            if (row == 0) {
+                return;
+            }
+            this.Component = components[(row-1) * columns + column];
         }
-        this.Component = components[(row-1) * columns + column];
     }
 
     public void GoDown(List<Component> components, int columns)
     {
-        int currentIndex = components.IndexOf(this.Component);
-        int row = currentIndex / columns;
-        int column = currentIndex % columns;
-        int newIndex = (row+1) * columns + column;
-        if (newIndex >= components.Count) {
-            return;
+        if (this.Component.type != Component.Type.Port)
+        {
+            int currentIndex = components.IndexOf(this.Component);
+            int row = currentIndex / columns;
+            int column = currentIndex % columns;
+            int newIndex = (row+1) * columns + column;
+            if (newIndex >= components.Count){return;}
+            else 
+            {
+                this.Component = components[newIndex];
+            }
         }
-        this.Component = components[newIndex];
     }
 
     public void GoLeft(List<Component> components, int columns)
     {
-        int currentIndex = components.IndexOf(this.Component);
-        int column = currentIndex % columns;
-        if (column > 0) {
-            this.Component = components[currentIndex - 1];
-        }
+            int currentIndex = components.IndexOf(this.Component);
+            int column = currentIndex % columns;
+            if (column > 0 || this.Component.type == Component.Type.Port && this.Component != components.First()) {
+                this.Component = components[currentIndex - 1];
+            }
     }
 
     public void GoRight(List<Component> components, int columns)
@@ -226,7 +233,7 @@ class HighlightButton
         }
         int currentIndex = components.IndexOf(this.Component);
         int column = currentIndex % columns;            
-        if (column < columns - 1) {
+        if (column < columns - 1 || this.Component.type == Component.Type.Port) {
             this.Component = components[currentIndex + 1];
         }
     }
