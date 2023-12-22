@@ -20,7 +20,7 @@ public static class Selection
 
     public  static int  GoToLink                = -1;
     
-    public         enum Key {None, Up, Down, Left, Right, Enter, Back}
+    public         enum Key {None, Up, Down, Left, Right, Enter, Back, Help}
     public         enum LinkScroll { Nothing, Up, Down }
     public static       LinkScroll linkScroll = LinkScroll.Nothing;
     public         enum CanvasZoomChange  { Nothing, In, Out }
@@ -79,6 +79,9 @@ public static class Selection
             else if (previousKeyboardState.IsKeyDown(Keys.Back) && currentKeyboardState.IsKeyUp(Keys.Back)) {
                 Action = Key.Back;
             }
+            else if (previousKeyboardState.IsKeyDown(Keys.H) && currentKeyboardState.IsKeyUp(Keys.H)) {
+                Action = Key.Help;
+            } 
 
             if (currentKeyboardState.IsKeyDown(Keys.LeftControl) || currentKeyboardState.IsKeyDown(Keys.RightControl)) {
                 if (previousKeyboardState.IsKeyDown(Keys.P) && currentKeyboardState.IsKeyUp(Keys.P)) {

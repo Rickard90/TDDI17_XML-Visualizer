@@ -282,6 +282,9 @@ class Window : Game
                 this.highlightButton.GoRight(this.top.GetCurrent().Children, this.top.NumberOfColums(windowSize.X, canvas.zoomLevel));
                 canvas.ScrollCanvasToArea(highlightButton.GetArea(), Window.ClientBounds);
                 break;
+            case(Selection.Key.Help):
+             this.helpButton.isPressed = !this.helpButton.isPressed;
+            break;
         }
 
         
